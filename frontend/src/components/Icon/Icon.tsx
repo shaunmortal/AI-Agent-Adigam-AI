@@ -1,3 +1,5 @@
+import { useId } from 'react';
+
 /**
  * The icons the app uses, as inline SVG paths.
  *
@@ -132,6 +134,9 @@ export function Icon({
 
 /** The wordmark. An open book, because this is a study product and it reads at 20px. */
 export function Logo({ size = 26 }: { size?: number }) {
+    // One gradient id per logo: with a shared id every copy points at the first, and when that one
+    // sits in a hidden column (the sign-in pitch on a phone) the others lose their stroke.
+    const gradientId = `adigam-mark-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
     return (
         <svg
             width={size}
@@ -142,14 +147,14 @@ export function Logo({ size = 26 }: { size?: number }) {
             focusable="false"
         >
             <defs>
-                <linearGradient id="adigam-mark" x1="0" y1="0" x2="24" y2="24">
+                <linearGradient id={gradientId} x1="0" y1="0" x2="24" y2="24">
                     <stop offset="0%" stopColor="#3b82f6" />
                     <stop offset="100%" stopColor="#8b5cf6" />
                 </linearGradient>
             </defs>
             <path
                 d="M3 5.5A1.5 1.5 0 014.5 4H10a2 2 0 012 2v13a2 2 0 00-2-2H4.5A1.5 1.5 0 013 15.5zM21 5.5A1.5 1.5 0 0019.5 4H14a2 2 0 00-2 2v13a2 2 0 012-2h5.5A1.5 1.5 0 0021 15.5z"
-                stroke="url(#adigam-mark)"
+                stroke={`url(#${gradientId})`}
                 strokeWidth={1.8}
                 strokeLinecap="round"
                 strokeLinejoin="round"
