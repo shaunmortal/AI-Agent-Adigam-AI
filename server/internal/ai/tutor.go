@@ -304,7 +304,9 @@ func (t *Tutor) Ask(ctx context.Context, in AskInput) (TutorReply, error) {
 		}
 	}
 	var reply Answer
-	if grounded {
+	if IsOffTopic(ctx, t.AI, question, history) {
+		reply = Answer{Text: OffTopicReply(facts.PreferredLanguage)}
+	} else if grounded {
 		reply, err = AnswerFromMaterial(ctx, t.AI, t.Material, in.UserID, question, tc, history)
 	} else {
 		reply, err = AnswerFreely(ctx, t.AI, question, tc, history)
