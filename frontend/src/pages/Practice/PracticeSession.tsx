@@ -181,8 +181,8 @@ export function PracticeSession({
 
             {aimedAt && (
                 <div className="banner" role="note">
-                    Aimed at a misconception you showed earlier: <strong>{aimedAt}</strong>. Let&rsquo;s
-                    see if it still holds.
+                    Aimed at a misconception you showed earlier: <strong>{aimedAt}</strong>.
+                    Let&rsquo;s see if it still holds.
                 </div>
             )}
 
@@ -280,8 +280,8 @@ export function PracticeSession({
 
                     {result.isCorrect && result.reasoningVerdict === 'flawed' && (
                         <div className="banner banner--warn">
-                            <strong>Right answer, shaky reasoning.</strong> The option is right, but the
-                            reason you gave isn't quite.
+                            <strong>Right answer, shaky reasoning.</strong> The option is right, but
+                            the reason you gave isn't quite.
                         </div>
                     )}
 
@@ -308,7 +308,9 @@ export function PracticeSession({
                     {result.reasoningFeedback && (
                         <div>
                             <span className="label">On your reasoning</span>
-                            <p style={{ marginTop: 8, marginBottom: 0 }}>{result.reasoningFeedback}</p>
+                            <p style={{ marginTop: 8, marginBottom: 0 }}>
+                                {result.reasoningFeedback}
+                            </p>
                         </div>
                     )}
 

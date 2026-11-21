@@ -92,7 +92,10 @@ describe('pickVoice', () => {
     const google = voice('Google US English', 'en-US');
     const aria = voice('Microsoft Aria Online (Natural) - English (United States)', 'en-US');
     const andrew = voice('Microsoft Andrew Online (Natural) - English (United States)', 'en-US');
-    const andrewMulti = voice('Microsoft AndrewMultilingual Online (Natural) - English (United States)', 'en-US');
+    const andrewMulti = voice(
+        'Microsoft AndrewMultilingual Online (Natural) - English (United States)',
+        'en-US'
+    );
 
     it("prefers Edge's Andrew, the multilingual one first", () => {
         expect(pickVoice([robotic, aria, andrew, andrewMulti])).toBe(andrewMulti);

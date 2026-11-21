@@ -73,11 +73,20 @@ const LANG = 'en-IN';
  * Multilingual one also reads Hinglish well); Chrome has Google's network voices. Any of those
  * beats the default, and the device's own en-IN voice is the last resort before it.
  */
-const PREFERRED_VOICES = [/Andrew.*Multilingual/i, /Andrew/i, /Online \(Natural\)/i, /^Google (US|UK) English/i];
+const PREFERRED_VOICES = [
+    /Andrew.*Multilingual/i,
+    /Andrew/i,
+    /Online \(Natural\)/i,
+    /^Google (US|UK) English/i,
+];
 
 /** The most natural English voice the browser offers, or undefined to leave the default. */
-export function pickVoice(voices: readonly SpeechSynthesisVoice[]): SpeechSynthesisVoice | undefined {
-    const english = voices.filter((voice) => voice.lang.startsWith('en') || /Multilingual/i.test(voice.name));
+export function pickVoice(
+    voices: readonly SpeechSynthesisVoice[]
+): SpeechSynthesisVoice | undefined {
+    const english = voices.filter(
+        (voice) => voice.lang.startsWith('en') || /Multilingual/i.test(voice.name)
+    );
     for (const pattern of PREFERRED_VOICES) {
         const match = english.find((voice) => pattern.test(voice.name));
         if (match) return match;

@@ -11,7 +11,9 @@ import type { GroupSummary, OwnedClass } from '@/types/api';
  * members' per-topic mastery, misconceptions and reasoning, so the form says so before it is made.
  */
 export function ClassCards() {
-    const classes = useApi<{ classes: OwnedClass[] }>(() => api.get<{ classes: OwnedClass[] }>('/classes'));
+    const classes = useApi<{ classes: OwnedClass[] }>(() =>
+        api.get<{ classes: OwnedClass[] }>('/classes')
+    );
     const [name, setName] = useState('');
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -22,7 +24,10 @@ export function ClassCards() {
         setError(null);
         setBusy(true);
         try {
-            await api.post<{ group: GroupSummary }>('/groups', { name: name.trim(), isClass: true });
+            await api.post<{ group: GroupSummary }>('/groups', {
+                name: name.trim(),
+                isClass: true,
+            });
             setName('');
             classes.reload();
         } catch (cause) {
@@ -47,8 +52,10 @@ export function ClassCards() {
                             <span className="row-item__body">
                                 <strong>{c.name}</strong>
                                 <div className="faint">
-                                    Code <span className="mono">{c.inviteCode}</span> · {Math.max(0, c.memberCount - 1)}{' '}
-                                    {c.memberCount - 1 === 1 ? 'student' : 'students'} · Open class dashboard
+                                    Code <span className="mono">{c.inviteCode}</span> ·{' '}
+                                    {Math.max(0, c.memberCount - 1)}{' '}
+                                    {c.memberCount - 1 === 1 ? 'student' : 'students'} · Open class
+                                    dashboard
                                 </div>
                             </span>
                             <Icon name="chevron" className="row-item__chev" />
@@ -76,13 +83,17 @@ export function ClassCards() {
                         />
                     </div>
                     <span className="faint">
-                        For teachers. Students join with the code like any group, and you get a class
-                        dashboard: where the class is stuck, the misconceptions behind it and a re-teach
-                        plan. Unlike a study group, you will see each student's per-topic mastery,
-                        misconceptions and the reasoning they write.
+                        For teachers. Students join with the code like any group, and you get a
+                        class dashboard: where the class is stuck, the misconceptions behind it and
+                        a re-teach plan. Unlike a study group, you will see each student's per-topic
+                        mastery, misconceptions and the reasoning they write.
                     </span>
                 </div>
-                <button type="submit" className="secondary wide" disabled={busy || name.trim().length < 2}>
+                <button
+                    type="submit"
+                    className="secondary wide"
+                    disabled={busy || name.trim().length < 2}
+                >
                     {busy ? 'Working…' : 'Create class'}
                 </button>
             </form>

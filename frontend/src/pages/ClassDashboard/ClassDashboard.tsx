@@ -22,7 +22,10 @@ function pct(score: number) {
 
 export default function ClassDashboard() {
     const { id = '' } = useParams();
-    const data = useApi<ClassInsights>(() => api.get<ClassInsights>(`/groups/${id}/insights`), [id]);
+    const data = useApi<ClassInsights>(
+        () => api.get<ClassInsights>(`/groups/${id}/insights`),
+        [id]
+    );
 
     const [plan, setPlan] = useState<ReteachPlan | null>(null);
     const [planning, setPlanning] = useState(false);
@@ -96,8 +99,9 @@ export default function ClassDashboard() {
 
             {insights.totals.students === 0 && (
                 <div className="banner banner--note">
-                    No students yet. Share the code <strong className="mono">{cls.inviteCode}</strong>{' '}
-                    with your class — they join from Study groups.
+                    No students yet. Share the code{' '}
+                    <strong className="mono">{cls.inviteCode}</strong> with your class — they join
+                    from Study groups.
                 </div>
             )}
 
@@ -108,13 +112,19 @@ export default function ClassDashboard() {
                             Class-wide gaps
                         </h2>
                         <p className="faint" style={{ margin: '4px 0 0' }}>
-                            Ranked by how weak the class is and how many later topics each one blocks.
+                            Ranked by how weak the class is and how many later topics each one
+                            blocks.
                         </p>
                     </div>
 
-                    {gaps.length === 0 && <p className="faint">Nothing to rank until students answer.</p>}
+                    {gaps.length === 0 && (
+                        <p className="faint">Nothing to rank until students answer.</p>
+                    )}
 
-                    <ol className="stack" style={{ gap: 14, margin: 0, paddingLeft: 0, listStyle: 'none' }}>
+                    <ol
+                        className="stack"
+                        style={{ gap: 14, margin: 0, paddingLeft: 0, listStyle: 'none' }}
+                    >
                         {gaps.map((gap, i) => (
                             <li key={gap.topicId} className="stack" style={{ gap: 6 }}>
                                 <div className="spread" style={{ gap: 8 }}>
@@ -143,7 +153,11 @@ export default function ClassDashboard() {
                     </ol>
 
                     {insights.gaps.length > GAPS_SHOWN && (
-                        <button type="button" className="secondary" onClick={() => setShowAllGaps((v) => !v)}>
+                        <button
+                            type="button"
+                            className="secondary"
+                            onClick={() => setShowAllGaps((v) => !v)}
+                        >
                             {showAllGaps ? 'Show fewer' : `Show all ${insights.gaps.length}`}
                         </button>
                     )}
@@ -164,10 +178,17 @@ export default function ClassDashboard() {
                     )}
 
                     {insights.misconceptions.map((m) => (
-                        <div key={`${m.topicId}-${m.label}`} className="card stack" style={{ gap: 6 }}>
+                        <div
+                            key={`${m.topicId}-${m.label}`}
+                            className="card stack"
+                            style={{ gap: 6 }}
+                        >
                             <div className="spread" style={{ gap: 8, alignItems: 'flex-start' }}>
                                 <strong>{m.label}</strong>
-                                <span className="pill mono" style={{ padding: '2px 10px', whiteSpace: 'nowrap' }}>
+                                <span
+                                    className="pill mono"
+                                    style={{ padding: '2px 10px', whiteSpace: 'nowrap' }}
+                                >
                                     {m.students} of {insights.totals.students}
                                 </span>
                             </div>
@@ -182,15 +203,19 @@ export default function ClassDashboard() {
                 </section>
             </div>
 
-            <section className="card card--accent stack" aria-labelledby="plan-title" style={{ gap: 12 }}>
+            <section
+                className="card card--accent stack"
+                aria-labelledby="plan-title"
+                style={{ gap: 12 }}
+            >
                 <div className="spread" style={{ gap: 12, flexWrap: 'wrap' }}>
                     <div style={{ minWidth: 0 }}>
                         <h2 id="plan-title" className="label">
                             Re-teach plan for the next lesson
                         </h2>
                         <p className="faint" style={{ margin: '4px 0 0' }}>
-                            AI reads the gaps and misconceptions above and drafts a 35-minute lesson with
-                            student groups.
+                            AI reads the gaps and misconceptions above and drafts a 35-minute lesson
+                            with student groups.
                         </p>
                     </div>
                     <button
@@ -199,7 +224,12 @@ export default function ClassDashboard() {
                         disabled={planning || insights.gaps.length === 0}
                         onClick={() => void makePlan()}
                     >
-                        <Icon name="sparkles" size={16} /> {planning ? 'Writing the plan…' : plan ? 'Write it again' : 'Generate re-teach plan'}
+                        <Icon name="sparkles" size={16} />{' '}
+                        {planning
+                            ? 'Writing the plan…'
+                            : plan
+                              ? 'Write it again'
+                              : 'Generate re-teach plan'}
                     </button>
                 </div>
 
@@ -213,7 +243,8 @@ export default function ClassDashboard() {
                         <ol className="stack" style={{ gap: 10, margin: 0, paddingLeft: '1.2em' }}>
                             {plan.steps.map((step, i) => (
                                 <li key={i}>
-                                    <strong>{step.topic}</strong> <span className="faint">· {step.minutes} min</span>
+                                    <strong>{step.topic}</strong>{' '}
+                                    <span className="faint">· {step.minutes} min</span>
                                     <div>{step.activity}</div>
                                     {step.addresses && step.addresses !== '-' && (
                                         <div className="faint">Fixes: {step.addresses}</div>
@@ -247,7 +278,11 @@ export default function ClassDashboard() {
                 {insights.students.length === 0 || insights.topics.length === 0 ? (
                     <p className="faint">Nothing to show until students answer.</p>
                 ) : (
-                    <div className="class-heat" tabIndex={0} aria-label="Mastery heatmap, scrolls sideways">
+                    <div
+                        className="class-heat"
+                        tabIndex={0}
+                        aria-label="Mastery heatmap, scrolls sideways"
+                    >
                         <table>
                             <thead>
                                 <tr>
@@ -255,7 +290,12 @@ export default function ClassDashboard() {
                                         Student
                                     </th>
                                     {insights.topics.map((t) => (
-                                        <th key={t.id} scope="col" title={t.name} className="class-heat__topic">
+                                        <th
+                                            key={t.id}
+                                            scope="col"
+                                            title={t.name}
+                                            className="class-heat__topic"
+                                        >
                                             <span>{t.name}</span>
                                         </th>
                                     ))}
@@ -279,7 +319,10 @@ export default function ClassDashboard() {
                                                             ? undefined
                                                             : {
                                                                   background: `color-mix(in srgb, var(--accent) ${Math.round(score)}%, transparent)`,
-                                                                  color: score >= 55 ? '#fff' : undefined,
+                                                                  color:
+                                                                      score >= 55
+                                                                          ? '#fff'
+                                                                          : undefined,
                                                               }
                                                     }
                                                 >
