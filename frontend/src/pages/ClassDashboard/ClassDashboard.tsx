@@ -185,11 +185,21 @@ export default function ClassDashboard() {
                         >
                             <div className="spread" style={{ gap: 8, alignItems: 'flex-start' }}>
                                 <strong>{m.label}</strong>
-                                <span
-                                    className="pill mono"
-                                    style={{ padding: '2px 10px', whiteSpace: 'nowrap' }}
-                                >
-                                    {m.students} of {insights.totals.students}
+                                <span className="row" style={{ gap: 6, flexWrap: 'nowrap' }}>
+                                    {m.fixed > 0 && (
+                                        <span
+                                            className="pill pill--easy mono"
+                                            style={{ padding: '2px 10px', whiteSpace: 'nowrap' }}
+                                        >
+                                            {m.fixed} fixed
+                                        </span>
+                                    )}
+                                    <span
+                                        className="pill mono"
+                                        style={{ padding: '2px 10px', whiteSpace: 'nowrap' }}
+                                    >
+                                        {m.students} of {insights.totals.students}
+                                    </span>
                                 </span>
                             </div>
                             <span className="faint">{m.topicName}</span>

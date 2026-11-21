@@ -33,7 +33,7 @@ func RecordGraded(ctx context.Context, d *app.Deps, userID string, q *store.Ques
 	var out Recorded
 	err = inTx(ctx, d, func(tx pgx.Tx) error {
 		inserted, recs, err := recordAnswers(ctx, tx, userID, source,
-			[]graded{{questionID: q.ID, given: given, verdict: verdict{IsCorrect: isCorrect}}}, days)
+			[]graded{{questionID: q.ID, given: given, verdict: verdict{IsCorrect: isCorrect, Probes: probes(q)}}}, days)
 		if err != nil {
 			return err
 		}

@@ -278,6 +278,12 @@ export function PracticeSession({
                         <strong>{result.isCorrect ? 'Correct' : 'Not quite'}</strong>
                     </div>
 
+                    {result.resolvedMisconceptions?.map((label) => (
+                        <div key={label} className="banner banner--good" role="status">
+                            <strong>Fixed: {label}.</strong> Two clean answers in a row.
+                        </div>
+                    ))}
+
                     {result.isCorrect && result.reasoningVerdict === 'flawed' && (
                         <div className="banner banner--warn">
                             <strong>Right answer, shaky reasoning.</strong> The option is right, but

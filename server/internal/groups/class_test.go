@@ -44,7 +44,7 @@ func TestStudentRowsUseOpaqueKeysWeakestFirst(t *testing.T) {
 func TestClassSummaryNamesWeakestStudentsAndQuotes(t *testing.T) {
 	students := StudentRows([]string{"Asha", "Ravi"}, []MasteryCell{{0, "a", "Current", 80}, {1, "a", "Current", 20}})
 	gaps := ClassGaps([]MasteryCell{{0, "a", "Current", 80}, {1, "a", "Current", 20}}, nil)
-	s := ClassSummary("10-B", students, gaps, []ClassMisconception{{"a", "Current", "current gets used up", 1, []string{"the bulb eats it"}}})
+	s := ClassSummary("10-B", students, gaps, []ClassMisconception{{"a", "Current", "current gets used up", 1, 0, []string{"the bulb eats it"}}})
 	for _, want := range []string{"Current: class average 50%", "Weakest: Ravi, Asha", `"current gets used up" (Current): 1 students`, "the bulb eats it"} {
 		if !strings.Contains(s, want) {
 			t.Fatalf("summary missing %q:\n%s", want, s)
