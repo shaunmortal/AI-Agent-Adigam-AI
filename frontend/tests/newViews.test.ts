@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { isDeck } from '@/components/Citations/deck';
-import { bandOf, layers, layoutCourseMap } from '@/components/CourseGraph/layout';
+import {
+    bandOf,
+    layers,
+    layoutCourseMap,
+    pendingMasteryLabel,
+} from '@/components/CourseGraph/layout';
 import { briefParts, pickVoice } from '@/pages/SmartRevision/brief';
 import type { CourseMap, FlashcardTopic } from '@/types/api';
 
@@ -47,6 +52,14 @@ describe('course map layout', () => {
         expect(at.get('c')!.y).toBeGreaterThan(at.get('b')!.y);
         expect(at.get('c')!.x).toBeGreaterThan(at.get('b')!.x);
         expect(g.width).toBeGreaterThan(at.get('c')!.x);
+    });
+
+    it('never says "Not started" while the scores are loading or failed', () => {
+        expect(pendingMasteryLabel({ data: null, error: null })).toBe('Loading…');
+        expect(pendingMasteryLabel({ data: null, error: new Error('x') })).toBe(
+            'Mastery unavailable'
+        );
+        expect(pendingMasteryLabel({ data: { topics: [] }, error: null })).toBeUndefined();
     });
 
     it('bands mastery', () => {

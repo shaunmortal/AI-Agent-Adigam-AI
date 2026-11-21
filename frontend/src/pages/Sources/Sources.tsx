@@ -1,7 +1,7 @@
 import { type FormEvent, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CourseGraph, MasteryLegend } from '@/components/CourseGraph/CourseGraph';
-import { masteryLabel, practiceHref } from '@/components/CourseGraph/layout';
+import { masteryLabel, pendingMasteryLabel, practiceHref } from '@/components/CourseGraph/layout';
 import { Icon } from '@/components/Icon/Icon';
 import { Failed, Loading } from '@/components/Loading/States';
 import { useApi } from '@/hooks/useApi';
@@ -332,6 +332,7 @@ function BuildCourse({
     const [building, setBuilding] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [map, setMap] = useState<CourseMap | null>(null);
+    const scores = useApi<MockTestList>(() => api.get<MockTestList>('/mock-tests'));
 
     // Show the map that already exists, so revisiting the page does not mean rebuilding it.
     useEffect(() => {
@@ -394,7 +395,7 @@ function BuildCourse({
                 </button>
             </form>
 
-            {map && <CourseMapView map={map} />}
+            {map && <CourseMapView map={map} scores={scores} />}
         </div>
     );
 }
@@ -405,15 +406,24 @@ function BuildCourse({
  * The list is always rendered: hidden visually while the graph is on screen, so a screen reader
  * still reads the course in order whichever view is chosen.
  */
-export function CourseMapView({ map }: { map: CourseMap }) {
+export function CourseMapView({
+    map,
+    scores,
+}: {
+    map: CourseMap;
+    /**
+     * Per-topic mastery for the learner's goal (the mock-test scope already carries it). Fetched by
+     * the page, alongside its map rather than after it.
+     */
+    scores: ReturnType<typeof useApi<MockTestList>>;
+}) {
     const [view, setView] = useState<'graph' | 'list'>('graph');
-    // Per-topic mastery for the learner's goal: the mock-test scope already carries it. Topics outside
-    // the goal (or before any answers) show as not started.
-    const scope = useApi<MockTestList>(() => api.get<MockTestList>('/mock-tests'));
+    // Topics outside the goal (or before any answers) show as not started — once the scores are in.
     const mastery = useMemo(
-        () => new Map((scope.data?.topics ?? []).map((t) => [t.topicId, t.masteryScore])),
-        [scope.data]
+        () => new Map((scores.data?.topics ?? []).map((t) => [t.topicId, t.masteryScore])),
+        [scores.data]
     );
+    const pending = pendingMasteryLabel(scores);
 
     return (
         <div className="card stack">
@@ -449,13 +459,15 @@ export function CourseMapView({ map }: { map: CourseMap }) {
                 {view === 'graph' && <MasteryLegend />}
             </div>
 
+            {scores.error ? <Failed error={scores.error} onRetry={scores.reload} /> : null}
+
             {view === 'graph' && (
                 <>
                     <p className="faint" style={{ margin: 0 }}>
                         Arrows run from what to learn first. Hover or tap a topic for its key
                         concepts; click it (or tap again) to practise it.
                     </p>
-                    <CourseGraph map={map} mastery={mastery} />
+                    <CourseGraph map={map} mastery={mastery} pending={pending} />
                 </>
             )}
 
@@ -476,7 +488,7 @@ export function CourseMapView({ map }: { map: CourseMap }) {
                                     </Link>
                                     <span className="faint">
                                         {' '}
-                                        · {masteryLabel(mastery.get(topic.id))} ·{' '}
+                                        · {pending ?? masteryLabel(mastery.get(topic.id))} ·{' '}
                                         {topic.excerptCount} excerpts
                                     </span>
                                     {topic.keyConcepts.length > 0 && (

@@ -4,11 +4,13 @@ import { Empty, Failed, Loading } from '@/components/Loading/States';
 import { useApi } from '@/hooks/useApi';
 import { api } from '@/lib/api';
 import { CourseMapView } from '@/pages/Sources/Sources';
-import type { CourseMap, Goal } from '@/types/api';
+import type { CourseMap, Goal, MockTestList } from '@/types/api';
 
 /** The concept graph of the syllabus behind the learner's goal, coloured by their mastery. */
 export default function ConceptMap() {
     const goal = useApi<{ goal: Goal | null }>(() => api.get<{ goal: Goal | null }>('/goals'));
+    // Needs no curriculum id, so it starts now rather than after the map has been drawn.
+    const scores = useApi<MockTestList>(() => api.get<MockTestList>('/mock-tests'));
     const curriculumId = goal.data?.goal?.curriculumId ?? null;
     const map = useApi<CourseMap | null>(
         () =>
@@ -50,7 +52,7 @@ export default function ConceptMap() {
                     appears here.
                 </Empty>
             )}
-            {map.data && <CourseMapView map={map.data} />}
+            {map.data && <CourseMapView map={map.data} scores={scores} />}
         </div>
     );
 }

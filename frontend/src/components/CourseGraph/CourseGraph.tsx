@@ -24,11 +24,15 @@ import {
 export function CourseGraph({
     map,
     mastery,
+    pending,
 }: {
     map: CourseMap;
     mastery: Map<string, number | null>;
+    /** Shown on every topic instead of its score while the scores are not in hand. */
+    pending?: string;
 }) {
     const navigate = useNavigate();
+    const scoreLabel = (topicId: string) => pending ?? masteryLabel(mastery.get(topicId));
     const layout = useMemo(() => layoutCourseMap(map), [map]);
     const [active, setActive] = useState<string | null>(null);
     const lastPointer = useRef<string>('mouse');
@@ -104,6 +108,7 @@ export function CourseGraph({
 
                 {layout.nodes.map((node) => {
                     const score = mastery.get(node.topic.id);
+                    const label = scoreLabel(node.topic.id);
                     const needs = node.topic.prerequisites.map((p) => p.name);
                     return (
                         <button
@@ -111,7 +116,7 @@ export function CourseGraph({
                             type="button"
                             className={`cmap__node cmap__node--${bandOf(score)}`}
                             aria-current={node.topic.id === active ? 'true' : undefined}
-                            aria-label={`${node.topic.name}. ${masteryLabel(score)}.${needs.length ? ` Needs first: ${needs.join(', ')}.` : ''} Practise this topic.`}
+                            aria-label={`${node.topic.name}. ${label}.${needs.length ? ` Needs first: ${needs.join(', ')}.` : ''} Practise this topic.`}
                             style={{ left: node.x, top: node.y, width: NODE_W, height: NODE_H }}
                             onPointerDown={(e) => {
                                 lastPointer.current = e.pointerType;
@@ -132,7 +137,7 @@ export function CourseGraph({
                             }}
                         >
                             <span className="cmap__name">{node.topic.name}</span>
-                            <span className="cmap__score">{masteryLabel(score)}</span>
+                            <span className="cmap__score">{label}</span>
                         </button>
                     );
                 })}
@@ -151,7 +156,7 @@ export function CourseGraph({
                     >
                         <strong>{shown.topic.name}</strong>
                         <span className="faint">
-                            {shown.subjectName} · {masteryLabel(mastery.get(shown.topic.id))}
+                            {shown.subjectName} · {scoreLabel(shown.topic.id)}
                         </span>
                         {shown.topic.keyConcepts.length > 0 && (
                             <div className="cmap__concepts">

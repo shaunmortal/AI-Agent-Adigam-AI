@@ -173,6 +173,16 @@ export function masteryLabel(mastery: number | null | undefined): string {
         : `Mastery ${Math.round(mastery)}`;
 }
 
+/**
+ * What every topic says while the learner's scores are not in hand: loading, or failed. Undefined
+ * once they are. Without it a topic with no score yet reads "Not started", which is wrong for a
+ * learner who has started them all.
+ */
+export function pendingMasteryLabel(scores: { data: unknown; error: unknown }): string | undefined {
+    if (scores.data) return undefined;
+    return scores.error ? 'Mastery unavailable' : 'Loading…';
+}
+
 /** Practice for one topic. The subject scopes the session; the topic is passed along with it. */
 export function practiceHref(subjectId: string, topicId: string): string {
     return `/practice?subject=${subjectId}&topic=${topicId}`;
