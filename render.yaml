@@ -1,5 +1,5 @@
 # Render blueprint: the Go API and the Redis it needs.
-#
+
 # Secrets are not here: `sync: false` makes Render ask for each value once and store it encrypted.
 # Region: Singapore is Render's closest to Supabase's Mumbai region; every query pays that round
 # trip, so keep the API and the database as close together as the platforms allow.
