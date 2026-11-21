@@ -123,13 +123,13 @@ Adigam uses **Claude AI** for the language work below ([`server/internal/ai`](se
 
 | Call | What it does | Guardrails |
 |---|---|---|
-| Question author | Writes a batch for a topic and difficulty, each wrong option tagged with its misconception; can be aimed at a learner's own misconceptions | JSON schema; structural validation; existing questions listed so they are not rewritten, exact duplicates never stored; misconception labels quoted as data and capped at 80 chars; one generation per topic at a time (Redis lock); background top-ups at most once per 15 minutes per learner and topic; 10 per hour per learner on the manual route |
+| Question author | Writes a batch for a topic and difficulty, each wrong option tagged with its misconception; can be aimed at a learner's own misconceptions | JSON schema; structural validation; existing questions listed so they are not rewritten, exact duplicates never stored; misconception labels quoted as data and capped at 80 chars; one generation per topic at a time (Redis lock); background top-ups at most once per 15 minutes per learner and topic; 30 per hour per learner on the manual route |
 | Independent answer check | Solves each generated question **cold, without seeing the proposed answer** | Choice: the indexes must match. Numeric: within tolerance. Short: accepted wording or rubric. Any failure leaves the question unverified, and learners can only read verified questions |
-| Reasoning check | Verdict `sound` / `flawed` / `missing`, misconception, evidence, feedback | Reasoning capped at 600 chars and fenced in `<reasoning>` with `<` `>` neutralised; JSON schema; unknown verdicts become `missing`; 20 s timeout; 60 per hour per learner; on failure or past the limit the answer is marked as if no reasoning were given |
+| Reasoning check | Verdict `sound` / `flawed` / `missing`, misconception, evidence, feedback | Reasoning capped at 600 chars and fenced in `<reasoning>` with `<` `>` neutralised; JSON schema; unknown verdicts become `missing`; 20 s timeout; 180 per hour per learner; on failure or past the limit the answer is marked as if no reasoning were given |
 | Short-answer grader | Marks a typed answer the normalised match did not accept | Answer fenced in `<answer>` and labelled data, not instructions; JSON schema |
 | Study-only scope gate | One-word `STUDY` / `OFF_TOPIC` check before the tutor answers | A separate call rather than a rule in the tutor prompt, which a persuasive message can bend; off-topic gets a fixed refusal and the tutor is never called; if the check itself fails, the question is answered |
-| Tutor (Ask Adigam) | Answers from the learner's course material with numbered citations, or from general knowledge under a "General knowledge · not from your material" label | Question fenced in `<question>`; citations that point at nothing are removed and an uncited answer is relabelled as general knowledge; 2,000-char questions; 40 per hour |
-| Re-teach plan | Headline, timed 3 to 5 step lesson, 2 or 3 student groups | Class data fenced in `<class_data>`; JSON schema; class owner only; 20 per hour; cached 2 minutes per class |
+| Tutor (Ask Adigam) | Answers from the learner's course material with numbered citations, or from general knowledge under a "General knowledge · not from your material" label | Question fenced in `<question>`; citations that point at nothing are removed and an uncited answer is relabelled as general knowledge; 2,000-char questions; 120 per hour |
+| Re-teach plan | Headline, timed 3 to 5 step lesson, 2 or 3 student groups | Class data fenced in `<class_data>`; JSON schema; class owner only; 60 per hour; cached 2 minutes per class |
 | Syllabus from a goal | Decides whether typed goal text is something to study and writes its syllabus | Fenced input; schema-validated and business-checked before insert; 20 per hour. "Class 10 Physics" resolves to the seeded syllabus with no AI call |
 | Course map, OCR, figures, flashcards | Turns uploaded PDFs, slides and video into topics, searchable text and revision cards | JSON schemas; uploads 30 per hour, course map rebuilds 10 per hour |
 
@@ -180,13 +180,79 @@ flowchart LR
 
 | Suite | Size | Runs |
 |---|---|---|
-| Go (`go test -race ./...`) | 272 test functions in 51 files across 21 packages: mastery, SM-2, Elo calibration, selection, class gaps, prompts, scope gate, rate limits, shedding, handlers | CI on every push and pull request to `main` |
+| Go (`go test -race ./...`) | 276 test functions in 52 files across 21 packages: mastery, SM-2, Elo calibration, selection, class gaps, prompts, scope gate, rate limits, shedding, handlers | CI on every push and pull request to `main` |
 | Frontend (Vitest) | 3 files, 21 cases | CI, together with lint, Prettier check, type check and production build |
 | SQL (`database/tests/`) | 8 files on schema, RLS and grants | By hand against a database; they roll back |
 
 CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) also runs `gofmt`, `go vet`, and Linux and
 Windows builds, with a real Redis service. Database integration tests skip without `DATABASE_URL`, so no
 database credentials sit in CI.
+
+**Misconception detection: measured**
+
+Every item is a real Class 10 physics MCQ from the question bank, copied unchanged, with student
+reasoning written by hand without looking at the judge's prompt or code. Each one is a real model call
+through `practice.JudgeReasoning`, the same call the practice route makes.
+
+**First run, blind:** 36 items in [`eval/reasoning-testset.json`](eval/reasoning-testset.json), 21 in
+English and 15 in Hinglish. A separate review, also done without the prompt, checked every answer key,
+verdict and label against the bank and changed nothing ([review notes](eval/reasoning-testset-review.md)).
+
+| Category (6 items each) | Verdict, first run | Verdict, re-run after fix | Label exact (both runs) |
+|---|---:|---:|---:|
+| Wrong option, flawed reasoning (English) | 6/6 | 6/6 | 6/6 |
+| Wrong option, flawed reasoning (Hinglish) | 6/6 | 6/6 | 6/6 |
+| Right option, wrong reason | 6/6 | 6/6 | 6/6 |
+| Right option, sound reasoning | 6/6 | 6/6 | – |
+| Vague (expected "missing") | 6/6 | 6/6 | – |
+| Wrong option, right idea with a careless slip (expected "sound") | 2/6 | 6/6 | – |
+| **Overall** | **32/36** | **36/36** | **18/18** |
+
+- **The 4 first-run misses** were all careless slips judged "flawed" with an invented label, which the
+  app would have stored as the attempt's misconception:
+  - r25: took t = 2 for 2 minutes in I = Q/t → "forgot to convert minutes to seconds".
+  - r26: wrote I²Rt, then dropped t → "Forgot the time factor t in H = I²Rt".
+  - r27: kept the power in watts → "Forgot to convert watts to kilowatts for kWh".
+  - r28: put 2 Ω for the 4 Ω resistor in the last step → "used wrong resistance value in V = IR".
+- **The fix** adds this to the "sound" rule of the judge's prompt (`ReasoningCheckSystem` in
+  [`ai/prompts.go`](server/internal/ai/prompts.go)):
+  > Also sound: the right idea and method with a careless slip in arithmetic, units or the final pick (minutes not turned into seconds, a dropped factor, the wrong value plugged in). A slip is not a misconception: point it out in the feedback.
+- **Re-run on the same 36:** 36/36 verdicts, 18/18 labels, 0 false alarms. This set is no longer blind:
+  the fix was written after seeing its misses, so it shows they are fixed, not that the fix generalises.
+
+**Held-out, after the fix:** 16 new items in [`eval/reasoning-heldout.json`](eval/reasoning-heldout.json),
+written without opening the prompt, the code or earlier results, with no question reused; 8 English,
+8 Hinglish.
+
+| Category | Verdict right | Label exact |
+|---|---:|---:|
+| Wrong option, careless slip (expected "sound") | 6/6 | – |
+| Wrong option, flawed reasoning | 5/5 | 5/5 |
+| Right option, wrong reason (checks the fix did not make the judge lenient) | 5/5 | 5/5 |
+| **Overall** | **16/16** | **10/10** |
+
+- **False alarms:** 0 of 6 slips. No slip got a label, including the 4 (h01, h02, h04, h05) whose chosen
+  option carries one. **Misses:** none.
+- It is small and has no right-option-sound or vague items; those rows rest on the 36-item set alone.
+
+**Labels are an easy test here.** A learner with no recorded mistakes gets only the question's own option
+labels as known labels (1 or 2 on every flawed item in the first set, 1 to 3 in the held-out set), and the
+expected label was always among them. The label scores measure picking the right one of those, not
+naming a misconception unaided.
+
+Rerun (reads `server/.env`; one real model call per item, a failed call retried once; no call failed or
+was retried in any of the three runs). Without `-out` it writes to `eval/results/` and replaces the
+first-run files.
+
+```sh
+(cd server && go run ./cmd/evalreasoning -in ../eval/reasoning-testset.json -out ../eval/results/after-slip-fix)
+(cd server && go run ./cmd/evalreasoning -in ../eval/reasoning-heldout.json -out ../eval/results/heldout)
+```
+
+Results, per item and summary: first run
+[`reasoning-eval.json`](eval/results/reasoning-eval.json) and
+[`reasoning-eval-summary.json`](eval/results/reasoning-eval-summary.json); re-run
+[`after-slip-fix/`](eval/results/after-slip-fix); held-out [`heldout/`](eval/results/heldout).
 
 **Load test (local)**
 
