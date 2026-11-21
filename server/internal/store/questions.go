@@ -155,10 +155,13 @@ type QuestionRating struct {
 }
 
 // FindRatingForUpdate reads a question's rating and locks the row for the rest of the
-// transaction, so two answers to one question cannot overwrite each other's update.
+// transaction, so two answers to one question cannot overwrite each other's update. NO KEY
+// UPDATE, not UPDATE: the attempt just inserted holds the foreign key's KEY SHARE lock on this
+// row, and FOR UPDATE conflicts with another answer's KEY SHARE, which deadlocks two learners
+// answering the same question at once.
 func (r *Questions) FindRatingForUpdate(ctx context.Context, id string) (*QuestionRating, error) {
 	return rowOf[QuestionRating](ctx, r.q, "questions.findRatingForUpdate",
-		`select rating, rating_attempts, difficulty from questions where id = $1 for update`, id)
+		`select rating, rating_attempts, difficulty from questions where id = $1 for no key update`, id)
 }
 
 // SaveRating stores a question's new rating and counts the answer behind it.

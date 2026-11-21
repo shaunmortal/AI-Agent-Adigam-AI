@@ -1,7 +1,11 @@
 package store
 
 import (
+	"encoding/json"
+	"sync"
 	"testing"
+
+	"github.com/jackc/pgx/v5"
 
 	"github.com/shaunmortal/AI-tutor/server/internal/adaptive"
 	"github.com/shaunmortal/AI-tutor/server/internal/learner"
@@ -79,4 +83,58 @@ func TestFindExposingMatchesLabelsIgnoringCaseAndSkipsSeen(t *testing.T) {
 	check(t, !ok, "a question already answered is not served again")
 	_, ok = has([]string{"light bends away"}, nil)
 	check(t, !ok, "another misconception does not match")
+}
+
+// Two learners answering one question at once. Each attempt's foreign key holds KEY SHARE on the
+// question until commit, so the rating lock taken after it must not conflict with the other
+// learner's, or the two transactions wait on each other (deadlock). Both transactions roll back.
+func TestRatingLockLetsTwoLearnersAnswerAtOnce(t *testing.T) {
+	f := setup(t) // for the question; its own transaction is not used here
+	var inserted sync.WaitGroup
+	inserted.Add(2)
+	errs := make([]error, 2)
+	var done sync.WaitGroup
+	for i := range errs {
+		done.Go(func() {
+			ready := sync.OnceFunc(inserted.Done)
+			defer ready() // never leave the other learner waiting at the barrier
+			errs[i] = func() error {
+				conn, err := pgx.Connect(f.ctx, databaseURL())
+				if err != nil {
+					return err
+				}
+				defer func() { _ = conn.Close(f.ctx) }()
+				tx, err := conn.Begin(f.ctx)
+				if err != nil {
+					return err
+				}
+				defer func() { _ = tx.Rollback(f.ctx) }() // always: this is a shared database
+				if _, err := tx.Exec(f.ctx, `set local statement_timeout = '10s'`); err != nil {
+					return err
+				}
+				var user string
+				if err := tx.QueryRow(f.ctx, `with id as (select gen_random_uuid() as id)
+					insert into auth.users (id, email) select id, id || '@adigam.test' from id returning id::text`).
+					Scan(&user); err != nil {
+					return err
+				}
+				if _, err := NewAttempts(tx).Insert(f.ctx, NewAttempt{UserID: user, QuestionID: f.questionID,
+					GivenAnswer: json.RawMessage(`{"selectedOptions":[0]}`), Source: "practice"}); err != nil {
+					return err
+				}
+				// Both attempts are in (both KEY SHARE locks held) before either locks the rating.
+				ready()
+				inserted.Wait()
+				q := NewQuestions(tx)
+				if _, err := q.FindRatingForUpdate(f.ctx, f.questionID); err != nil {
+					return err
+				}
+				return q.SaveRating(f.ctx, f.questionID, 0)
+			}()
+		})
+	}
+	done.Wait()
+	for _, err := range errs {
+		must(t, err)
+	}
 }
