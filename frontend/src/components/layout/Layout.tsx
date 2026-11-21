@@ -30,6 +30,7 @@ interface NavItem {
 const LEARNING: NavItem[] = [
     { label: 'Dashboard', icon: 'grid', to: '/dashboard' },
     { label: 'Course Material', icon: 'book', to: '/sources' },
+    { label: 'Concept Map', icon: 'grid', to: '/concept-map' },
     { label: 'Practice', icon: 'code', to: '/practice' },
     { label: 'Knowledge Check', icon: 'target', to: '/assessment' },
     { label: 'Mock Tests', icon: 'file', to: '/mock-tests' },

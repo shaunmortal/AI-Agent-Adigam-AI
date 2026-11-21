@@ -76,6 +76,10 @@ type attemptResult struct {
 	// Misconception is what a wrong answer showed, when it showed something specific.
 	Misconception *string       `json:"misconception"`
 	Mastery       masteryChange `json:"mastery"`
+	// ReasoningVerdict (sound | flawed | missing) and ReasoningFeedback judge the learner's
+	// written reasoning; null when none was written or it could not be judged.
+	ReasoningVerdict  *string `json:"reasoningVerdict"`
+	ReasoningFeedback *string `json:"reasoningFeedback"`
 }
 
 type masteryChange struct {
@@ -113,6 +117,7 @@ func submitAttempt(d *app.Deps) httpx.Handler {
 		if err != nil {
 			return err
 		}
+		v = withReasoning(v, checkReasoning(ctx, d, userID, question, in.Answer, in.Reasoning))
 		before, err := store.NewMastery(admin).FindScore(ctx, userID, question.TopicID)
 		if err != nil {
 			return err
@@ -121,7 +126,7 @@ func submitAttempt(d *app.Deps) httpx.Handler {
 		var rec recomputed
 		if err := inTx(ctx, d, func(tx pgx.Tx) error {
 			inserted, recs, err := recordAnswers(ctx, tx, userID, in.Source, []graded{{questionID: in.QuestionID,
-				given: in.Answer.json(), seconds: in.TimeTakenSeconds, verdict: v}}, daysUntilExam)
+				given: in.Answer.json(), seconds: in.TimeTakenSeconds, reasoning: in.Reasoning, verdict: v}}, daysUntilExam)
 			if err == nil {
 				attempt, rec = inserted[0], recs[inserted[0].TopicID]
 			}
@@ -132,8 +137,9 @@ func submitAttempt(d *app.Deps) httpx.Handler {
 
 		res := attemptResult{AttemptID: attempt.ID, IsCorrect: v.IsCorrect, CorrectAnswer: question.CorrectAnswer,
 			Explanation: question.Explanation, SourceChunkID: question.SourceChunkID, Feedback: v.Feedback,
-			Misconception: v.Misconception,
-			Mastery:       masteryChange{TopicID: attempt.TopicID, Before: before, After: rec.score, AttemptsOnTopic: rec.total}}
+			Misconception:    v.Misconception,
+			Mastery:          masteryChange{TopicID: attempt.TopicID, Before: before, After: rec.score, AttemptsOnTopic: rec.total},
+			ReasoningVerdict: v.ReasoningVerdict, ReasoningFeedback: v.ReasoningFeedback}
 		if before != nil {
 			change := jsRound((rec.score-*before)*100) / 100
 			res.Mastery.Change = &change

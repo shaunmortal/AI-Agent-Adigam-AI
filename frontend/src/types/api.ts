@@ -92,6 +92,9 @@ export interface AttemptResult {
         change: number | null;
         attemptsOnTopic: number;
     };
+    /** The judgement of the learner's written "why"; null when none was written or it could not be judged. */
+    reasoningVerdict?: 'sound' | 'flawed' | 'missing' | null;
+    reasoningFeedback?: string | null;
 }
 
 export interface Subject {
@@ -631,4 +634,55 @@ export interface TopicMisconceptions {
         lastSeenAt: string;
         source: Citation | null;
     }[];
+}
+
+/** A class the learner teaches (GET /classes). */
+export interface OwnedClass {
+    id: string;
+    name: string;
+    inviteCode: string;
+    memberCount: number;
+}
+
+export interface ClassGap {
+    topicId: string;
+    topicName: string;
+    avgMastery: number;
+    belowHalf: number;
+    studentsSeen: number;
+    downstream: number;
+    priority: number;
+}
+
+export interface ClassMisconception {
+    topicId: string;
+    topicName: string;
+    label: string;
+    students: number;
+    quotes: string[];
+}
+
+export interface ClassStudentRow {
+    key: string;
+    name: string;
+    avgMastery: number;
+    mastery: Record<string, number>;
+}
+
+/** GET /groups/{id}/insights — the teacher's view of a class. */
+export interface ClassInsights {
+    class: { id: string; name: string; inviteCode: string };
+    insights: {
+        totals: { students: number; answers: number; activeToday: number };
+        gaps: ClassGap[];
+        misconceptions: ClassMisconception[];
+        topics: { id: string; name: string }[];
+        students: ClassStudentRow[];
+    };
+}
+
+export interface ReteachPlan {
+    headline: string;
+    steps: { topic: string; minutes: number; activity: string; addresses: string }[];
+    groups: { title: string; students: string[]; focus: string }[];
 }

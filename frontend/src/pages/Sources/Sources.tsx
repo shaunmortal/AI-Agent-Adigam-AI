@@ -405,7 +405,7 @@ function BuildCourse({
  * The list is always rendered: hidden visually while the graph is on screen, so a screen reader
  * still reads the course in order whichever view is chosen.
  */
-function CourseMapView({ map }: { map: CourseMap }) {
+export function CourseMapView({ map }: { map: CourseMap }) {
     const [view, setView] = useState<'graph' | 'list'>('graph');
     // Per-topic mastery for the learner's goal: the mock-test scope already carries it. Topics outside
     // the goal (or before any answers) show as not started.

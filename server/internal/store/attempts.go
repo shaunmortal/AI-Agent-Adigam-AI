@@ -24,10 +24,12 @@ type QuestionForGrading struct {
 	// tempts a learner ("" for correct options), or is nil.
 	Body                 string   `db:"body" json:"-"`
 	OptionMisconceptions []string `db:"option_misconceptions" json:"-"`
+	// Options is what a reasoning check is shown, so it can name the options the learner weighed.
+	Options []string `db:"options" json:"-"`
 }
 
 const gradingCols = `id, topic_id, question_type, correct_answer, explanation, difficulty, is_verified, source_chunk_id,
-	body, option_misconceptions`
+	body, option_misconceptions, options`
 
 // AttemptRow is one attempt with the question's difficulty embedded, as PostgREST's
 // `questions(difficulty)` returned it: Questions is nil when the question could not be read.
@@ -58,6 +60,9 @@ type NewAttempt struct {
 	TimeTakenSeconds *int
 	// practice | assessment | topic_test | mock_test | revision
 	Source string
+	// The learner's written reasoning and its verdict (sound | flawed | missing); nil when none.
+	Reasoning        *string
+	ReasoningVerdict *string
 }
 
 // InsertedAttempt is what Insert returns.
@@ -112,9 +117,10 @@ func (r *Attempts) FindByIDs(ctx context.Context, attemptIDs []string) ([]Attemp
 
 func (r *Attempts) Insert(ctx context.Context, a NewAttempt) (*InsertedAttempt, error) {
 	return single[InsertedAttempt](ctx, r.q, "attempts.insert",
-		`insert into question_attempts (user_id, question_id, is_correct, given_answer, time_taken_seconds, source)
-		 values ($1, $2, $3, $4, $5, $6) returning id, topic_id`,
-		a.UserID, a.QuestionID, a.IsCorrect, a.GivenAnswer, a.TimeTakenSeconds, a.Source)
+		`insert into question_attempts (user_id, question_id, is_correct, given_answer, time_taken_seconds, source,
+		   reasoning, reasoning_verdict)
+		 values ($1, $2, $3, $4, $5, $6, $7, $8) returning id, topic_id`,
+		a.UserID, a.QuestionID, a.IsCorrect, a.GivenAnswer, a.TimeTakenSeconds, a.Source, a.Reasoning, a.ReasoningVerdict)
 }
 
 // FindTopicAttempts is every attempt on one topic, newest first, with the question's

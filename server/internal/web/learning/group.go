@@ -130,6 +130,15 @@ func (h handlers) createGroup(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
+	// Optional: omitted means a plain study group, exactly as before classes existed.
+	isClass := false
+	if v, present := f["isClass"]; present {
+		b, ok := v.(bool)
+		if !ok {
+			return expected("isClass", "boolean", v, present)
+		}
+		isClass = b
+	}
 	goal, err := h.activeGoal(r)
 	if err != nil {
 		return err
@@ -149,6 +158,11 @@ func (h handlers) createGroup(w http.ResponseWriter, r *http.Request) error {
 	}
 	if err := g.AddMember(ctx, group.ID, userID, "owner"); err != nil {
 		return err
+	}
+	if isClass {
+		if err := g.MarkClass(ctx, group.ID); err != nil {
+			return err
+		}
 	}
 	httpx.OK(w, http.StatusCreated, map[string]any{"group": toSummary(group, "owner", 1)})
 	return nil

@@ -18,6 +18,7 @@ import (
 	"github.com/shaunmortal/AI-tutor/server/internal/assessment"
 	"github.com/shaunmortal/AI-tutor/server/internal/dates"
 	"github.com/shaunmortal/AI-tutor/server/internal/goals"
+	"github.com/shaunmortal/AI-tutor/server/internal/learner"
 	"github.com/shaunmortal/AI-tutor/server/internal/store"
 )
 
@@ -31,7 +32,12 @@ type verdict struct {
 	Feedback *string
 	// Misconception is what a wrong answer showed: the chosen option's distractor rationale, or
 	// the rubric grader's diagnosis. Nil when the answer was right or showed nothing specific.
+	// When the learner's reasoning was judged, the idea it showed takes precedence (withReasoning).
 	Misconception *string
+	// ReasoningVerdict (sound | flawed | missing) and ReasoningFeedback judge the learner's
+	// written reasoning; nil when none was written or it could not be judged.
+	ReasoningVerdict  *string
+	ReasoningFeedback *string
 }
 
 // rubricGrade is the model's mark for a typed answer (ai.ShortAnswerGradeSchema).
@@ -171,6 +177,7 @@ type graded struct {
 	questionID string
 	given      json.RawMessage
 	seconds    *int
+	reasoning  *string
 	verdict
 }
 
@@ -196,11 +203,13 @@ func recordAnswers(ctx context.Context, q store.Q, userID, source string, answer
 	correct := 0
 	for i, a := range answers {
 		at, err := attempts.Insert(ctx, store.NewAttempt{UserID: userID, QuestionID: a.questionID, IsCorrect: a.IsCorrect,
-			GivenAnswer: a.given, TimeTakenSeconds: a.seconds, Source: source})
+			GivenAnswer: a.given, TimeTakenSeconds: a.seconds, Source: source,
+			Reasoning: a.reasoning, ReasoningVerdict: a.ReasoningVerdict})
 		if err != nil {
 			return nil, nil, err
 		}
 		inserted[i] = at
+		calibrate(ctx, q, userID, at.TopicID, a.questionID, a.IsCorrect)
 		if !slices.Contains(topics, at.TopicID) {
 			topics = append(topics, at.TopicID)
 		}
@@ -234,6 +243,31 @@ func recordAnswers(ctx context.Context, q store.Q, userID, source string, answer
 		return nil, nil, err
 	}
 	return inserted, recs, nil
+}
+
+// calibrate moves the question's measured difficulty by one answer, judged against the learner's
+// mastery of the topic before it (recordAnswers recomputes mastery only after every insert).
+// Never fails the submission: a rating that did not move is a question measured a little slower.
+func calibrate(ctx context.Context, q store.Q, userID, topicID, questionID string, correct bool) {
+	err := softly(ctx, q, func(q store.Q) error {
+		before, err := store.NewMastery(q).FindScore(ctx, userID, topicID)
+		if err != nil {
+			return err
+		}
+		questions := store.NewQuestions(q)
+		cur, err := questions.FindRatingForUpdate(ctx, questionID)
+		if err != nil || cur == nil {
+			return err
+		}
+		rating := learner.BaseRating(cur.Difficulty)
+		if cur.Rating != nil {
+			rating = *cur.Rating
+		}
+		return questions.SaveRating(ctx, questionID, learner.UpdateRating(rating, cur.Attempts, learner.Ability(before), correct))
+	})
+	if err != nil {
+		slog.Warn("could not calibrate the question", "question", questionID, "err", err)
+	}
 }
 
 // examDays is how many days the learner's active goal has left, read as the learner. It caps

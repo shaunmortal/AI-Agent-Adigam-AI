@@ -108,6 +108,26 @@ func (r *Questions) CountVerifiedForTopic(ctx context.Context, topicID string) (
 	return n[0], nil
 }
 
+// QuestionRating is a question's measured difficulty so far. Rating is nil until first answered.
+type QuestionRating struct {
+	Rating     *float64 `db:"rating"`
+	Attempts   int      `db:"rating_attempts"`
+	Difficulty string   `db:"difficulty"`
+}
+
+// FindRatingForUpdate reads a question's rating and locks the row for the rest of the
+// transaction, so two answers to one question cannot overwrite each other's update.
+func (r *Questions) FindRatingForUpdate(ctx context.Context, id string) (*QuestionRating, error) {
+	return rowOf[QuestionRating](ctx, r.q, "questions.findRatingForUpdate",
+		`select rating, rating_attempts, difficulty from questions where id = $1 for update`, id)
+}
+
+// SaveRating stores a question's new rating and counts the answer behind it.
+func (r *Questions) SaveRating(ctx context.Context, id string, rating float64) error {
+	return exec(ctx, r.q, "questions.saveRating",
+		`update questions set rating = $2, rating_attempts = rating_attempts + 1 where id = $1`, id, rating)
+}
+
 // InsertGenerated stores one generated question and returns its id, or nil when an identical
 // question already exists on the topic. `on conflict do nothing` answers the duplicate case the
 // TS caught as error 23505, without aborting a surrounding transaction.

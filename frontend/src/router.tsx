@@ -19,6 +19,7 @@ const LearningGoals = lazy(() => import('@/pages/LearningGoals/LearningGoals'));
 const AITutor = lazy(() => import('@/pages/AITutor/AITutor'));
 const StudyPlan = lazy(() => import('@/pages/StudyPlan/StudyPlan'));
 const StudyGroups = lazy(() => import('@/pages/StudyGroups/StudyGroups'));
+const ClassDashboard = lazy(() => import('@/pages/ClassDashboard/ClassDashboard'));
 const Settings = lazy(() => import('@/pages/Settings/Settings'));
 const MockTest = lazy(() => import('@/pages/MockTest/MockTest'));
 const Assessment = lazy(() => import('@/pages/Assessment/Assessment'));
@@ -26,6 +27,7 @@ const ExamReadiness = lazy(() => import('@/pages/ExamReadiness/ExamReadiness'));
 const Sources = lazy(() => import('@/pages/Sources/Sources'));
 const SmartRevision = lazy(() => import('@/pages/SmartRevision/SmartRevision'));
 const Onboarding = lazy(() => import('@/pages/Onboarding/Onboarding'));
+const ConceptMap = lazy(() => import('@/pages/ConceptMap/ConceptMap'));
 
 /**
  * Everything behind this needs a session.
@@ -76,6 +78,7 @@ export function AppRoutes() {
                     <Route path="/goals" element={<LearningGoals />} />
                     <Route path="/plan" element={<StudyPlan />} />
                     <Route path="/groups" element={<StudyGroups />} />
+                    <Route path="/classes/:id" element={<ClassDashboard />} />
                     <Route path="/tutor" element={<AITutor />} />
                     <Route path="/sources" element={<Sources />} />
                     <Route path="/mock-tests" element={<MockTest />} />
@@ -84,6 +87,7 @@ export function AppRoutes() {
                     <Route path="/settings" element={<Settings />} />
                     <Route path="/revision" element={<SmartRevision />} />
                     <Route path="/start" element={<Onboarding />} />
+                    <Route path="/concept-map" element={<ConceptMap />} />
                 </Route>
 
                 {/* Anything unknown goes to the dashboard, which itself redirects to login

@@ -5,6 +5,7 @@ import { Failed } from '@/components/Loading/States';
 import { useApi } from '@/hooks/useApi';
 import { api } from '@/lib/api';
 import type { GroupDetail, GroupSummary } from '@/types/api';
+import { ClassCards } from './ClassCards';
 
 /**
  * Study groups: classmates preparing for the same thing, comparing how much they have done.
@@ -376,6 +377,10 @@ export default function StudyGroups() {
                                 onChange={(e) => setCode(e.target.value)}
                             />
                         </div>
+                        <span className="faint">
+                            If this is your teacher's class code, your teacher will also see your
+                            mastery per topic, your misconceptions and the reasoning you write.
+                        </span>
                     </div>
 
                     <button
@@ -386,6 +391,8 @@ export default function StudyGroups() {
                         {busy ? 'Working…' : 'Join group'}
                     </button>
                 </form>
+
+                <ClassCards />
             </div>
 
             {/* ------------------------------------------------ insights rail */}

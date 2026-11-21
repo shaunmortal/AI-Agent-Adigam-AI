@@ -47,6 +47,8 @@ export function PracticeSession({
     const [selected, setSelected] = useState<number[]>([]);
     // What was typed for a numeric or short-answer question.
     const [typed, setTyped] = useState('');
+    // The learner's one line on why they chose an option; the tutor reads it for the idea behind it.
+    const [reasoning, setReasoning] = useState('');
     const [result, setResult] = useState<AttemptResult | null>(null);
     const [submitting, setSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
@@ -138,6 +140,7 @@ export function PracticeSession({
                       : { value: Number(typed) }),
                 timeTakenSeconds: Math.min(3600, Math.round((Date.now() - startedAt) / 1000)),
                 source: 'practice' as const,
+                ...(isChoice && reasoning.trim() ? { reasoning: reasoning.trim() } : {}),
             };
 
             setResult(await api.post<AttemptResult>('/attempts', payload));
@@ -152,6 +155,7 @@ export function PracticeSession({
         setIndex((i) => i + 1);
         setSelected([]);
         setTyped('');
+        setReasoning('');
         setResult(null);
         setSubmitError(null);
         setStartedAt(Date.now());
@@ -228,6 +232,24 @@ export function PracticeSession({
                     />
                 )}
 
+                {isChoice && (
+                    <div className="field">
+                        <label htmlFor="practice-reasoning">Why did you choose this?</label>
+                        <textarea
+                            id="practice-reasoning"
+                            rows={2}
+                            maxLength={600}
+                            value={reasoning}
+                            disabled={result !== null}
+                            placeholder="One line is enough, e.g. “because the current splits at the junction”"
+                            onChange={(e) => setReasoning(e.target.value)}
+                        />
+                        <span className="faint">
+                            Optional, but it lets the tutor spot the idea behind your answer.
+                        </span>
+                    </div>
+                )}
+
                 {submitError && <div className="banner banner--error">{submitError}</div>}
 
                 {!result && (
@@ -248,6 +270,13 @@ export function PracticeSession({
                         <strong>{result.isCorrect ? 'Correct' : 'Not quite'}</strong>
                     </div>
 
+                    {result.isCorrect && result.reasoningVerdict === 'flawed' && (
+                        <div className="banner banner--warn">
+                            <strong>Right answer, shaky reasoning.</strong> The option is right, but the
+                            reason you gave isn't quite.
+                        </div>
+                    )}
+
                     {/* A typed answer has no options to colour, so the key is said in words. */}
                     {!isChoice && !result.isCorrect && (
                         <p style={{ margin: 0 }}>
@@ -265,6 +294,13 @@ export function PracticeSession({
                     {result.misconception && (
                         <div className="banner banner--warn">
                             <strong>Likely misconception:</strong> {result.misconception}
+                        </div>
+                    )}
+
+                    {result.reasoningFeedback && (
+                        <div>
+                            <span className="label">On your reasoning</span>
+                            <p style={{ marginTop: 8, marginBottom: 0 }}>{result.reasoningFeedback}</p>
                         </div>
                     )}
 

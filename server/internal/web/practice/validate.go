@@ -229,6 +229,31 @@ type attemptInput struct {
 	Answer           givenAnswer
 	TimeTakenSeconds *int
 	Source           string
+	// Reasoning is the learner's one line on why they chose it; nil when none was written.
+	Reasoning *string
+}
+
+// maxReasoning bounds the "why" a learner writes; it goes to a model and into the attempt row.
+const maxReasoning = 600
+
+// reasoningField is an optional string: NUL bytes dropped, trimmed, at most 600 characters,
+// and empty means none.
+func reasoningField(v any) (*string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	s, ok := v.(string)
+	if !ok {
+		return nil, expected("reasoning", "string", v, true)
+	}
+	s = strings.TrimSpace(strings.ReplaceAll(s, "\x00", ""))
+	if len([]rune(s)) > maxReasoning {
+		return nil, invalid("reasoning", "Too big: expected string to have <="+strconv.Itoa(maxReasoning)+" characters")
+	}
+	if s == "" {
+		return nil, nil
+	}
+	return &s, nil
 }
 
 func parseAttempt(w http.ResponseWriter, r *http.Request) (attemptInput, error) {
@@ -267,6 +292,9 @@ func parseAttempt(w http.ResponseWriter, r *http.Request) (attemptInput, error) 
 	}
 	if in.Source, err = enumField(m, "source", "practice",
 		"practice", "assessment", "topic_test", "mock_test", "revision"); err != nil {
+		return in, err
+	}
+	if in.Reasoning, err = reasoningField(m["reasoning"]); err != nil {
 		return in, err
 	}
 	sent := 0

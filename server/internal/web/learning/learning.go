@@ -70,6 +70,11 @@ func routes(d *app.Deps) []route {
 			limit("groups-join", 30, "Too many join attempts. Wait a while and check the code you were given.")},
 		{"GET /groups/{id}", h.getGroup, nil},
 		{"POST /groups/{id}/leave", h.leaveGroup, nil},
+
+		{"GET /classes", h.listMyClasses, nil},
+		{"GET /groups/{id}/insights", h.getClassInsights, nil},
+		{"POST /groups/{id}/insights/plan", h.generateClassPlan,
+			limit("class-plan", 20, "You have generated a lot of plans in the last hour.")},
 	}
 }
 
