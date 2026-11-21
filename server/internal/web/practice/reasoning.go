@@ -36,7 +36,7 @@ const (
 	knownPerTopic = 10
 	// checksPerHour caps the paid call on an otherwise free route. Past it an answer is marked
 	// without its reasoning judged, never refused.
-	checksPerHour = 60
+	checksPerHour = 180
 )
 
 var verdicts = []string{"sound", "flawed", "missing"}
@@ -67,19 +67,30 @@ func checkReasoning(ctx context.Context, d *app.Deps, userID string, q *store.Qu
 	if !ratelimit.Allow(ctx, d.Redis, "reasoning-check", userID, checksPerHour, time.Hour) {
 		return nil
 	}
-	var correct []int
-	_ = json.Unmarshal(q.CorrectAnswer, &correct) // grade has already checked its shape
-	prompt := ai.ReasoningCheckPrompt(topicLabel(ctx, d, q.TopicID), q.Body, q.Options, correct, a.Options,
-		*reasoning, knownMisconceptions(ctx, d, userID, q))
-	c, err := reasoningChecker(ctx, d.AI, prompt)
+	c, err := JudgeReasoning(ctx, d, userID, q, a.Options, *reasoning)
 	if err != nil {
 		slog.Warn("reasoning could not be checked", "question", q.ID, "err", err)
 		return nil
 	}
+	return c
+}
+
+// JudgeReasoning is checkReasoning past its gates (length, question type, hourly cap): the
+// prompt, known labels and model call the app makes. Exported for cmd/evalreasoning.
+func JudgeReasoning(ctx context.Context, d *app.Deps, userID string, q *store.QuestionForGrading,
+	chosen []int, reasoning string) (*reasoningCheck, error) {
+	var correct []int
+	_ = json.Unmarshal(q.CorrectAnswer, &correct) // grade has already checked its shape
+	prompt := ai.ReasoningCheckPrompt(topicLabel(ctx, d, q.TopicID), q.Body, q.Options, correct, chosen,
+		reasoning, knownMisconceptions(ctx, d, userID, q))
+	c, err := reasoningChecker(ctx, d.AI, prompt)
+	if err != nil {
+		return nil, err
+	}
 	if !slices.Contains(verdicts, c.Verdict) {
 		c.Verdict = "missing"
 	}
-	return &c
+	return &c, nil
 }
 
 // withReasoning folds the judgement into the mark. The reasoning outranks the option's tag: a

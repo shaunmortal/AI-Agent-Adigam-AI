@@ -1,0 +1,312 @@
+[
+  {
+    "id": "h01",
+    "category": "wrong-option-sound-slip",
+    "language": "english",
+    "reasoning": "R = V/I for each reading. first one 2/0.2 = 10 ohm. second one 6/0.4 = 20 ohm. so resistance goes up from 10 to 20, filament gets hot",
+    "knownLabels": [
+      "calculates I/V instead of V/I",
+      "assumes every conductor obeys Ohm's law",
+      "uses change in V over change in I"
+    ],
+    "expectedVerdict": "sound",
+    "gotVerdict": "sound",
+    "expectedMisconception": null,
+    "gotMisconception": null,
+    "evidence": "R = V/I for each reading. first one 2/0.2 = 10 ohm. second one 6/0.4 = 20 ohm. so resistance goes up from 10 to 20, filament gets hot",
+    "feedback": "Your method is right: R = V/I for each reading, and you correctly linked the rise in resistance to the filament getting hot. The slip is in the arithmetic: 6/0.4 = 15 ohm, not 20, so the answer is A. Check a division by multiplying back: 0.4 × 20 = 8, not 6, but 0.4 × 15 = 6.",
+    "verdictCorrect": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "h02",
+    "category": "wrong-option-sound-slip",
+    "language": "hinglish",
+    "reasoning": "Q = I x t hota hai. 0.6 A matlab 600 mA, toh Q = 600 x 10 = 6000 mC, jo 0.6 C hua",
+    "knownLabels": [
+      "Current gets used up by components",
+      "forgets to multiply current by time",
+      "divides current by time instead of multiplying"
+    ],
+    "expectedVerdict": "sound",
+    "gotVerdict": "sound",
+    "expectedMisconception": null,
+    "gotMisconception": null,
+    "evidence": "Q = I x t hota hai. 0.6 A matlab 600 mA, toh Q = 600 x 10 = 6000 mC, jo 0.6 C hua",
+    "feedback": "Aapka method bilkul sahi hai: Q = I x t, aur 0.6 A = 600 mA bhi sahi hai, 6000 mC tak sab theek hai. Slip sirf last step mein hui: 1 C = 1000 mC, toh 6000 mC = 6 C, 0.6 C nahi. Quick check: seedha 0.6 A x 10 s = 6 C nikalo, aur dekho ki dono tarike same answer dete hain, yaani option A.",
+    "verdictCorrect": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "h03",
+    "category": "wrong-option-sound-slip",
+    "language": "english",
+    "reasoning": "lens formula 1/v - 1/u = 1/f. u = -30, f = +20. 1/v = 1/20 + 1/(-30) = 1/20 - 1/30. lcm 60 so (2-3)/60 = -1/60, v = -60 cm. negative so image is on the same side as the object",
+    "knownLabels": [
+      "Uses the mirror formula for lenses"
+    ],
+    "expectedVerdict": "sound",
+    "gotVerdict": "sound",
+    "expectedMisconception": null,
+    "gotMisconception": null,
+    "evidence": "1/v = 1/20 + 1/(-30) = 1/20 - 1/30. lcm 60 so (2-3)/60 = -1/60, v = -60 cm",
+    "feedback": "Your method is right: you used the lens formula 1/v - 1/u = 1/f with correct signs (u = -30, f = +20), and you knew a negative v means the same side as the object. The slip is in the LCM step. 1/20 = 3/60 and 1/30 = 2/60, so the result is (3-2)/60 = +1/60, giving v = +60 cm, on the other side of the lens (option D). A quick check: an object between f and 2f of a convex lens gives a real image beyond 2f on the opposite side, so a virtual image on the object's side could not be right.",
+    "verdictCorrect": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "h04",
+    "category": "wrong-option-sound-slip",
+    "language": "hinglish",
+    "reasoning": "resistance same rahega 5 ohm. current double karna h toh 0.4 x 2 = 0.8 A. V = IR = 0.4 x 5 = 2 V",
+    "knownLabels": [
+      "Resistance rises when voltage rises"
+    ],
+    "expectedVerdict": "sound",
+    "gotVerdict": "sound",
+    "expectedMisconception": null,
+    "gotMisconception": null,
+    "evidence": "resistance same rahega 5 ohm. current double karna h toh 0.4 x 2 = 0.8 A. V = IR = 0.4 x 5 = 2 V",
+    "feedback": "Tumhari soch sahi hai: resistance 5 Ω constant rehta hai aur naya current 0.8 A hoga. Bas last step mein galti ho gayi, tumne V = IR mein purana current 0.4 A daal diya. Naya current 0.8 A lagao: V = 0.8 × 5 = 4 V, yaani option A. Option B ka reason (current double hone par resistance aadha) tumhari apni soch ke khilaaf hai, isliye option dobara check karo.",
+    "verdictCorrect": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "h05",
+    "category": "wrong-option-sound-slip",
+    "language": "hinglish",
+    "reasoning": "H = I^2 R t. R aur t same hai, current double hua toh 2^2 = 4, matlab heat 4 guna ho jayegi",
+    "knownLabels": [
+      "Heat is proportional to current, not current²"
+    ],
+    "expectedVerdict": "sound",
+    "gotVerdict": "sound",
+    "expectedMisconception": null,
+    "gotMisconception": null,
+    "evidence": "H = I^2 R t. R aur t same hai, current double hua toh 2^2 = 4, matlab heat 4 guna ho jayegi",
+    "feedback": "Tumhara reasoning bilkul sahi hai: H = I²Rt se current double hone par heat 4 guna hoti hai, jo option B hai. Lekin tumne option A choose kiya, jo tumhari apni calculation se match nahi karta, toh yeh option select karne mein slip lagti hai. Answer choose karne se pehle apna result options se ek baar check kar lo.",
+    "verdictCorrect": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "h06",
+    "category": "wrong-option-sound-slip",
+    "language": "english",
+    "reasoning": "in series we just add them, 2 + 3 + 5 = 10 ohm",
+    "knownLabels": [],
+    "expectedVerdict": "sound",
+    "gotVerdict": "sound",
+    "expectedMisconception": null,
+    "gotMisconception": null,
+    "evidence": "in series we just add them, 2 + 3 + 5 = 10 ohm",
+    "feedback": "Your idea is right: in series, resistances add up, so 2 + 3 + 5 = 10 Ω, which is option C. But you chose D (5 Ω), which doesn't match your own working, so this looks like a slip when picking the option. Before you submit, check that the letter you pick matches the value you calculated.",
+    "verdictCorrect": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "h07",
+    "category": "wrong-option-flawed",
+    "language": "english",
+    "reasoning": "our eyes send out light rays to the page, they hit the words and bounce back into the eye, thats how we see. the lamp just makes the room bright",
+    "knownLabels": [
+      "We see because eyes send out light"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "We see because eyes send out light",
+    "gotMisconception": "We see because eyes send out light",
+    "evidence": "our eyes send out light rays to the page, they hit the words and bounce back into the eye",
+    "feedback": "You are right that light bouncing off the page and entering the eye is what lets us see, and that the lamp matters. But eyes do not send out light rays. The lamp is the source, its light falls on the page, and the page scatters some of it into your eye. Quick check: in a completely dark room you cannot see the page even though your eyes are open, so the light must come from an outside source like the lamp (option D).",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "h08",
+    "category": "wrong-option-flawed",
+    "language": "hinglish",
+    "reasoning": "andar soft iron hai, ek baar magnet ban gaya toh magnet hi rehta h. current ulta karne se bhi iron ka north north hi rahega",
+    "knownLabels": [
+      "An electromagnet stays magnetised when switched off",
+      "Solenoid field is only outside the coils"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "An electromagnet stays magnetised when switched off",
+    "gotMisconception": "An electromagnet stays magnetised when switched off",
+    "evidence": "ek baar magnet ban gaya toh magnet hi rehta h. current ulta karne se bhi iron ka north north hi rahega",
+    "feedback": "Tumne sahi socha ki solenoid ke andar soft iron hota hai, par soft iron ka magnetism current par depend karta hai, wo apne aap pole fix nahi rakhta. Current ulta karne se solenoid ka field ulta ho jata hai (right-hand rule se check karo), isliye wo end south pole ban jata hai. Isi wajah se soft iron electromagnet mein use hota hai: current band karo toh magnetism chala jata hai, ulta karo toh poles badal jaate hain.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "h09",
+    "category": "wrong-option-flawed",
+    "language": "hinglish",
+    "reasoning": "6 V dono resistors me resistance ke hisaab se batega. total 2+4 = 6 ohm, toh 4 ohm wale ko 4/6 x 6 = 4 V milega",
+    "knownLabels": [
+      "splits voltage by resistance as in series",
+      "assumes voltage is shared equally in parallel",
+      "uses the inverse resistance ratio to split voltage"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "splits voltage by resistance as in series",
+    "gotMisconception": "splits voltage by resistance as in series",
+    "evidence": "total 2+4 = 6 ohm, toh 4 ohm wale ko 4/6 x 6 = 4 V milega",
+    "feedback": "Tumne voltage divide karne ka sahi tareeka use kiya, lekin wo sirf series circuit me chalta hai. Parallel me dono resistors seedhe battery ke dono terminals se jude hote hain, isliye har resistor ke across poora 6 V aata hai (2+4 = 6 ohm jodna bhi parallel me galat hai). Check karo: 4 ohm me current = 6/4 = 1.5 A aur 2 ohm me 6/2 = 3 A, dono me V = 6 V hi hai.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "h10",
+    "category": "wrong-option-flawed",
+    "language": "english",
+    "reasoning": "n of B wrt A = nB/nA = 2/1.5 = 4/3. B has the bigger refractive index so the ray bends more, away from the normal",
+    "knownLabels": [
+      "inverts the ratio n_B / n_A",
+      "thinks larger index means bending away",
+      "inverts ratio and reverses bending direction"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "thinks larger index means bending away",
+    "gotMisconception": "thinks larger index means bending away",
+    "evidence": "B has the bigger refractive index so the ray bends more, away from the normal",
+    "feedback": "Your ratio is correct: n of B with respect to A = 2.0/1.5 = 4/3. The mistake is the direction. When light enters a medium with a higher refractive index (optically denser, where light travels slower), it bends towards the normal, not away. Quick check: light going from air into glass bends towards the normal, and glass has the higher index. So the answer is A.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "h11",
+    "category": "wrong-option-flawed",
+    "language": "hinglish",
+    "reasoning": "100 W wala bulb zyada power leta h aur zyada bright jalta hai, matlab uska resistance zyada hai tabhi wo zyada garam hota h",
+    "knownLabels": [
+      "Higher wattage bulb has higher resistance"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "Higher wattage bulb has higher resistance",
+    "gotMisconception": "Higher wattage bulb has higher resistance",
+    "evidence": "100 W wala bulb zyada power leta h aur zyada bright jalta hai, matlab uska resistance zyada hai tabhi wo zyada garam hota h",
+    "feedback": "Aapne sahi socha ki 100 W bulb zyada power leta hai aur zyada bright hota hai. Lekin dono bulb 220 V par chalte hain, to R = V²/P use karo: 100 W ke liye R = 48400/100 = 484 Ω, aur 60 W ke liye R = 48400/60 ≈ 807 Ω. Same voltage par zyada power ka matlab kam resistance, kyunki kam resistance se zyada current behta hai (P = V²/R). Isliye 60 W bulb ka resistance zyada hai, sahi option C hai.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "h12",
+    "category": "right-option-flawed-reasoning",
+    "language": "english",
+    "reasoning": "angle of incidence is the angle between the ray and the mirror, so the ray makes 40 deg with the first mirror and reflects at 40 deg with it too. mirrors are at 90 so in the triangle 180 - 90 - 40 = 50, so it hits the second mirror at 50 deg",
+    "knownLabels": [
+      "Measures angles from the mirror surface"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "Measures angles from the mirror surface",
+    "gotMisconception": "Measures angles from the mirror surface",
+    "evidence": "angle of incidence is the angle between the ray and the mirror, so the ray makes 40 deg with the first mirror",
+    "feedback": "Your triangle idea is good: the two mirrors and the ray form a triangle with a 90° corner. But the angle of incidence is measured from the normal, not from the mirror surface. So 40° incidence means the ray makes 50° with mirror 1. The triangle then gives 180 - 90 - 50 = 40° with mirror 2, and the incidence angle there is 90 - 40 = 50°. You reached 50° only because two mix-ups cancelled. Check with a ray hitting a mirror head-on: its angle of incidence is 0°, though it makes 90° with the surface.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "h13",
+    "category": "right-option-flawed-reasoning",
+    "language": "hinglish",
+    "reasoning": "stretch karne se length double ho gayi toh resistivity bhi double ho jaati h kyunki wire lamba ho gaya. R = rho l / A, rho double aur l bhi double, toh 2 x 2 = 4R",
+    "knownLabels": [
+      "Confuses resistivity with resistance",
+      "Thicker wires have more resistance"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "Confuses resistivity with resistance",
+    "gotMisconception": "Confuses resistivity with resistance",
+    "evidence": "length double ho gayi toh resistivity bhi double ho jaati h kyunki wire lamba ho gaya. rho double aur l bhi double, toh 2 x 2 = 4R",
+    "feedback": "Aapne R = rho l / A ka formula sahi use kiya aur final answer 4R bhi sahi hai, lekin reason galat hai. Resistivity (rho) sirf material aur temperature par depend karti hai, wire ko kheenchne se woh nahi badalti. 4R isliye aata hai kyunki volume same rehta hai: length 2 guna hone par area A aadha ho jaata hai, toh R = rho (2l)/(A/2) = 4 rho l/A = 4R. Check: ek rubber band kheench kar dekho, material wahi hai, bas lamba aur patla hua hai.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "h14",
+    "category": "right-option-flawed-reasoning",
+    "language": "english",
+    "reasoning": "fuse just has to be in series with the appliance, so in live or neutral both it would cut the current when it melts. live is the usual one so i chose live",
+    "knownLabels": [
+      "Fuse can go in the neutral wire",
+      "Earth wire carries current in normal use"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "Fuse can go in the neutral wire",
+    "gotMisconception": "Fuse can go in the neutral wire",
+    "evidence": "fuse just has to be in series with the appliance, so in live or neutral both it would cut the current when it melts. live is the usual one so i chose live",
+    "feedback": "You are right that a fuse must be in series and that it cuts the current when it melts. But it matters which wire: if the fuse is in the neutral, the appliance stays connected to the live wire after the fuse blows. The metal body can then stay at high potential, and a person touching it can get a shock. Live is not just 'usual'; it is the safe choice because a blown fuse in the live wire disconnects the appliance completely from the high potential.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "h15",
+    "category": "right-option-flawed-reasoning",
+    "language": "hinglish",
+    "reasoning": "paani denser medium hai aur denser medium me light normal se door bend hoti h, isliye pencil ka andar wala part upar utha hua dikhta h",
+    "knownLabels": [
+      "Bends away from normal in denser medium",
+      "Light's speed is the same in every medium"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "Bends away from normal in denser medium",
+    "gotMisconception": "Bends away from normal in denser medium",
+    "evidence": "denser medium me light normal se door bend hoti h",
+    "feedback": "Aapne D sahi chuna aur ye bhi sahi socha ki pencil ka dooba hua part upar utha hua dikhta hai. Lekin rule ulta hai: denser medium (paani) me light normal ki taraf bend hoti hai, kyunki wahan uski speed kam ho jati hai. Yahan light paani (denser) se hawa (rarer) me aati hai, isliye wo normal se door bend hoti hai, aur isi wajah se immersed part raised dikhta hai. Check karo: hawa se glass me jaati light normal ki taraf mudti hai, to paani se hawa me aate waqt ulta hoga.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "h16",
+    "category": "right-option-flawed-reasoning",
+    "language": "english",
+    "reasoning": "the cell keeps making new charge and the lamp destroys it at the same rate, so the current stays the same all the way round",
+    "knownLabels": [
+      "Current gets used up by components",
+      "thinks current flows from both terminals into lamp",
+      "believes charge is created and destroyed in circuits"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "believes charge is created and destroyed in circuits",
+    "gotMisconception": "believes charge is created and destroyed in circuits",
+    "evidence": "the cell keeps making new charge and the lamp destroys it at the same rate",
+    "feedback": "You are right that the current is the same all the way round, so A is the correct option. But the reason is wrong: the cell does not make charge and the lamp does not destroy it. The charge is already in the wire, and the cell only pushes it around the loop. Because charge cannot pile up or vanish anywhere, the same amount passes every point each second. Quick check: a wire has the same number of charges in it before and after you switch on the circuit.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  }
+]

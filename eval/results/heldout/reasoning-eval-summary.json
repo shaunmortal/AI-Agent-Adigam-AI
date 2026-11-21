@@ -1,0 +1,50 @@
+{
+  "testset": "../eval/reasoning-heldout.json",
+  "items": 16,
+  "failed": [],
+  "overall": {
+    "items": 16,
+    "verdictCorrect": 16,
+    "expectedFlawed": 10,
+    "misconceptionExact": 10
+  },
+  "byCategory": {
+    "right-option-flawed-reasoning": {
+      "items": 5,
+      "verdictCorrect": 5,
+      "expectedFlawed": 5,
+      "misconceptionExact": 5
+    },
+    "wrong-option-flawed": {
+      "items": 5,
+      "verdictCorrect": 5,
+      "expectedFlawed": 5,
+      "misconceptionExact": 5
+    },
+    "wrong-option-sound-slip": {
+      "items": 6,
+      "verdictCorrect": 6,
+      "expectedFlawed": 0,
+      "misconceptionExact": 0
+    }
+  },
+  "byLanguage": {
+    "english": {
+      "items": 8,
+      "verdictCorrect": 8,
+      "expectedFlawed": 5,
+      "misconceptionExact": 5
+    },
+    "hinglish": {
+      "items": 8,
+      "verdictCorrect": 8,
+      "expectedFlawed": 5,
+      "misconceptionExact": 5
+    }
+  },
+  "soundOrSlipItems": 6,
+  "falseAlarms": 0,
+  "falseAlarmIds": [],
+  "verdictMissIds": [],
+  "labelMismatches": []
+}

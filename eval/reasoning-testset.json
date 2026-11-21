@@ -1,0 +1,965 @@
+{
+  "about": "Testset for the judge that reads a student's reasoning on a multiple-choice question and returns a verdict (sound, flawed or missing) plus, when flawed, a misconception label. Every item uses a real question from the hosted question bank (curriculum class-10-physics, verified MCQs); question text, options and correct indexes are copied unchanged. The reasoning was written by hand without looking at the judge's prompt or code, in the short, informal style of Class 10 students, in English or Hinglish in Roman script, with spelling slips left in. expectedMisconception is copied verbatim from that question's option_misconceptions when the verdict is flawed, and is null otherwise. Categories: wrong-option-flawed-english and wrong-option-flawed-hinglish (wrong answer, reasoning shows a known misconception, sometimes on an option with no label), right-option-flawed-reasoning (right answer for a wrong reason), right-option-sound (false-alarm check), wrong-option-sound-slip (correct idea, careless arithmetic, unit or selection slip; must not be labelled), and vague (no usable reasoning; expected missing even when the chosen option has a label). topicMisconceptions lists the distinct non-empty option_misconceptions for every topic of the curriculum.",
+  "curriculum": "class-10-physics",
+  "topicMisconceptions": {
+    "Atmospheric refraction": [
+      "Air cannot bend light",
+      "Planets twinkle just like stars",
+      "Stars twinkle because they flicker"
+    ],
+    "Defects of vision and correction": [
+      "Mixes up near- and far-sightedness",
+      "Myopia is corrected with a convex lens"
+    ],
+    "Domestic electric circuits": [
+      "A short circuit reduces the current",
+      "Earth wire carries current in normal use",
+      "Fuse can go in the neutral wire"
+    ],
+    "Electric charge and current": [
+      "Current gets used up by components",
+      "Electrons move in the conventional current direction",
+      "believes charge is created and destroyed in circuits",
+      "confuses ammeter with voltmeter",
+      "confuses current with charge",
+      "confuses current with potential difference",
+      "confuses current with resistance",
+      "divides current by time instead of multiplying",
+      "fails to see 4.8 is three times 1.6",
+      "fails to see 8.0 is five times 1.6",
+      "forgets to multiply current by time",
+      "mixes up connection and resistance rules",
+      "thinks current flows from both terminals into lamp",
+      "thinks meter resistance does not matter in series",
+      "thinks only exactly one electron's charge allowed"
+    ],
+    "Electric power and energy": [
+      "Higher wattage bulb has higher resistance",
+      "Kilowatt-hour is a unit of power"
+    ],
+    "Factors affecting resistance": [
+      "Confuses resistivity with resistance",
+      "Thicker wires have more resistance"
+    ],
+    "Field due to a straight current": [
+      "Field runs along the wire",
+      "Wire stays magnetic without current"
+    ],
+    "Force on a current in a field": [
+      "Force is largest when current is parallel to field",
+      "Uses a right-hand rule for the force"
+    ],
+    "Heating effect of current": [
+      "Fuse wire needs a high melting point",
+      "Heat is proportional to current, not current²"
+    ],
+    "Image formation by lenses": [
+      "A convex lens always magnifies",
+      "Concave lens can form real images",
+      "Covering half a lens cuts half the image"
+    ],
+    "Image formation by spherical mirrors": [
+      "Concave mirrors always form real images",
+      "Convex mirror can enlarge or form real images",
+      "Rear-view mirrors are concave"
+    ],
+    "Images in a plane mirror": [
+      "Image forms on the mirror surface",
+      "Image gets smaller as you move away",
+      "Plane mirror image can form on a screen"
+    ],
+    "Laws of reflection": [
+      "Measures angles from the mirror surface",
+      "Only shiny surfaces reflect light"
+    ],
+    "Lens formula and power": [
+      "Swaps the sign of lens power",
+      "Uses focal length in cm for power",
+      "Uses the mirror formula for lenses"
+    ],
+    "Light travels in straight lines": [
+      "Light curves around opaque objects",
+      "We see because eyes send out light"
+    ],
+    "Magnetic field lines": [
+      "Field lines are physical things",
+      "Magnetic field lines can cross",
+      "applies right-hand thumb rule with reversed curl",
+      "assumes needle points directly at nearest pole",
+      "assumes same direction inside and outside",
+      "confuses field reversal outside with inside",
+      "confuses magnetic field with electric field of charge",
+      "confuses outside-end spreading with inside pattern",
+      "confuses tangent with normal to field line",
+      "reverses the north-to-south convention",
+      "thinks field lines begin and end like charges",
+      "thinks field lines follow the current direction",
+      "thinks like poles attract",
+      "thinks straight lines mean no field"
+    ],
+    "Mirror formula and magnification": [
+      "Negative magnification means a smaller image",
+      "Takes all distances as positive"
+    ],
+    "Ohm's law": [
+      "Current flows without a potential difference",
+      "Resistance rises when voltage rises",
+      "assumes every conductor obeys Ohm's law",
+      "calculates I/V instead of V/I",
+      "confuses ohmic behaviour with equal resistance",
+      "does not know slope of V-I graph equals R",
+      "treats slope as 1/R, as on an I-V graph",
+      "uses change in V over change in I"
+    ],
+    "Potential difference": [
+      "Thinks current is used up by components",
+      "Thinks each series component gets full battery voltage",
+      "Voltage flows through the circuit",
+      "Voltmeter is connected in series",
+      "assumes voltage is shared equally in parallel",
+      "splits voltage by resistance as in series",
+      "uses the inverse resistance ratio to split voltage"
+    ],
+    "Prism and dispersion": [
+      "Red light bends the most",
+      "The prism creates the colours"
+    ],
+    "Refraction of light": [
+      "A ray along the normal also bends",
+      "Bends away from normal in denser medium",
+      "Light's speed is the same in every medium"
+    ],
+    "Refractive index": [
+      "Higher refractive index means faster light",
+      "Optically denser means heavier",
+      "inverts ratio and reverses bending direction",
+      "inverts the ratio n_B / n_A",
+      "thinks larger index means bending away"
+    ],
+    "Resistors in parallel": [
+      "Adding parallel resistors increases resistance",
+      "Confuses constant voltage with constant resistance",
+      "Parallel branches get equal current",
+      "Thinks a large parallel resistor raises total resistance",
+      "confuses parallel rule with series rule",
+      "forgets to take reciprocal of the sum",
+      "thinks equivalent resistance is the average"
+    ],
+    "Resistors in series": [
+      "Current differs across series components",
+      "Each series component gets the full voltage",
+      "First bulb in series is brightest"
+    ],
+    "Scattering of light": [
+      "Red light is scattered the most",
+      "Sky is blue because it reflects the sea"
+    ],
+    "Solenoid and electromagnet": [
+      "An electromagnet stays magnetised when switched off",
+      "Solenoid field is only outside the coils"
+    ],
+    "Spherical mirror terms": [
+      "Convex mirror has a real focus",
+      "Focal length equals radius of curvature"
+    ],
+    "The eye and accommodation": [
+      "Eye focuses by moving the lens",
+      "Image on the retina is upright",
+      "The pupil does the focusing"
+    ]
+  },
+  "items": [
+    {
+      "id": "r01",
+      "questionId": "22dfed0c-ddec-460b-86f4-abb9c2a99a37",
+      "topicName": "Factors affecting resistance",
+      "question": "A wire is cut into two equal halves. What is the resistivity of each half?",
+      "options": [
+        "The same as the original wire",
+        "Half of the original",
+        "Double the original",
+        "One-fourth of the original"
+      ],
+      "correctIndexes": [
+        0
+      ],
+      "chosenIndex": 1,
+      "reasoning": "resistivity depends on the length of the wire, if we cut it in half the length becomes half so resistivity also becomes half",
+      "language": "english",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "Confuses resistivity with resistance",
+      "category": "wrong-option-flawed-english",
+      "note": "Treats resistivity as if it scaled with length like resistance does."
+    },
+    {
+      "id": "r02",
+      "questionId": "83f510d4-5955-40f6-8ccf-1c0d0e3c84f3",
+      "topicName": "Resistors in parallel",
+      "question": "Why are household appliances connected in parallel rather than in series?",
+      "options": [
+        "Parallel connection increases the total resistance and saves electricity",
+        "The same current then flows through every appliance",
+        "Each appliance gets the full mains voltage and can be switched on or off independently",
+        "Series wiring would need more wire"
+      ],
+      "correctIndexes": [
+        2
+      ],
+      "chosenIndex": 1,
+      "reasoning": "in parallel all the apliances get the same current so every one works properly and none of them gets less current than the other",
+      "language": "english",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "Parallel branches get equal current",
+      "category": "wrong-option-flawed-english",
+      "note": "Believes parallel branches share one equal current."
+    },
+    {
+      "id": "r03",
+      "questionId": "9ead298c-2fd0-4e8f-8e03-c76afcce7178",
+      "topicName": "The eye and accommodation",
+      "question": "The image formed on the retina of the human eye is",
+      "options": [
+        "virtual and erect",
+        "real and inverted",
+        "real and erect",
+        "virtual and inverted"
+      ],
+      "correctIndexes": [
+        1
+      ],
+      "chosenIndex": 0,
+      "reasoning": "we see everything the right way up not upside down, so the image on the retina has to be erect. and its not on a screen so virtual",
+      "language": "english",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "Image on the retina is upright",
+      "category": "wrong-option-flawed-english",
+      "note": "Infers an upright retinal image from upright perception."
+    },
+    {
+      "id": "r04",
+      "questionId": "03b0bda2-ed58-4241-8edf-8d12b3bf13a1",
+      "topicName": "Force on a current in a field",
+      "question": "The direction of the force on a current-carrying conductor in a magnetic field is given by",
+      "options": [
+        "Fleming's left-hand rule",
+        "Fleming's right-hand rule",
+        "the right-hand thumb rule",
+        "Snell's law"
+      ],
+      "correctIndexes": [
+        0
+      ],
+      "chosenIndex": 1,
+      "reasoning": "for force on a conductor we use the right hand rule, thumb is force, first finger is field and middle finger is current",
+      "language": "english",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "Uses a right-hand rule for the force",
+      "category": "wrong-option-flawed-english",
+      "note": "Uses the right hand for the motor-effect force."
+    },
+    {
+      "id": "r05",
+      "questionId": "7601cfc4-3612-4392-81a1-6f58fb3b7335",
+      "topicName": "Prism and dispersion",
+      "question": "A second, identical prism is placed upside down after the first prism. What comes out of the second prism?",
+      "options": [
+        "An even wider spectrum",
+        "New colours made by the second prism",
+        "White light, because the colours recombine",
+        "Only red light, because red bends the most"
+      ],
+      "correctIndexes": [
+        2
+      ],
+      "chosenIndex": 0,
+      "reasoning": "each prism makes colours out of the light, so the 2nd prism will make more colours again and the band will be even wider",
+      "language": "english",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "The prism creates the colours",
+      "category": "wrong-option-flawed-english",
+      "note": "Chosen option carries no label; the misconception shows only in the reasoning."
+    },
+    {
+      "id": "r06",
+      "questionId": "3c5eeb9a-a95e-42bb-8f0a-132371d6e2af",
+      "topicName": "Laws of reflection",
+      "question": "A ray strikes a plane mirror making an angle of 30° with the mirror surface. What is the angle of reflection?",
+      "options": [
+        "30°",
+        "90°",
+        "60°",
+        "15°"
+      ],
+      "correctIndexes": [
+        2
+      ],
+      "chosenIndex": 0,
+      "reasoning": "angle of incidence = angle of refelction. the ray makes 30 with the mirror so it reflects at 30 also",
+      "language": "english",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "Measures angles from the mirror surface",
+      "category": "wrong-option-flawed-english",
+      "note": "Takes the 30 degrees from the surface as the angle of incidence."
+    },
+    {
+      "id": "r07",
+      "questionId": "26e8621b-f9c4-456a-86b1-19072abc896c",
+      "topicName": "Scattering of light",
+      "question": "The clear sky appears blue because",
+      "options": [
+        "it reflects the colour of the oceans",
+        "air molecules scatter blue light more than red light",
+        "air molecules scatter red light more than blue light",
+        "the Sun gives out mostly blue light"
+      ],
+      "correctIndexes": [
+        1
+      ],
+      "chosenIndex": 0,
+      "reasoning": "sky blue isliye dikhta h kyuki earth pe zyada tar samundar hai aur uska colour blue hai, sky usi ko reflect karta hai",
+      "language": "hinglish",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "Sky is blue because it reflects the sea",
+      "category": "wrong-option-flawed-hinglish",
+      "note": "Explains the blue sky as a reflection of the ocean."
+    },
+    {
+      "id": "r08",
+      "questionId": "57f4bac0-8d13-498d-8567-afbab828b3f4",
+      "topicName": "Ohm's law",
+      "question": "The potential difference across an ohmic resistor is doubled at constant temperature. What happens?",
+      "options": [
+        "The resistance doubles and the current stays the same",
+        "Both the current and the resistance double",
+        "The current doubles and the resistance stays the same",
+        "The current halves"
+      ],
+      "correctIndexes": [
+        2
+      ],
+      "chosenIndex": 0,
+      "reasoning": "V = IR hai na, toh V double kiya toh R bhi double ho jayega aur current utna hi rahega",
+      "language": "hinglish",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "Resistance rises when voltage rises",
+      "category": "wrong-option-flawed-hinglish",
+      "note": "Reads V = IR as R following V."
+    },
+    {
+      "id": "r09",
+      "questionId": "c8e59f98-4f5c-4d44-8751-0653b147efe4",
+      "topicName": "Defects of vision and correction",
+      "question": "The far point of a myopic person is 80 cm in front of the eye. What is the power of the lens needed to correct this?",
+      "options": [
+        "−0.0125 D",
+        "+1.25 D",
+        "+0.8 D",
+        "−1.25 D"
+      ],
+      "correctIndexes": [
+        3
+      ],
+      "chosenIndex": 1,
+      "reasoning": "P = 1/f = 1/0.8 = 1.25 D. myopia me convex lens lagate h toh power positive hogi",
+      "language": "hinglish",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "Myopia is corrected with a convex lens",
+      "category": "wrong-option-flawed-hinglish",
+      "note": "Arithmetic is right; the sign comes from the wrong lens type."
+    },
+    {
+      "id": "r10",
+      "questionId": "6ca49128-eaea-41b4-8324-b19fdbcaca07",
+      "topicName": "Domestic electric circuits",
+      "question": "What is the job of the earth wire on a metal-bodied appliance?",
+      "options": [
+        "It carries current back to the mains during normal use",
+        "It provides a low-resistance path to the ground if the body becomes live, protecting the user",
+        "It increases the voltage supplied to the appliance",
+        "The appliance needs it to work at all"
+      ],
+      "correctIndexes": [
+        1
+      ],
+      "chosenIndex": 0,
+      "reasoning": "earth wire se current wapas mains me jata hai, live se aata h aur earth se wapas jata h, isliye teen wire hote h",
+      "language": "hinglish",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "Earth wire carries current in normal use",
+      "category": "wrong-option-flawed-hinglish",
+      "note": "Treats the earth wire as the normal return path."
+    },
+    {
+      "id": "r11",
+      "questionId": "82e82fd1-c814-4f98-8770-3eb0cc3857c7",
+      "topicName": "Solenoid and electromagnet",
+      "question": "A solenoid with a soft-iron core is used as an electromagnet. When the current is switched off, the core",
+      "options": [
+        "loses almost all of its magnetism",
+        "remains a strong permanent magnet",
+        "swaps its north and south poles",
+        "becomes a stronger magnet"
+      ],
+      "correctIndexes": [
+        0
+      ],
+      "chosenIndex": 1,
+      "reasoning": "ek baar iron ke andar magnetism aa gaya toh woh rehta hai, current band karne se thodi na chala jayega",
+      "language": "hinglish",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "An electromagnet stays magnetised when switched off",
+      "category": "wrong-option-flawed-hinglish",
+      "note": "Expects soft iron to keep its magnetism."
+    },
+    {
+      "id": "r12",
+      "questionId": "3643ebfb-16be-4667-859b-35f4648b1ec3",
+      "topicName": "Atmospheric refraction",
+      "question": "Stars appear to twinkle because",
+      "options": [
+        "starlight is refracted by air layers whose refractive index keeps changing",
+        "stars give out light in pulses",
+        "clouds keep passing in front of them",
+        "air cannot bend light, so we see their true flicker"
+      ],
+      "correctIndexes": [
+        0
+      ],
+      "chosenIndex": 2,
+      "reasoning": "hawa light ko mod nahi sakti toh twinkle ka reason clouds hi hoga jo beech beech me aate h",
+      "language": "hinglish",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "Air cannot bend light",
+      "category": "wrong-option-flawed-hinglish",
+      "note": "Chosen option carries no label; the misconception shows only in the reasoning."
+    },
+    {
+      "id": "r13",
+      "questionId": "2879a720-6d0b-471c-8b09-15a59122afbe",
+      "topicName": "The eye and accommodation",
+      "question": "You shift your gaze from a distant tree to a book in your hands. How does the eye adjust?",
+      "options": [
+        "The eye lens moves closer to the retina",
+        "The pupil gets larger to bring the book into focus",
+        "The eye lens becomes thinner",
+        "The ciliary muscles contract, so the eye lens becomes thicker"
+      ],
+      "correctIndexes": [
+        3
+      ],
+      "chosenIndex": 3,
+      "reasoning": "the lens becomes thicker and it also moves forward towards the book so the image comes on the retina",
+      "language": "english",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "Eye focuses by moving the lens",
+      "category": "right-option-flawed-reasoning",
+      "note": "Right answer, but adds lens movement as part of accommodation."
+    },
+    {
+      "id": "r14",
+      "questionId": "0db96333-51ae-49ca-87c9-f1ff5a64b563",
+      "topicName": "Electric charge and current",
+      "question": "Two ammeters are placed just before and just after a bulb in a simple circuit. The first reads 0.4 A. What does the second read?",
+      "options": [
+        "Less than 0.4 A, because the bulb used up some current",
+        "0.4 A",
+        "0 A, because the bulb used up all the current",
+        "More than 0.4 A"
+      ],
+      "correctIndexes": [
+        1
+      ],
+      "chosenIndex": 1,
+      "reasoning": "bulb thoda sa current use karta h light banane ke liye but itna kam ki ammeter me fark nahi aayega, isliye 0.4 hi",
+      "language": "hinglish",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "Current gets used up by components",
+      "category": "right-option-flawed-reasoning",
+      "note": "Right answer, but still believes the bulb consumes current."
+    },
+    {
+      "id": "r15",
+      "questionId": "109cb6d2-e4df-43a0-899c-db688b4666b2",
+      "topicName": "Scattering of light",
+      "question": "The Sun looks reddish at sunrise and sunset because",
+      "options": [
+        "light travels a longer path through air, so most blue light is scattered away and mostly red reaches us",
+        "red light is scattered the most, towards us",
+        "the Sun is cooler in the morning and evening",
+        "the ocean reflects red light upwards"
+      ],
+      "correctIndexes": [
+        0
+      ],
+      "chosenIndex": 0,
+      "reasoning": "at sunrise the light comes thru more air, and red is scattered the most so it spreads all over and reaches our eyes, thats why sun looks red",
+      "language": "english",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "Red light is scattered the most",
+      "category": "right-option-flawed-reasoning",
+      "note": "Right answer, but reverses which colour scatters most."
+    },
+    {
+      "id": "r16",
+      "questionId": "c0e4c20b-6ea5-46a7-84dd-0642a338f55b",
+      "topicName": "Refraction of light",
+      "question": "A ray of light travels obliquely from air into glass. At the surface it",
+      "options": [
+        "bends away from the normal",
+        "bends towards the normal",
+        "goes straight on, since its speed does not change",
+        "is completely reflected"
+      ],
+      "correctIndexes": [
+        1
+      ],
+      "chosenIndex": 1,
+      "reasoning": "glass is denser so the ray bends towards normal. the speed of light stays same only the direction changes",
+      "language": "english",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "Light's speed is the same in every medium",
+      "category": "right-option-flawed-reasoning",
+      "note": "Right answer, but denies the change of speed that causes refraction."
+    },
+    {
+      "id": "r17",
+      "questionId": "7a38d880-3b17-4284-89e5-9520930e929b",
+      "topicName": "Refractive index",
+      "question": "The refractive index of diamond is 2.42. This means",
+      "options": [
+        "light travels in vacuum 2.42 times faster than in diamond",
+        "light travels 2.42 times faster in diamond than in vacuum",
+        "diamond is 2.42 times heavier than glass",
+        "light bends by 2.42° inside diamond"
+      ],
+      "correctIndexes": [
+        0
+      ],
+      "chosenIndex": 0,
+      "reasoning": "diamond is very heavy and dense, more mass so light slows down 2.42 times inside it",
+      "language": "english",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "Optically denser means heavier",
+      "category": "right-option-flawed-reasoning",
+      "note": "Right answer, but ties refractive index to mass density."
+    },
+    {
+      "id": "r18",
+      "questionId": "f6eedc74-f4d2-42a3-82ff-f980229ee5bf",
+      "topicName": "Images in a plane mirror",
+      "question": "You stand 2 m in front of a plane mirror. How far is your image from you?",
+      "options": [
+        "2 m",
+        "4 m",
+        "1 m",
+        "0 m, it is on the mirror"
+      ],
+      "correctIndexes": [
+        1
+      ],
+      "chosenIndex": 1,
+      "reasoning": "image mirror pe hi banti hai 2 m pe, light wahan tak jaati h aur wapas aati h toh 2+2 = 4 m",
+      "language": "hinglish",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "Image forms on the mirror surface",
+      "category": "right-option-flawed-reasoning",
+      "note": "Right number reached by placing the image on the mirror and doubling the light path."
+    },
+    {
+      "id": "r19",
+      "questionId": "de06817c-4d9f-400d-8dec-1467419f33db",
+      "topicName": "Heating effect of current",
+      "question": "A material is chosen for a fuse wire because it has",
+      "options": [
+        "a low melting point, so it melts when too much current flows",
+        "a high melting point, so it never melts",
+        "zero resistance",
+        "a high melting point and very low resistance"
+      ],
+      "correctIndexes": [
+        0
+      ],
+      "chosenIndex": 0,
+      "reasoning": "fuse ka kaam hai zyada current aane pe pighal jana aur circuit tod dena, isliye low melting point chahiye",
+      "language": "hinglish",
+      "expectedVerdict": "sound",
+      "expectedMisconception": null,
+      "category": "right-option-sound",
+      "note": "Correct idea: the fuse must melt on overload."
+    },
+    {
+      "id": "r20",
+      "questionId": "e8c0f160-32d0-4f92-809c-bf185454600f",
+      "topicName": "Magnetic field lines",
+      "question": "Outside a bar magnet, magnetic field lines run from",
+      "options": [
+        "the north pole to the south pole",
+        "the south pole to the north pole",
+        "the middle of the magnet to its ends",
+        "nowhere; the field exists only on the drawn lines"
+      ],
+      "correctIndexes": [
+        0
+      ],
+      "chosenIndex": 0,
+      "reasoning": "outside the magnet field lines go from north to south, thats the way the north end of a compass points. inside they go s to n",
+      "language": "english",
+      "expectedVerdict": "sound",
+      "expectedMisconception": null,
+      "category": "right-option-sound",
+      "note": "Correct, including the direction inside the magnet."
+    },
+    {
+      "id": "r21",
+      "questionId": "b10c49e6-b453-49d3-87a0-3f7385c2943a",
+      "topicName": "Resistors in parallel",
+      "question": "A 2 Ω and an 8 Ω resistor are connected in parallel across a 4 V battery. What current flows through the 2 Ω resistor?",
+      "options": [
+        "0.5 A",
+        "2 A",
+        "1.25 A, the same as in the 8 Ω branch",
+        "0.4 A"
+      ],
+      "correctIndexes": [
+        1
+      ],
+      "chosenIndex": 1,
+      "reasoning": "in parallel both resistors get the full 4V, so I = V/R = 4/2 = 2 A for the 2 ohm one",
+      "language": "english",
+      "expectedVerdict": "sound",
+      "expectedMisconception": null,
+      "category": "right-option-sound",
+      "note": "Correct use of full voltage across each parallel branch."
+    },
+    {
+      "id": "r22",
+      "questionId": "a816447c-6451-4b94-8adb-2b9475afb3de",
+      "topicName": "Field due to a straight current",
+      "question": "A compass near a straight wire deflects to the east when current flows. The current is then reversed. What does the needle do?",
+      "options": [
+        "It deflects to the west",
+        "It keeps deflecting east, because the wire is now magnetised",
+        "It points along the wire",
+        "It stays still because only the current's size matters"
+      ],
+      "correctIndexes": [
+        0
+      ],
+      "chosenIndex": 0,
+      "reasoning": "current ulta kiya toh magnetic field ki direction bhi ulti ho jayegi (right hand thumb rule), toh needle west me jayegi",
+      "language": "hinglish",
+      "expectedVerdict": "sound",
+      "expectedMisconception": null,
+      "category": "right-option-sound",
+      "note": "Correct: the field reverses with the current."
+    },
+    {
+      "id": "r23",
+      "questionId": "6fbd16c9-89e2-4be5-84b1-51d401722a0b",
+      "topicName": "Mirror formula and magnification",
+      "question": "An object is placed 30 cm in front of a concave mirror of focal length 15 cm. Where is the image formed?",
+      "options": [
+        "30 cm behind the mirror",
+        "10 cm in front of the mirror",
+        "30 cm in front of the mirror",
+        "15 cm in front of the mirror"
+      ],
+      "correctIndexes": [
+        2
+      ],
+      "chosenIndex": 2,
+      "reasoning": "u = -30, f = -15. 1/v = 1/f - 1/u = -1/15 + 1/30 = -1/30 so v = -30 cm, in front of the mirror. object is at C so image also at C",
+      "language": "english",
+      "expectedVerdict": "sound",
+      "expectedMisconception": null,
+      "category": "right-option-sound",
+      "note": "Correct mirror formula with sign convention."
+    },
+    {
+      "id": "r24",
+      "questionId": "578a717f-8e50-4460-8b35-39ee0c183e81",
+      "topicName": "Image formation by lenses",
+      "question": "Half of a convex lens is covered with black paper. What happens to the image of an object?",
+      "options": [
+        "It disappears",
+        "It shows only half of the object",
+        "It is complete but less bright",
+        "It becomes twice as large"
+      ],
+      "correctIndexes": [
+        2
+      ],
+      "chosenIndex": 2,
+      "reasoning": "every part of the lens makes the full image, covering half just lets less light thru so its dimmer but still complete",
+      "language": "english",
+      "expectedVerdict": "sound",
+      "expectedMisconception": null,
+      "category": "right-option-sound",
+      "note": "Correct: each part of the lens forms the whole image."
+    },
+    {
+      "id": "r25",
+      "questionId": "29bd2c12-f686-4c12-8517-dd85d63d704e",
+      "topicName": "Electric charge and current",
+      "question": "A charge of 60 C flows through a wire in 2 minutes. What is the current?",
+      "options": [
+        "30 A",
+        "120 A",
+        "0.5 A",
+        "2 A"
+      ],
+      "correctIndexes": [
+        2
+      ],
+      "chosenIndex": 0,
+      "reasoning": "I = Q/t, Q = 60 C aur t = 2 toh 60/2 = 30 A",
+      "language": "hinglish",
+      "expectedVerdict": "sound",
+      "expectedMisconception": null,
+      "category": "wrong-option-sound-slip",
+      "note": "Right formula; forgot to turn 2 minutes into 120 s."
+    },
+    {
+      "id": "r26",
+      "questionId": "8f91851d-659c-4af3-8d50-fe7d815e5407",
+      "topicName": "Heating effect of current",
+      "question": "A current of 2 A flows through a 5 Ω resistor for 10 s. How much heat is produced?",
+      "options": [
+        "100 J",
+        "20 J",
+        "1000 J",
+        "200 J"
+      ],
+      "correctIndexes": [
+        3
+      ],
+      "chosenIndex": 1,
+      "reasoning": "H = I^2 R t = 2^2 x 5 = 4 x 5 = 20 J",
+      "language": "english",
+      "expectedVerdict": "sound",
+      "expectedMisconception": null,
+      "category": "wrong-option-sound-slip",
+      "note": "Right formula (current squared); dropped the time factor."
+    },
+    {
+      "id": "r27",
+      "questionId": "41f375aa-911c-46b3-8f40-41123bb12658",
+      "topicName": "Electric power and energy",
+      "question": "A 1000 W heater is used for 2 hours a day for 30 days. How much energy does it use?",
+      "options": [
+        "60 kWh",
+        "60,000 kWh",
+        "2 kWh",
+        "60 kW"
+      ],
+      "correctIndexes": [
+        0
+      ],
+      "chosenIndex": 1,
+      "reasoning": "energy = power x time = 1000 x 2 x 30 = 60000 kWh",
+      "language": "english",
+      "expectedVerdict": "sound",
+      "expectedMisconception": null,
+      "category": "wrong-option-sound-slip",
+      "note": "Right idea (energy = power x time); left the power in W instead of kW."
+    },
+    {
+      "id": "r28",
+      "questionId": "acae43be-f816-4290-8530-e7ad8fed2029",
+      "topicName": "Resistors in series",
+      "question": "A 4 Ω and a 2 Ω resistor are connected in series to a 12 V battery. What is the potential difference across the 4 Ω resistor?",
+      "options": [
+        "12 V, because each series resistor gets the full battery voltage",
+        "4 V",
+        "6 V",
+        "8 V"
+      ],
+      "correctIndexes": [
+        3
+      ],
+      "chosenIndex": 1,
+      "reasoning": "total R = 4+2 = 6 ohm, I = 12/6 = 2 A. 4 ohm wale pe V = IR = 2 x 2 = 4 V",
+      "language": "hinglish",
+      "expectedVerdict": "sound",
+      "expectedMisconception": null,
+      "category": "wrong-option-sound-slip",
+      "note": "Right method; used the 2 ohm value in the last step."
+    },
+    {
+      "id": "r29",
+      "questionId": "1a452450-364e-43f3-8a35-9df87a8b4520",
+      "topicName": "Lens formula and power",
+      "question": "A convex lens has a focal length of 25 cm. What is its power?",
+      "options": [
+        "+0.04 D",
+        "+4 D",
+        "−4 D",
+        "+25 D"
+      ],
+      "correctIndexes": [
+        1
+      ],
+      "chosenIndex": 2,
+      "reasoning": "f = 25 cm = 0.25 m, P = 1/f = 1/0.25 = 4 D. convex lens so its +4",
+      "language": "english",
+      "expectedVerdict": "sound",
+      "expectedMisconception": null,
+      "category": "wrong-option-sound-slip",
+      "note": "Reasoning says +4 D but the chosen option is -4 D, whose option carries a label; the label must not be assigned."
+    },
+    {
+      "id": "r30",
+      "questionId": "21b51be5-6972-4255-84ba-79cee8819339",
+      "topicName": "Refractive index",
+      "question": "The speed of light in a medium is 2 × 10⁸ m/s. Taking c = 3 × 10⁸ m/s, what is its refractive index?",
+      "options": [
+        "0.67",
+        "1.33",
+        "6",
+        "1.5"
+      ],
+      "correctIndexes": [
+        3
+      ],
+      "chosenIndex": 1,
+      "reasoning": "n = c/v = 3x10^8 / 2x10^8 = 1.5",
+      "language": "english",
+      "expectedVerdict": "sound",
+      "expectedMisconception": null,
+      "category": "wrong-option-sound-slip",
+      "note": "Computed 1.5 correctly but selected 1.33."
+    },
+    {
+      "id": "r31",
+      "questionId": "8c6a881e-5dac-43a6-8c89-95f6d21fa345",
+      "topicName": "Prism and dispersion",
+      "question": "When white light passes through a glass prism, a band of colours is seen. Why?",
+      "options": [
+        "The prism adds colours to the white light",
+        "White light is made of colours that bend by different amounts",
+        "The prism reflects only coloured light",
+        "The glass heats up and gives out colours"
+      ],
+      "correctIndexes": [
+        1
+      ],
+      "chosenIndex": 1,
+      "reasoning": "we did this in class",
+      "language": "english",
+      "expectedVerdict": "missing",
+      "expectedMisconception": null,
+      "category": "vague",
+      "note": "No physics stated; right option."
+    },
+    {
+      "id": "r32",
+      "questionId": "bf704d8a-1df2-478f-8a52-8fc74d9845db",
+      "topicName": "Potential difference",
+      "question": "Which statement about potential difference is correct?",
+      "options": [
+        "It is the amount of charge flowing past a point each second",
+        "It is the work done per unit charge in moving charge between two points",
+        "It flows through a resistor and is used up there",
+        "A voltmeter must have very low resistance"
+      ],
+      "correctIndexes": [
+        1
+      ],
+      "chosenIndex": 2,
+      "reasoning": "just guessed tbh",
+      "language": "english",
+      "expectedVerdict": "missing",
+      "expectedMisconception": null,
+      "category": "vague",
+      "note": "Guess on a labelled wrong option; the option label alone is not evidence."
+    },
+    {
+      "id": "r33",
+      "questionId": "61d198da-fc18-4354-9280-956d0b37cd5c",
+      "topicName": "Electric charge and current",
+      "question": "An ammeter is used to measure the current through a resistor. How should it be connected, and what kind of resistance should a good ammeter have?",
+      "options": [
+        "In series with the resistor, with very low resistance",
+        "In parallel with the resistor, with very high resistance",
+        "In series with the resistor, with very high resistance",
+        "In parallel with the resistor, with very low resistance"
+      ],
+      "correctIndexes": [
+        0
+      ],
+      "chosenIndex": 1,
+      "reasoning": "pata nahi yaar, yehi sahi laga",
+      "language": "hinglish",
+      "expectedVerdict": "missing",
+      "expectedMisconception": null,
+      "category": "vague",
+      "note": "Feeling only, on a labelled wrong option."
+    },
+    {
+      "id": "r34",
+      "questionId": "8c374e00-7af4-43d1-8c8f-15abb4373727",
+      "topicName": "Magnetic field lines",
+      "question": "Where is the magnetic field of a bar magnet strongest?",
+      "options": [
+        "Where the field lines are farthest apart",
+        "Where the field lines cross each other",
+        "Where the field lines are closest together, near the poles",
+        "At the middle of the magnet, between the lines"
+      ],
+      "correctIndexes": [
+        2
+      ],
+      "chosenIndex": 2,
+      "reasoning": "its obvious",
+      "language": "english",
+      "expectedVerdict": "missing",
+      "expectedMisconception": null,
+      "category": "vague",
+      "note": "No reason given; right option."
+    },
+    {
+      "id": "r35",
+      "questionId": "abd1710a-33da-4b35-8f05-d7fcc60027e7",
+      "topicName": "Mirror formula and magnification",
+      "question": "A concave mirror produces a magnification m = −2. This means the image is",
+      "options": [
+        "virtual, erect and twice the size of the object",
+        "real, inverted and twice the size of the object",
+        "real, inverted and half the size of the object",
+        "virtual and half the size of the object"
+      ],
+      "correctIndexes": [
+        1
+      ],
+      "chosenIndex": 2,
+      "reasoning": "formula se aaya",
+      "language": "hinglish",
+      "expectedVerdict": "missing",
+      "expectedMisconception": null,
+      "category": "vague",
+      "note": "Names no formula or step, on a labelled wrong option."
+    },
+    {
+      "id": "r36",
+      "questionId": "d18ae5eb-5d77-4bda-8b3b-f36dddb6bd08",
+      "topicName": "Resistors in parallel",
+      "question": "Two resistors are connected in parallel across a battery. A third resistor is then connected in parallel with them. What happens to the equivalent resistance of the combination?",
+      "options": [
+        "It decreases",
+        "It increases",
+        "It stays the same, because the voltage across each resistor is unchanged",
+        "It increases if the new resistor is larger than the others, and decreases if it is smaller"
+      ],
+      "correctIndexes": [
+        0
+      ],
+      "chosenIndex": 1,
+      "reasoning": "sir ne bataya tha aise hi hota h",
+      "language": "hinglish",
+      "expectedVerdict": "missing",
+      "expectedMisconception": null,
+      "category": "vague",
+      "note": "Appeal to the teacher with no reason, on a labelled wrong option."
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "testset": "../eval/reasoning-testset.json",
+  "items": 36,
+  "failed": [],
+  "overall": {
+    "items": 36,
+    "verdictCorrect": 36,
+    "expectedFlawed": 18,
+    "misconceptionExact": 18
+  },
+  "byCategory": {
+    "right-option-flawed-reasoning": {
+      "items": 6,
+      "verdictCorrect": 6,
+      "expectedFlawed": 6,
+      "misconceptionExact": 6
+    },
+    "right-option-sound": {
+      "items": 6,
+      "verdictCorrect": 6,
+      "expectedFlawed": 0,
+      "misconceptionExact": 0
+    },
+    "vague": {
+      "items": 6,
+      "verdictCorrect": 6,
+      "expectedFlawed": 0,
+      "misconceptionExact": 0
+    },
+    "wrong-option-flawed-english": {
+      "items": 6,
+      "verdictCorrect": 6,
+      "expectedFlawed": 6,
+      "misconceptionExact": 6
+    },
+    "wrong-option-flawed-hinglish": {
+      "items": 6,
+      "verdictCorrect": 6,
+      "expectedFlawed": 6,
+      "misconceptionExact": 6
+    },
+    "wrong-option-sound-slip": {
+      "items": 6,
+      "verdictCorrect": 6,
+      "expectedFlawed": 0,
+      "misconceptionExact": 0
+    }
+  },
+  "byLanguage": {
+    "english": {
+      "items": 21,
+      "verdictCorrect": 21,
+      "expectedFlawed": 10,
+      "misconceptionExact": 10
+    },
+    "hinglish": {
+      "items": 15,
+      "verdictCorrect": 15,
+      "expectedFlawed": 8,
+      "misconceptionExact": 8
+    }
+  },
+  "soundOrSlipItems": 12,
+  "falseAlarms": 0,
+  "falseAlarmIds": [],
+  "verdictMissIds": [],
+  "labelMismatches": []
+}

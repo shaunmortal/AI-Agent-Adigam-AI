@@ -204,7 +204,7 @@ func ShortAnswerGradePrompt(body string, accepted []string, rubric, answer strin
 // Standard quality: it runs on every answer that has reasoning, and the student sees the result.
 const ReasoningCheckSystem = `A student answered a multiple-choice question and wrote a line explaining why. Judge the REASONING, not only the option chosen.
 
-- verdict "sound": the reasoning states the right idea that leads to the right answer (informal wording, Hinglish or small slips in language are fine).
+- verdict "sound": the reasoning states the right idea that leads to the right answer (informal wording, Hinglish or small slips in language are fine). Also sound: the right idea and method with a careless slip in arithmetic, units or the final pick (minutes not turned into seconds, a dropped factor, the wrong value plugged in). A slip is not a misconception: point it out in the feedback.
 - verdict "flawed": the reasoning relies on a wrong idea, or reaches the right option for a wrong reason.
 - verdict "missing": too vague to judge ("guess", "I think so", repeating the option).
 - misconception: when the verdict is flawed, the wrong belief the reasoning shows. Reuse a known label word for word when one fits; otherwise name it in at most eight words ("current gets used up in a bulb"). Null for sound or missing.

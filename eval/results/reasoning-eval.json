@@ -1,0 +1,681 @@
+[
+  {
+    "id": "r01",
+    "category": "wrong-option-flawed-english",
+    "language": "english",
+    "reasoning": "resistivity depends on the length of the wire, if we cut it in half the length becomes half so resistivity also becomes half",
+    "knownLabels": [
+      "Confuses resistivity with resistance"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "Confuses resistivity with resistance",
+    "gotMisconception": "Confuses resistivity with resistance",
+    "evidence": "resistivity depends on the length of the wire, if we cut it in half the length becomes half so resistivity also becomes half",
+    "feedback": "You are right that cutting the wire makes its length half, and that changes the resistance (R = ρl/A, so each half has half the resistance). But resistivity ρ is a property of the material, like density, so it does not depend on length or area. Check: a small piece of copper and a long copper rod are both copper, so they have the same resistivity, even though their resistances differ. So the answer is A.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r02",
+    "category": "wrong-option-flawed-english",
+    "language": "english",
+    "reasoning": "in parallel all the apliances get the same current so every one works properly and none of them gets less current than the other",
+    "knownLabels": [
+      "Adding parallel resistors increases resistance",
+      "Parallel branches get equal current"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "Parallel branches get equal current",
+    "gotMisconception": "Parallel branches get equal current",
+    "evidence": "in parallel all the apliances get the same current so every one works properly and none of them gets less current than the other",
+    "feedback": "You are right that every appliance should work properly, but in parallel it is the voltage that is the same across each appliance, not the current. Each branch draws current according to its own resistance (I = V/R), so a 2000 W heater draws much more current than a 10 W bulb on the same mains. In series, the same current flows through all, and that is why one appliance switching off would stop all the others.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r03",
+    "category": "wrong-option-flawed-english",
+    "language": "english",
+    "reasoning": "we see everything the right way up not upside down, so the image on the retina has to be erect. and its not on a screen so virtual",
+    "knownLabels": [
+      "Image on the retina is upright"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "Image on the retina is upright",
+    "gotMisconception": "Image on the retina is upright",
+    "evidence": "we see everything the right way up not upside down, so the image on the retina has to be erect. and its not on a screen so virtual",
+    "feedback": "You are right that we perceive objects upright, but that comes from the brain, not from the retina. The eye lens is convex and forms a real, inverted image on the retina, and the brain flips it so we see things the right way up. The retina itself acts like a screen, since a real image forms on it. A camera works the same way: its film or sensor records an inverted real image.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r04",
+    "category": "wrong-option-flawed-english",
+    "language": "english",
+    "reasoning": "for force on a conductor we use the right hand rule, thumb is force, first finger is field and middle finger is current",
+    "knownLabels": [
+      "Uses a right-hand rule for the force"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "Uses a right-hand rule for the force",
+    "gotMisconception": "Uses a right-hand rule for the force",
+    "evidence": "for force on a conductor we use the right hand rule, thumb is force, first finger is field and middle finger is current",
+    "feedback": "You remembered the finger assignments correctly: thumb is force, forefinger is field and middle finger is current. But that set-up belongs to Fleming's left-hand rule, which is used for motors. The right-hand rule is for generators, where the thumb gives motion and the middle finger gives the induced current. Quick check: a motor turns electrical energy into motion, so use the left hand there; a generator does the opposite, so use the right hand.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r05",
+    "category": "wrong-option-flawed-english",
+    "language": "english",
+    "reasoning": "each prism makes colours out of the light, so the 2nd prism will make more colours again and the band will be even wider",
+    "knownLabels": [
+      "The prism creates the colours",
+      "Red light bends the most"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "The prism creates the colours",
+    "gotMisconception": "The prism creates the colours",
+    "evidence": "each prism makes colours out of the light, so the 2nd prism will make more colours again",
+    "feedback": "You are right that the first prism spreads white light into a band of colours. But a prism does not make colours; white light already contains all of them, and the prism only separates them because each bends by a different amount. An inverted identical prism bends the colours back the other way, so they recombine into white light, which is option C. Quick check: Newton did this with two prisms and got white light again, so the second prism cannot be adding new colours.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r06",
+    "category": "wrong-option-flawed-english",
+    "language": "english",
+    "reasoning": "angle of incidence = angle of refelction. the ray makes 30 with the mirror so it reflects at 30 also",
+    "knownLabels": [
+      "Measures angles from the mirror surface"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "Measures angles from the mirror surface",
+    "gotMisconception": "Measures angles from the mirror surface",
+    "evidence": "the ray makes 30 with the mirror so it reflects at 30 also",
+    "feedback": "You remembered the law correctly: angle of incidence equals angle of reflection. But both angles are measured from the normal (the line perpendicular to the mirror), not from the mirror surface. Here the ray is 30° from the mirror, so the angle of incidence is 90° − 30° = 60°, and the angle of reflection is also 60°. Quick check: if a ray hits the mirror head-on along the normal, the angle of incidence is 0°, not 90°.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r07",
+    "category": "wrong-option-flawed-hinglish",
+    "language": "hinglish",
+    "reasoning": "sky blue isliye dikhta h kyuki earth pe zyada tar samundar hai aur uska colour blue hai, sky usi ko reflect karta hai",
+    "knownLabels": [
+      "Sky is blue because it reflects the sea",
+      "Red light is scattered the most"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "Sky is blue because it reflects the sea",
+    "gotMisconception": "Sky is blue because it reflects the sea",
+    "evidence": "earth pe zyada tar samundar hai aur uska colour blue hai, sky usi ko reflect karta hai",
+    "feedback": "Tumne ye sahi dekha ki sky aur samundar dono blue dikhte hain, par dono ka karan alag hai. Sky samundar ko reflect nahi karta; hawa ke molecules chhoti wavelength wali blue light ko red se zyada scatter karte hain, isliye option B sahi hai. Ek quick check: samundar ka paani aksar sky ke blue colour ko hi reflect karta hai, aur registan ya ped-paudhon ke upar bhi sky blue hi dikhta hai, to sea reason kaise chalega?",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r08",
+    "category": "wrong-option-flawed-hinglish",
+    "language": "hinglish",
+    "reasoning": "V = IR hai na, toh V double kiya toh R bhi double ho jayega aur current utna hi rahega",
+    "knownLabels": [
+      "Resistance rises when voltage rises"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "Resistance rises when voltage rises",
+    "gotMisconception": "Resistance rises when voltage rises",
+    "evidence": "V double kiya toh R bhi double ho jayega aur current utna hi rahega",
+    "feedback": "Tumne V = IR sahi likha, bas usko ulta padh liya. Ohmic resistor mein R sirf material, length, area aur temperature par depend karta hai, voltage par nahi, aur temperature constant hai toh R same rehta hai. Isliye V double hone par I double hota hai (I = V/R). Quick check: 2 Ω ke resistor par 4 V lagao toh I = 2 A, 8 V lagao toh I = 4 A, R phir bhi 2 Ω hi hai.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r09",
+    "category": "wrong-option-flawed-hinglish",
+    "language": "hinglish",
+    "reasoning": "P = 1/f = 1/0.8 = 1.25 D. myopia me convex lens lagate h toh power positive hogi",
+    "knownLabels": [
+      "Myopia is corrected with a convex lens"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "Myopia is corrected with a convex lens",
+    "gotMisconception": "Myopia is corrected with a convex lens",
+    "evidence": "myopia me convex lens lagate h toh power positive hogi",
+    "feedback": "Tumne f = 80 cm ko metre mein badalkar P = 1/f = 1.25 D nikala, ye magnitude bilkul sahi hai. Lekin myopia mein door ki cheez ki image retina ke aage banti hai, isliye light ko thoda failana padta hai, aur ye concave (diverging) lens karta hai. Concave lens ki focal length negative hoti hai, to power −1.25 D aayegi (option D). Quick check: myopia wale log minus number ka chashma lagate hain, plus number ka nahi.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r10",
+    "category": "wrong-option-flawed-hinglish",
+    "language": "hinglish",
+    "reasoning": "earth wire se current wapas mains me jata hai, live se aata h aur earth se wapas jata h, isliye teen wire hote h",
+    "knownLabels": [
+      "Earth wire carries current in normal use"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "Earth wire carries current in normal use",
+    "gotMisconception": "Earth wire carries current in normal use",
+    "evidence": "earth wire se current wapas mains me jata hai, live se aata h aur earth se wapas jata h",
+    "feedback": "Aapne sahi socha ki live wire se current appliance me aata hai, par normal use me wapas jaane ka kaam neutral wire karta hai, earth wire nahi. Earth wire ek safety wire hai: normal chalte time isme current nahi bahta, lekin agar body live ho jaye to ye low-resistance path se current ko zameen me bhej deta hai aur user ko shock nahi lagta. Ek quick check: agar earth wire hata do, to appliance phir bhi chalega (neutral se circuit complete hota hai), bas shock ka khatra badh jayega.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r11",
+    "category": "wrong-option-flawed-hinglish",
+    "language": "hinglish",
+    "reasoning": "ek baar iron ke andar magnetism aa gaya toh woh rehta hai, current band karne se thodi na chala jayega",
+    "knownLabels": [
+      "An electromagnet stays magnetised when switched off"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "An electromagnet stays magnetised when switched off",
+    "gotMisconception": "An electromagnet stays magnetised when switched off",
+    "evidence": "ek baar iron ke andar magnetism aa gaya toh woh rehta hai, current band karne se thodi na chala jayega",
+    "feedback": "Aapne sahi socha ki iron magnetism pakad sakta hai, lekin soft iron ki khaas baat ye hai ki woh temporary magnet banta hai. Current band hote hi uske domains wapas random ho jaate hain, isliye magnetism lagbhag chala jaata hai. Check karo: crane ka electromagnet agar band karne par bhi magnet rehta, toh woh lohe ka load chhod hi nahi paata. Steel permanent magnet ke liye use hota hai, soft iron nahi.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r12",
+    "category": "wrong-option-flawed-hinglish",
+    "language": "hinglish",
+    "reasoning": "hawa light ko mod nahi sakti toh twinkle ka reason clouds hi hoga jo beech beech me aate h",
+    "knownLabels": [
+      "Stars twinkle because they flicker",
+      "Air cannot bend light"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "Air cannot bend light",
+    "gotMisconception": "Air cannot bend light",
+    "evidence": "hawa light ko mod nahi sakti toh twinkle ka reason clouds hi hoga",
+    "feedback": "Aapne sahi socha ki twinkling ke liye koi cheez light ke raaste me aani chahiye. Lekin hawa light ko mod sakti hai: alag-alag garam aur thandi parto ka refractive index alag hota hai, aur wo lagataar badalta rehta hai. Isse starlight ka raasta thoda-thoda hilta hai aur taara twinkle karta hai. Check karo: clear raat me bhi taare twinkle karte hain, jab ek bhi baadal nahi hota, to baadal reason nahi ho sakte.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r13",
+    "category": "right-option-flawed-reasoning",
+    "language": "english",
+    "reasoning": "the lens becomes thicker and it also moves forward towards the book so the image comes on the retina",
+    "knownLabels": [
+      "Eye focuses by moving the lens",
+      "The pupil does the focusing"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "Eye focuses by moving the lens",
+    "gotMisconception": "Eye focuses by moving the lens",
+    "evidence": "it also moves forward towards the book so the image comes on the retina",
+    "feedback": "You are right that the lens becomes thicker for a nearby book, and that the image must fall on the retina. But the lens does not move forward. The eye focuses by changing the lens's shape: the ciliary muscles contract and the lens bulges, which shortens its focal length. Quick check: the lens-to-retina distance in the eye is fixed, so a camera-style movement is not possible. Only a change in focal length can bring near and far objects into focus on the retina.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r14",
+    "category": "right-option-flawed-reasoning",
+    "language": "hinglish",
+    "reasoning": "bulb thoda sa current use karta h light banane ke liye but itna kam ki ammeter me fark nahi aayega, isliye 0.4 hi",
+    "knownLabels": [
+      "Current gets used up by components"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "Current gets used up by components",
+    "gotMisconception": "Current gets used up by components",
+    "evidence": "bulb thoda sa current use karta h light banane ke liye but itna kam ki ammeter me fark nahi aayega",
+    "feedback": "Aapne sahi option 0.4 A chuna, aur ye sahi socha ki dono ammeter same padhenge. Lekin bulb current ko 'use' nahi karta, even thoda sa bhi nahi; series circuit me current har jagah same rehta hai kyunki charge bulb se guzarta hai, khatam nahi hota. Bulb charge ki energy ko light aur heat me badalta hai. Quick check: agar bulb current khata, to battery ke negative terminal tak wapas aate hue current kam hota, aur circuit complete hi nahi ho paata.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r15",
+    "category": "right-option-flawed-reasoning",
+    "language": "english",
+    "reasoning": "at sunrise the light comes thru more air, and red is scattered the most so it spreads all over and reaches our eyes, thats why sun looks red",
+    "knownLabels": [
+      "Red light is scattered the most",
+      "Sky is blue because it reflects the sea"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "Red light is scattered the most",
+    "gotMisconception": "Red light is scattered the most",
+    "evidence": "red is scattered the most so it spreads all over and reaches our eyes",
+    "feedback": "You are right that the light passes through more air at sunrise, and that matters. But red is scattered the least, not the most, because it has the longest wavelength. Blue is scattered away from the direct beam over the long path, so mostly red is left to reach us. Quick check: if red scattered the most, the daytime sky would look red, but it looks blue because blue is scattered most.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r16",
+    "category": "right-option-flawed-reasoning",
+    "language": "english",
+    "reasoning": "glass is denser so the ray bends towards normal. the speed of light stays same only the direction changes",
+    "knownLabels": [
+      "Bends away from normal in denser medium",
+      "Light's speed is the same in every medium"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "Light's speed is the same in every medium",
+    "gotMisconception": "Light's speed is the same in every medium",
+    "evidence": "the speed of light stays same only the direction changes",
+    "feedback": "You are right that glass is denser and the ray bends towards the normal. But the speed of light does not stay the same: it slows down in glass, and this change of speed is exactly why the ray bends. Quick check: if the speed really stayed the same, refractive index (n = c/v) would always be 1 and there would be no bending at all.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r17",
+    "category": "right-option-flawed-reasoning",
+    "language": "english",
+    "reasoning": "diamond is very heavy and dense, more mass so light slows down 2.42 times inside it",
+    "knownLabels": [
+      "Higher refractive index means faster light",
+      "Optically denser means heavier"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "Optically denser means heavier",
+    "gotMisconception": "Optically denser means heavier",
+    "evidence": "diamond is very heavy and dense, more mass so light slows down 2.42 times inside it",
+    "feedback": "You are right that light travels 2.42 times slower in diamond than in vacuum, so A is correct. But the slowing is not because diamond is heavy or has more mass. Refractive index depends on how the material's atoms interact with light, which is called optical density, and this is different from mass density. Check this: oil is lighter than water, yet it has a higher refractive index, so light is slower in oil.",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r18",
+    "category": "right-option-flawed-reasoning",
+    "language": "hinglish",
+    "reasoning": "image mirror pe hi banti hai 2 m pe, light wahan tak jaati h aur wapas aati h toh 2+2 = 4 m",
+    "knownLabels": [
+      "Image forms on the mirror surface"
+    ],
+    "expectedVerdict": "flawed",
+    "gotVerdict": "flawed",
+    "expectedMisconception": "Image forms on the mirror surface",
+    "gotMisconception": "Image forms on the mirror surface",
+    "evidence": "image mirror pe hi banti hai 2 m pe, light wahan tak jaati h aur wapas aati h toh 2+2 = 4 m",
+    "feedback": "Tumne 4 m sahi nikala, aur yeh sahi socha ki doori 2 m + 2 m judti hai. Lekin image mirror ki surface par nahi banti; plane mirror mein image mirror ke peeche utni hi doori par banti hai jitni tum aage ho, yaani 2 m peeche. Isliye tumse image tak doori 2 + 2 = 4 m hai, light ke aane-jaane ki wajah se nahi. Check karo: agar image mirror par hoti, toh tum use mirror ke andar peeche dikhte hue kaise dekhte?",
+    "verdictCorrect": true,
+    "misconceptionExact": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r19",
+    "category": "right-option-sound",
+    "language": "hinglish",
+    "reasoning": "fuse ka kaam hai zyada current aane pe pighal jana aur circuit tod dena, isliye low melting point chahiye",
+    "knownLabels": [
+      "Fuse wire needs a high melting point"
+    ],
+    "expectedVerdict": "sound",
+    "gotVerdict": "sound",
+    "expectedMisconception": null,
+    "gotMisconception": null,
+    "evidence": "fuse ka kaam hai zyada current aane pe pighal jana aur circuit tod dena, isliye low melting point chahiye",
+    "feedback": "Bilkul sahi! Fuse ka kaam hai zyada current aane par pighalkar circuit tod dena, aur uske liye low melting point zaroori hai. Isse ghar ke appliances kharab hone se bach jaate hain. Ek quick check: agar fuse wire ka melting point bahut high hota, to wo pighalta hi nahi aur wire garam hokar aag laga sakta tha.",
+    "verdictCorrect": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r20",
+    "category": "right-option-sound",
+    "language": "english",
+    "reasoning": "outside the magnet field lines go from north to south, thats the way the north end of a compass points. inside they go s to n",
+    "knownLabels": [
+      "Field lines are physical things"
+    ],
+    "expectedVerdict": "sound",
+    "gotVerdict": "sound",
+    "expectedMisconception": null,
+    "gotMisconception": null,
+    "evidence": "outside the magnet field lines go from north to south, thats the way the north end of a compass points. inside they go s to n",
+    "feedback": "Good thinking. Field lines run from N to S outside the magnet, and you linked this to the direction the north end of a compass needle points. You also remembered that the lines continue from S to N inside, so they form closed loops.",
+    "verdictCorrect": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r21",
+    "category": "right-option-sound",
+    "language": "english",
+    "reasoning": "in parallel both resistors get the full 4V, so I = V/R = 4/2 = 2 A for the 2 ohm one",
+    "knownLabels": [
+      "Parallel branches get equal current"
+    ],
+    "expectedVerdict": "sound",
+    "gotVerdict": "sound",
+    "expectedMisconception": null,
+    "gotMisconception": null,
+    "evidence": "in parallel both resistors get the full 4V, so I = V/R = 4/2 = 2 A for the 2 ohm one",
+    "feedback": "Correct. You noticed that each parallel branch has the full battery voltage across it, so Ohm's law can be applied to each branch separately. As a quick check, the 8 Ω branch gets 4/8 = 0.5 A, so the branches carry different currents.",
+    "verdictCorrect": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r22",
+    "category": "right-option-sound",
+    "language": "hinglish",
+    "reasoning": "current ulta kiya toh magnetic field ki direction bhi ulti ho jayegi (right hand thumb rule), toh needle west me jayegi",
+    "knownLabels": [
+      "Wire stays magnetic without current",
+      "Field runs along the wire"
+    ],
+    "expectedVerdict": "sound",
+    "gotVerdict": "sound",
+    "expectedMisconception": null,
+    "gotMisconception": null,
+    "evidence": "current ulta kiya toh magnetic field ki direction bhi ulti ho jayegi (right hand thumb rule), toh needle west me jayegi",
+    "feedback": "Bilkul sahi socha! Current ulta karne se right hand thumb rule ke hisaab se field ki direction bhi ulti ho jati hai, isliye needle west me deflect hoti hai. Quick check: thumb ko current ki direction me rakho aur ungliyon ka ghumav dekho; thumb ulta karoge toh ungliyon ka ghumav bhi ulta ho jayega.",
+    "verdictCorrect": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r23",
+    "category": "right-option-sound",
+    "language": "english",
+    "reasoning": "u = -30, f = -15. 1/v = 1/f - 1/u = -1/15 + 1/30 = -1/30 so v = -30 cm, in front of the mirror. object is at C so image also at C",
+    "knownLabels": [
+      "Takes all distances as positive"
+    ],
+    "expectedVerdict": "sound",
+    "gotVerdict": "sound",
+    "expectedMisconception": null,
+    "gotMisconception": null,
+    "evidence": "u = -30, f = -15. 1/v = 1/f - 1/u = -1/15 + 1/30 = -1/30 so v = -30 cm, in front of the mirror. object is at C so image also at C",
+    "feedback": "Well done. You applied the sign convention correctly (u and f both negative for a concave mirror) and solved the mirror formula properly to get v = -30 cm. Noting that the object is at the centre of curvature (2f), where the image forms at the same spot, is a good quick check. The image there is real, inverted and the same size (m = -1).",
+    "verdictCorrect": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r24",
+    "category": "right-option-sound",
+    "language": "english",
+    "reasoning": "every part of the lens makes the full image, covering half just lets less light thru so its dimmer but still complete",
+    "knownLabels": [
+      "Covering half a lens cuts half the image"
+    ],
+    "expectedVerdict": "sound",
+    "gotVerdict": "sound",
+    "expectedMisconception": null,
+    "gotMisconception": null,
+    "evidence": "every part of the lens makes the full image, covering half just lets less light thru so its dimmer but still complete",
+    "feedback": "Well reasoned. Light from each point of the object passes through every part of the lens, so the uncovered half still brings all those rays together to form the full image. With only half the light getting through, the image is dimmer. Quick check: if you look at a scene through half of a magnifying glass, you still see the whole scene.",
+    "verdictCorrect": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r25",
+    "category": "wrong-option-sound-slip",
+    "language": "hinglish",
+    "reasoning": "I = Q/t, Q = 60 C aur t = 2 toh 60/2 = 30 A",
+    "knownLabels": [],
+    "expectedVerdict": "sound",
+    "gotVerdict": "flawed",
+    "expectedMisconception": null,
+    "gotMisconception": "forgot to convert minutes to seconds",
+    "evidence": "Q = 60 C aur t = 2 toh 60/2 = 30 A",
+    "feedback": "Aapne formula I = Q/t bilkul sahi use kiya, aur Q = 60 C bhi sahi liya. Galti time mein hai: 2 minute ko seconds mein badalna zaroori hai kyunki current ampere (C/s) mein naapte hain, so t = 2 × 60 = 120 s. Phir I = 60/120 = 0.5 A, yaani option C. Quick check: 30 A bahut bada current hota, jabki 60 C 120 s mein dheere-dheere flow ho raha hai.",
+    "verdictCorrect": false,
+    "falseAlarm": true,
+    "attempts": 1
+  },
+  {
+    "id": "r26",
+    "category": "wrong-option-sound-slip",
+    "language": "english",
+    "reasoning": "H = I^2 R t = 2^2 x 5 = 4 x 5 = 20 J",
+    "knownLabels": [
+      "Heat is proportional to current, not current²"
+    ],
+    "expectedVerdict": "sound",
+    "gotVerdict": "flawed",
+    "expectedMisconception": null,
+    "gotMisconception": "Forgot the time factor t in H = I²Rt",
+    "evidence": "H = I^2 R t = 2^2 x 5 = 4 x 5 = 20 J",
+    "feedback": "Good, you chose the right formula H = I²Rt and squared the current correctly: I²R = 4 × 5 = 20. But you left out t, even though you wrote it in the formula. Multiply by the time: 20 × 10 = 200 J, which is option D. Quick check: 20 is the heat produced per second (the power in watts), so over 10 s you get 10 times as much.",
+    "verdictCorrect": false,
+    "falseAlarm": true,
+    "attempts": 1
+  },
+  {
+    "id": "r27",
+    "category": "wrong-option-sound-slip",
+    "language": "english",
+    "reasoning": "energy = power x time = 1000 x 2 x 30 = 60000 kWh",
+    "knownLabels": [
+      "Kilowatt-hour is a unit of power"
+    ],
+    "expectedVerdict": "sound",
+    "gotVerdict": "flawed",
+    "expectedMisconception": null,
+    "gotMisconception": "Forgot to convert watts to kilowatts for kWh",
+    "evidence": "energy = power x time = 1000 x 2 x 30 = 60000 kWh",
+    "feedback": "You used the right formula, energy = power x time, and your multiplication of 1000 x 2 x 30 = 60000 is correct. But 60000 is in watt-hours (Wh), not kWh, because you used power in watts. Convert first: 1000 W = 1 kW, so 1 x 2 x 30 = 60 kWh. Quick check: a 1 kW heater running for 1 hour uses 1 kWh, so 60 hours gives 60 kWh.",
+    "verdictCorrect": false,
+    "falseAlarm": true,
+    "attempts": 1
+  },
+  {
+    "id": "r28",
+    "category": "wrong-option-sound-slip",
+    "language": "hinglish",
+    "reasoning": "total R = 4+2 = 6 ohm, I = 12/6 = 2 A. 4 ohm wale pe V = IR = 2 x 2 = 4 V",
+    "knownLabels": [
+      "Each series component gets the full voltage"
+    ],
+    "expectedVerdict": "sound",
+    "gotVerdict": "flawed",
+    "expectedMisconception": null,
+    "gotMisconception": "used wrong resistance value in V = IR",
+    "evidence": "4 ohm wale pe V = IR = 2 x 2 = 4 V",
+    "feedback": "Aapne total R = 6 Ω aur I = 2 A bilkul sahi nikala, aur series mein same current wali baat bhi sahi use ki. Galti last step mein hui: 4 Ω wale resistor ke liye V = I × 4 = 2 × 4 = 8 V hona chahiye, aapne 2 Ω use kar liya. Check karo: 4 Ω pe 8 V aur 2 Ω pe 4 V jodo to 12 V milta hai, jo battery ke barabar hai.",
+    "verdictCorrect": false,
+    "falseAlarm": true,
+    "attempts": 1
+  },
+  {
+    "id": "r29",
+    "category": "wrong-option-sound-slip",
+    "language": "english",
+    "reasoning": "f = 25 cm = 0.25 m, P = 1/f = 1/0.25 = 4 D. convex lens so its +4",
+    "knownLabels": [
+      "Uses focal length in cm for power",
+      "Swaps the sign of lens power"
+    ],
+    "expectedVerdict": "sound",
+    "gotVerdict": "sound",
+    "expectedMisconception": null,
+    "gotMisconception": null,
+    "evidence": "f = 25 cm = 0.25 m, P = 1/f = 1/0.25 = 4 D. convex lens so its +4",
+    "feedback": "Your reasoning is correct: converting 25 cm to 0.25 m, using P = 1/f to get 4 D, and giving a convex lens a positive sign all lead to +4 D, which is option B. But you chose option C (−4 D), which contradicts your own working, so it looks like you picked the wrong option by mistake. Before you submit, check that your chosen option matches your final answer.",
+    "verdictCorrect": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r30",
+    "category": "wrong-option-sound-slip",
+    "language": "english",
+    "reasoning": "n = c/v = 3x10^8 / 2x10^8 = 1.5",
+    "knownLabels": [
+      "Higher refractive index means faster light"
+    ],
+    "expectedVerdict": "sound",
+    "gotVerdict": "sound",
+    "expectedMisconception": null,
+    "gotMisconception": null,
+    "evidence": "n = c/v = 3x10^8 / 2x10^8 = 1.5",
+    "feedback": "Your reasoning is correct: n = c/v, and 3×10⁸ ÷ 2×10⁸ = 1.5. But you picked option B (1.33), while 1.5 is option D, so it looks like a slip when selecting. Always match your final calculated value to the option before submitting. Here, 1.33 would need v = 2.25×10⁸ m/s, which is not what the question gives.",
+    "verdictCorrect": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r31",
+    "category": "vague",
+    "language": "english",
+    "reasoning": "we did this in class",
+    "knownLabels": [
+      "The prism creates the colours"
+    ],
+    "expectedVerdict": "missing",
+    "gotVerdict": "missing",
+    "expectedMisconception": null,
+    "gotMisconception": null,
+    "evidence": "we did this in class",
+    "feedback": "You picked the right option, B, but your note doesn't say why, so I can't tell if you understand it. Try explaining in one line: white light is a mix of colours, and each colour bends by a different amount in the prism, so they spread out into a band. A quick check: if the prism added the colours, a second prism turned the other way could not join them back into white light, but it does.",
+    "verdictCorrect": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r32",
+    "category": "vague",
+    "language": "english",
+    "reasoning": "just guessed tbh",
+    "knownLabels": [
+      "Voltage flows through the circuit"
+    ],
+    "expectedVerdict": "missing",
+    "gotVerdict": "missing",
+    "expectedMisconception": null,
+    "gotMisconception": null,
+    "evidence": "just guessed tbh",
+    "feedback": "Thanks for being honest about guessing. Here is a quick way to think about it: potential difference is the work done per unit charge between two points (option B), so it is measured across a component, it does not flow through it. Option C mixes it up with current, so try this check: does a voltmeter connect across a resistor or in the path of the current?",
+    "verdictCorrect": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r33",
+    "category": "vague",
+    "language": "hinglish",
+    "reasoning": "pata nahi yaar, yehi sahi laga",
+    "knownLabels": [
+      "confuses ammeter with voltmeter",
+      "thinks meter resistance does not matter in series",
+      "mixes up connection and resistance rules"
+    ],
+    "expectedVerdict": "missing",
+    "gotVerdict": "missing",
+    "expectedMisconception": null,
+    "gotMisconception": null,
+    "evidence": "pata nahi yaar, yehi sahi laga",
+    "feedback": "Koi baat nahi, guess karna bhi shuru karne ka tareeka hai. Ek quick check: current naapne ke liye ammeter ko circuit mein series mein lagate hain taaki wahi current usse guzre, aur uski resistance bahut kam hoti hai taaki circuit ka current badle nahi. Option B voltmeter ke rules jaisa hai (parallel, high resistance), to dono meters ka fark ek baar apne words mein likh kar dekho.",
+    "verdictCorrect": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r34",
+    "category": "vague",
+    "language": "english",
+    "reasoning": "its obvious",
+    "knownLabels": [
+      "Magnetic field lines can cross",
+      "Field lines are physical things"
+    ],
+    "expectedVerdict": "missing",
+    "gotVerdict": "missing",
+    "expectedMisconception": null,
+    "gotMisconception": null,
+    "evidence": "its obvious",
+    "feedback": "You picked the right option, C, but \"its obvious\" doesn't show why. Try explaining it: the closer the field lines are drawn, the stronger the field, and they bunch up near the poles. Check by looking at a bar magnet diagram: where are the lines most crowded, and where are they spread out?",
+    "verdictCorrect": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r35",
+    "category": "vague",
+    "language": "hinglish",
+    "reasoning": "formula se aaya",
+    "knownLabels": [
+      "Negative magnification means a smaller image"
+    ],
+    "expectedVerdict": "missing",
+    "gotVerdict": "missing",
+    "expectedMisconception": null,
+    "gotMisconception": null,
+    "evidence": "formula se aaya",
+    "feedback": "Aapne formula use karne ki baat likhi, par yeh nahi bataya ki kaunsa formula aur usse kya mila, isliye aapki soch samajh nahi aa rahi. Yaad rakhiye: m = −2 mein size ka matlab |m| = 2 hai, yaani image object se 2 guna bada hai, aur minus sign batata hai ki image real aur inverted hai. Ek baar apne steps likhkar dekhiye ki m = −2 se size aur nature kaise nikalte hain.",
+    "verdictCorrect": true,
+    "falseAlarm": false,
+    "attempts": 1
+  },
+  {
+    "id": "r36",
+    "category": "vague",
+    "language": "hinglish",
+    "reasoning": "sir ne bataya tha aise hi hota h",
+    "knownLabels": [
+      "Adding parallel resistors increases resistance",
+      "Confuses constant voltage with constant resistance",
+      "Thinks a large parallel resistor raises total resistance"
+    ],
+    "expectedVerdict": "missing",
+    "gotVerdict": "missing",
+    "expectedMisconception": null,
+    "gotMisconception": null,
+    "evidence": "sir ne bataya tha aise hi hota h",
+    "feedback": "Aapne kaafi kuch nahi likha jisse pata chale ki aap kya soch rahe the, sirf ye likha ki sir ne bataya tha. Ek check karo: parallel mein har naya resistor current ke liye ek aur raasta deta hai, to total current badhta hai aur equivalent resistance kam hota hai. Do barabar resistors R parallel mein R/2 dete hain, jo R se chhota hai. Isse apni soch ko apne shabdon mein likhne ki koshish karo.",
+    "verdictCorrect": true,
+    "falseAlarm": false,
+    "attempts": 1
+  }
+]

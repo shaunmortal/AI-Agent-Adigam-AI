@@ -1,0 +1,525 @@
+{
+  "about": "Held-out testset for the judge that reads a student's reasoning on a multiple-choice question and returns a verdict (sound, flawed or missing) plus, when flawed, a misconception label. Written after the slip fix as a blind held-out check: the author did not open the judge's prompt, its code or earlier eval results, and no question from reasoning-testset.json is reused. Every item uses a real question from the hosted question bank (curriculum class-10-physics, verified MCQs with option_misconceptions); question text, options and correct indexes are copied unchanged. Reasoning is written by hand in the short, informal style of Class 10 students, in English or Hinglish in Roman script. expectedMisconception is copied verbatim from that question's option_misconceptions when the verdict is flawed, and is null otherwise. Categories: wrong-option-sound-slip (right idea and method, a careless arithmetic, unit-conversion, sign, copying or neighbouring-option slip picks a wrong option, often one that carries a label; must be sound with no label), wrong-option-flawed (wrong answer from a misconception labelled on that question), and right-option-flawed-reasoning (right answer for a wrong reason matching one of that question's labels; checks the slip fix did not make the judge lenient). topicMisconceptions lists the distinct non-empty option_misconceptions for every topic of the curriculum.",
+  "curriculum": "class-10-physics",
+  "topicMisconceptions": {
+    "Atmospheric refraction": [
+      "Air cannot bend light",
+      "Planets twinkle just like stars",
+      "Stars twinkle because they flicker"
+    ],
+    "Defects of vision and correction": [
+      "Mixes up near- and far-sightedness",
+      "Myopia is corrected with a convex lens"
+    ],
+    "Domestic electric circuits": [
+      "A short circuit reduces the current",
+      "Earth wire carries current in normal use",
+      "Fuse can go in the neutral wire"
+    ],
+    "Electric charge and current": [
+      "Current gets used up by components",
+      "Electrons move in the conventional current direction",
+      "believes charge is created and destroyed in circuits",
+      "confuses ammeter with voltmeter",
+      "confuses current with charge",
+      "confuses current with potential difference",
+      "confuses current with resistance",
+      "divides current by time instead of multiplying",
+      "fails to see 4.8 is three times 1.6",
+      "fails to see 8.0 is five times 1.6",
+      "forgets to multiply current by time",
+      "mixes up connection and resistance rules",
+      "thinks current flows from both terminals into lamp",
+      "thinks meter resistance does not matter in series",
+      "thinks only exactly one electron's charge allowed"
+    ],
+    "Electric power and energy": [
+      "Higher wattage bulb has higher resistance",
+      "Kilowatt-hour is a unit of power"
+    ],
+    "Factors affecting resistance": [
+      "Confuses resistivity with resistance",
+      "Thicker wires have more resistance"
+    ],
+    "Field due to a straight current": [
+      "Field runs along the wire",
+      "Wire stays magnetic without current"
+    ],
+    "Force on a current in a field": [
+      "Force is largest when current is parallel to field",
+      "Uses a right-hand rule for the force"
+    ],
+    "Heating effect of current": [
+      "Fuse wire needs a high melting point",
+      "Heat is proportional to current, not current²"
+    ],
+    "Image formation by lenses": [
+      "A convex lens always magnifies",
+      "Concave lens can form real images",
+      "Covering half a lens cuts half the image"
+    ],
+    "Image formation by spherical mirrors": [
+      "Concave mirrors always form real images",
+      "Convex mirror can enlarge or form real images",
+      "Rear-view mirrors are concave"
+    ],
+    "Images in a plane mirror": [
+      "Image forms on the mirror surface",
+      "Image gets smaller as you move away",
+      "Plane mirror image can form on a screen"
+    ],
+    "Laws of reflection": [
+      "Measures angles from the mirror surface",
+      "Only shiny surfaces reflect light"
+    ],
+    "Lens formula and power": [
+      "Swaps the sign of lens power",
+      "Uses focal length in cm for power",
+      "Uses the mirror formula for lenses"
+    ],
+    "Light travels in straight lines": [
+      "Light curves around opaque objects",
+      "We see because eyes send out light"
+    ],
+    "Magnetic field lines": [
+      "Field lines are physical things",
+      "Magnetic field lines can cross",
+      "applies right-hand thumb rule with reversed curl",
+      "assumes needle points directly at nearest pole",
+      "assumes same direction inside and outside",
+      "confuses field reversal outside with inside",
+      "confuses magnetic field with electric field of charge",
+      "confuses outside-end spreading with inside pattern",
+      "confuses tangent with normal to field line",
+      "reverses the north-to-south convention",
+      "thinks field lines begin and end like charges",
+      "thinks field lines follow the current direction",
+      "thinks like poles attract",
+      "thinks straight lines mean no field"
+    ],
+    "Mirror formula and magnification": [
+      "Negative magnification means a smaller image",
+      "Takes all distances as positive"
+    ],
+    "Ohm's law": [
+      "Current flows without a potential difference",
+      "Resistance rises when voltage rises",
+      "assumes every conductor obeys Ohm's law",
+      "calculates I/V instead of V/I",
+      "confuses ohmic behaviour with equal resistance",
+      "does not know slope of V-I graph equals R",
+      "treats slope as 1/R, as on an I-V graph",
+      "uses change in V over change in I"
+    ],
+    "Potential difference": [
+      "Thinks current is used up by components",
+      "Thinks each series component gets full battery voltage",
+      "Voltage flows through the circuit",
+      "Voltmeter is connected in series",
+      "assumes voltage is shared equally in parallel",
+      "splits voltage by resistance as in series",
+      "uses the inverse resistance ratio to split voltage"
+    ],
+    "Prism and dispersion": [
+      "Red light bends the most",
+      "The prism creates the colours"
+    ],
+    "Refraction of light": [
+      "A ray along the normal also bends",
+      "Bends away from normal in denser medium",
+      "Light's speed is the same in every medium"
+    ],
+    "Refractive index": [
+      "Higher refractive index means faster light",
+      "Optically denser means heavier",
+      "inverts ratio and reverses bending direction",
+      "inverts the ratio n_B / n_A",
+      "thinks larger index means bending away"
+    ],
+    "Resistors in parallel": [
+      "Adding parallel resistors increases resistance",
+      "Confuses constant voltage with constant resistance",
+      "Parallel branches get equal current",
+      "Thinks a large parallel resistor raises total resistance",
+      "confuses parallel rule with series rule",
+      "forgets to take reciprocal of the sum",
+      "thinks equivalent resistance is the average"
+    ],
+    "Resistors in series": [
+      "Current differs across series components",
+      "Each series component gets the full voltage",
+      "First bulb in series is brightest"
+    ],
+    "Scattering of light": [
+      "Red light is scattered the most",
+      "Sky is blue because it reflects the sea"
+    ],
+    "Solenoid and electromagnet": [
+      "An electromagnet stays magnetised when switched off",
+      "Solenoid field is only outside the coils"
+    ],
+    "Spherical mirror terms": [
+      "Convex mirror has a real focus",
+      "Focal length equals radius of curvature"
+    ],
+    "The eye and accommodation": [
+      "Eye focuses by moving the lens",
+      "Image on the retina is upright",
+      "The pupil does the focusing"
+    ]
+  },
+  "items": [
+    {
+      "id": "h01",
+      "questionId": "e2d1b060-38f9-44a6-a370-6e4ae606ef27",
+      "topicName": "Ohm's law",
+      "question": "A filament lamp carries a current of 0.2 A when the potential difference across it is 2 V, and 0.4 A when the potential difference is 6 V. What happens to the resistance of the filament between these two readings?",
+      "options": [
+        "It increases from 10 ohm to 15 ohm",
+        "It decreases from 10 ohm to about 6.7 ohm",
+        "It stays at 10 ohm because the lamp obeys Ohm's law",
+        "It increases from 10 ohm to 20 ohm"
+      ],
+      "correctIndexes": [
+        0
+      ],
+      "chosenIndex": 3,
+      "reasoning": "R = V/I for each reading. first one 2/0.2 = 10 ohm. second one 6/0.4 = 20 ohm. so resistance goes up from 10 to 20, filament gets hot",
+      "language": "english",
+      "expectedVerdict": "sound",
+      "expectedMisconception": null,
+      "category": "wrong-option-sound-slip",
+      "note": "Arithmetic slip: 6/0.4 worked out as 20 instead of 15. Uses V/I on each reading, so the chosen option's label (change in V over change in I) must not be assigned."
+    },
+    {
+      "id": "h02",
+      "questionId": "84eed747-98cb-4544-999c-621cb831cf92",
+      "topicName": "Electric charge and current",
+      "question": "A cell drives a steady current of 0.6 A through a lamp and then through a resistor connected in series with it. How much charge passes through the resistor in 10 s?",
+      "options": [
+        "6 C",
+        "Less than 6 C, because the lamp takes up part of the current before it reaches the resistor",
+        "0.6 C",
+        "0.06 C"
+      ],
+      "correctIndexes": [
+        0
+      ],
+      "chosenIndex": 2,
+      "reasoning": "Q = I x t hota hai. 0.6 A matlab 600 mA, toh Q = 600 x 10 = 6000 mC, jo 0.6 C hua",
+      "language": "hinglish",
+      "expectedVerdict": "sound",
+      "expectedMisconception": null,
+      "category": "wrong-option-sound-slip",
+      "note": "Unit-conversion slip: 6000 mC turned into 0.6 C instead of 6 C. Current is multiplied by time, so the chosen option's label (forgets to multiply) must not be assigned."
+    },
+    {
+      "id": "h03",
+      "questionId": "5efffeb1-06df-449a-8736-ed800cdea0a5",
+      "topicName": "Lens formula and power",
+      "question": "An object is placed 30 cm in front of a convex lens of focal length 20 cm. Where is the image?",
+      "options": [
+        "12 cm on the other side of the lens",
+        "60 cm on the same side as the object",
+        "10 cm on the other side of the lens",
+        "60 cm on the other side of the lens"
+      ],
+      "correctIndexes": [
+        3
+      ],
+      "chosenIndex": 1,
+      "reasoning": "lens formula 1/v - 1/u = 1/f. u = -30, f = +20. 1/v = 1/20 + 1/(-30) = 1/20 - 1/30. lcm 60 so (2-3)/60 = -1/60, v = -60 cm. negative so image is on the same side as the object",
+      "language": "english",
+      "expectedVerdict": "sound",
+      "expectedMisconception": null,
+      "category": "wrong-option-sound-slip",
+      "note": "Sign slip: wrote 1/20 - 1/30 as (2-3)/60 instead of (3-2)/60, so v came out as -60 cm. Lens formula and sign convention are right."
+    },
+    {
+      "id": "h04",
+      "questionId": "677c607c-c065-4907-8428-16acf59cfda5",
+      "topicName": "Ohm's law",
+      "question": "A 5 Ω resistor carries 0.4 A. What potential difference is needed to double the current?",
+      "options": [
+        "4 V",
+        "2 V, because doubling the current halves the resistance",
+        "1 V",
+        "8 V"
+      ],
+      "correctIndexes": [
+        0
+      ],
+      "chosenIndex": 1,
+      "reasoning": "resistance same rahega 5 ohm. current double karna h toh 0.4 x 2 = 0.8 A. V = IR = 0.4 x 5 = 2 V",
+      "language": "hinglish",
+      "expectedVerdict": "sound",
+      "expectedMisconception": null,
+      "category": "wrong-option-sound-slip",
+      "note": "Copying slip: worked out the new current as 0.8 A but put the old 0.4 A into V = IR. Keeps R fixed, so the chosen option's label (resistance rises with voltage) must not be assigned."
+    },
+    {
+      "id": "h05",
+      "questionId": "eb4f69d2-0789-422c-8ce4-f41abd669bba",
+      "topicName": "Heating effect of current",
+      "question": "If the current through a heater is doubled while its resistance stays the same, the heat produced in the same time becomes",
+      "options": [
+        "2 times",
+        "4 times",
+        "half",
+        "unchanged"
+      ],
+      "correctIndexes": [
+        1
+      ],
+      "chosenIndex": 0,
+      "reasoning": "H = I^2 R t. R aur t same hai, current double hua toh 2^2 = 4, matlab heat 4 guna ho jayegi",
+      "language": "hinglish",
+      "expectedVerdict": "sound",
+      "expectedMisconception": null,
+      "category": "wrong-option-sound-slip",
+      "note": "Neighbouring-option slip: reasoning says 4 times but the option just above it (2 times) was picked. It squares the current, so the chosen option's label must not be assigned."
+    },
+    {
+      "id": "h06",
+      "questionId": "52f249a8-2007-4451-87ca-cf5d489925c4",
+      "topicName": "Resistors in series",
+      "question": "Resistors of 2 Ω, 3 Ω and 5 Ω are connected in series. What is the equivalent resistance?",
+      "options": [
+        "30 Ω",
+        "0.97 Ω",
+        "10 Ω",
+        "5 Ω"
+      ],
+      "correctIndexes": [
+        2
+      ],
+      "chosenIndex": 3,
+      "reasoning": "in series we just add them, 2 + 3 + 5 = 10 ohm",
+      "language": "english",
+      "expectedVerdict": "sound",
+      "expectedMisconception": null,
+      "category": "wrong-option-sound-slip",
+      "note": "Neighbouring-option slip: computed 10 ohm but picked 5 ohm, the option next to it. No label on the chosen option."
+    },
+    {
+      "id": "h07",
+      "questionId": "3d7bc7a8-57f3-4937-817c-aa972998d375",
+      "topicName": "Light travels in straight lines",
+      "question": "You read a book in a room lit by a lamp. Which path does light take so that you can see the page?",
+      "options": [
+        "From your eye to the page and back to your eye",
+        "From your eye to the lamp, then to the page",
+        "From the page straight to the lamp",
+        "From the lamp to the page, then from the page into your eye"
+      ],
+      "correctIndexes": [
+        3
+      ],
+      "chosenIndex": 0,
+      "reasoning": "our eyes send out light rays to the page, they hit the words and bounce back into the eye, thats how we see. the lamp just makes the room bright",
+      "language": "english",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "We see because eyes send out light",
+      "category": "wrong-option-flawed",
+      "note": "Believes vision works by rays leaving the eye."
+    },
+    {
+      "id": "h08",
+      "questionId": "f2401e60-0d3e-47e6-8be2-7ae219da9898",
+      "topicName": "Solenoid and electromagnet",
+      "question": "One end of a current-carrying solenoid behaves like a north pole. If the current is reversed, that end",
+      "options": [
+        "stays a north pole, because the iron keeps its poles",
+        "has no pole, since the field exists only outside the coils",
+        "becomes a south pole",
+        "becomes neutral but still attracts iron"
+      ],
+      "correctIndexes": [
+        2
+      ],
+      "chosenIndex": 0,
+      "reasoning": "andar soft iron hai, ek baar magnet ban gaya toh magnet hi rehta h. current ulta karne se bhi iron ka north north hi rahega",
+      "language": "hinglish",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "An electromagnet stays magnetised when switched off",
+      "category": "wrong-option-flawed",
+      "note": "Thinks the soft-iron core keeps its magnetism once magnetised."
+    },
+    {
+      "id": "h09",
+      "questionId": "e176d234-fad6-473b-9a01-9f4cc2b4c727",
+      "topicName": "Potential difference",
+      "question": "A 2 ohm resistor and a 4 ohm resistor are connected in parallel across a 6 V battery of negligible internal resistance. What does a voltmeter connected across the 4 ohm resistor read?",
+      "options": [
+        "6 V",
+        "4 V",
+        "3 V",
+        "2 V"
+      ],
+      "correctIndexes": [
+        0
+      ],
+      "chosenIndex": 1,
+      "reasoning": "6 V dono resistors me resistance ke hisaab se batega. total 2+4 = 6 ohm, toh 4 ohm wale ko 4/6 x 6 = 4 V milega",
+      "language": "hinglish",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "splits voltage by resistance as in series",
+      "category": "wrong-option-flawed",
+      "note": "Shares the battery voltage by resistance as if the resistors were in series."
+    },
+    {
+      "id": "h10",
+      "questionId": "2a083ab3-ba77-4a11-a2fd-9817d82be661",
+      "topicName": "Refractive index",
+      "question": "A ray of light travels obliquely from medium A, with absolute refractive index 1.5, into medium B, with absolute refractive index 2.0. What is the refractive index of B with respect to A, and how does the ray bend at the boundary?",
+      "options": [
+        "4/3, and the ray bends towards the normal",
+        "3/4, and the ray bends towards the normal",
+        "4/3, and the ray bends away from the normal",
+        "3/4, and the ray bends away from the normal"
+      ],
+      "correctIndexes": [
+        0
+      ],
+      "chosenIndex": 2,
+      "reasoning": "n of B wrt A = nB/nA = 2/1.5 = 4/3. B has the bigger refractive index so the ray bends more, away from the normal",
+      "language": "english",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "thinks larger index means bending away",
+      "category": "wrong-option-flawed",
+      "note": "Ratio is right, but thinks entering the higher-index medium bends the ray away from the normal."
+    },
+    {
+      "id": "h11",
+      "questionId": "592dced7-4d6b-436b-8d7c-f2843b2a7f39",
+      "topicName": "Electric power and energy",
+      "question": "Two bulbs are rated 100 W, 220 V and 60 W, 220 V. Which one has the higher resistance?",
+      "options": [
+        "The 100 W bulb, because it is brighter",
+        "Both are equal, since they run on the same voltage",
+        "The 60 W bulb",
+        "It cannot be decided"
+      ],
+      "correctIndexes": [
+        2
+      ],
+      "chosenIndex": 0,
+      "reasoning": "100 W wala bulb zyada power leta h aur zyada bright jalta hai, matlab uska resistance zyada hai tabhi wo zyada garam hota h",
+      "language": "hinglish",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "Higher wattage bulb has higher resistance",
+      "category": "wrong-option-flawed",
+      "note": "Links higher wattage and brightness to higher resistance."
+    },
+    {
+      "id": "h12",
+      "questionId": "5e8571a5-2351-4fe0-8091-c30478579d1b",
+      "topicName": "Laws of reflection",
+      "question": "Two plane mirrors are placed at 90° to each other. A ray hits the first mirror with an angle of incidence of 40°. What is the angle of incidence at the second mirror?",
+      "options": [
+        "90°",
+        "40°",
+        "130°",
+        "50°"
+      ],
+      "correctIndexes": [
+        3
+      ],
+      "chosenIndex": 3,
+      "reasoning": "angle of incidence is the angle between the ray and the mirror, so the ray makes 40 deg with the first mirror and reflects at 40 deg with it too. mirrors are at 90 so in the triangle 180 - 90 - 40 = 50, so it hits the second mirror at 50 deg",
+      "language": "english",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "Measures angles from the mirror surface",
+      "category": "right-option-flawed-reasoning",
+      "note": "Right answer, but measures both angles of incidence from the mirror surface; the symmetry of the 90 degree corner hides the error."
+    },
+    {
+      "id": "h13",
+      "questionId": "59a576c7-3d0d-44a2-8e07-300875cbbea8",
+      "topicName": "Factors affecting resistance",
+      "question": "A wire of resistance R is stretched to twice its length while its volume stays the same. What is its new resistance?",
+      "options": [
+        "2R",
+        "R, because the material is the same",
+        "4R",
+        "R/2, because the wire becomes thinner"
+      ],
+      "correctIndexes": [
+        2
+      ],
+      "chosenIndex": 2,
+      "reasoning": "stretch karne se length double ho gayi toh resistivity bhi double ho jaati h kyunki wire lamba ho gaya. R = rho l / A, rho double aur l bhi double, toh 2 x 2 = 4R",
+      "language": "hinglish",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "Confuses resistivity with resistance",
+      "category": "right-option-flawed-reasoning",
+      "note": "Right answer, but gets the second factor of 2 from resistivity doubling instead of the area halving."
+    },
+    {
+      "id": "h14",
+      "questionId": "4ef8a9a1-5e87-442c-8e37-bd9b7f730cc5",
+      "topicName": "Domestic electric circuits",
+      "question": "In a household circuit, the fuse is connected in",
+      "options": [
+        "the live wire",
+        "the neutral wire",
+        "the earth wire",
+        "any wire; it does not matter"
+      ],
+      "correctIndexes": [
+        0
+      ],
+      "chosenIndex": 0,
+      "reasoning": "fuse just has to be in series with the appliance, so in live or neutral both it would cut the current when it melts. live is the usual one so i chose live",
+      "language": "english",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "Fuse can go in the neutral wire",
+      "category": "right-option-flawed-reasoning",
+      "note": "Right answer, but believes a fuse in the neutral wire would protect just as well."
+    },
+    {
+      "id": "h15",
+      "questionId": "c7d09925-65b4-40fd-853f-9663d11ca4fd",
+      "topicName": "Refraction of light",
+      "question": "A pencil partly dipped in water looks bent at the water surface. What is the best explanation?",
+      "options": [
+        "Water physically bends the pencil",
+        "Light from the immersed part bends towards the normal as it leaves water, so that part looks deeper",
+        "Light travels at the same speed in water, but reflects off the surface",
+        "Light from the immersed part bends away from the normal as it leaves water into air, so that part looks raised"
+      ],
+      "correctIndexes": [
+        3
+      ],
+      "chosenIndex": 3,
+      "reasoning": "paani denser medium hai aur denser medium me light normal se door bend hoti h, isliye pencil ka andar wala part upar utha hua dikhta h",
+      "language": "hinglish",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "Bends away from normal in denser medium",
+      "category": "right-option-flawed-reasoning",
+      "note": "Right answer, but says light bends away from the normal because water is the denser medium."
+    },
+    {
+      "id": "h16",
+      "questionId": "026b4b15-7a20-4bb9-bbf5-f3e274de0b6f",
+      "topicName": "Electric charge and current",
+      "question": "A lamp is connected to a cell in a simple working circuit. Which statement correctly describes the current in this circuit?",
+      "options": [
+        "The current is the same all the way round the circuit, because charge flows through the lamp and returns to the cell.",
+        "Less current returns to the cell than leaves it, because the lamp uses up some of the current to make light.",
+        "Current flows out of both terminals of the cell and meets inside the lamp.",
+        "Charge is created inside the cell and destroyed inside the lamp."
+      ],
+      "correctIndexes": [
+        0
+      ],
+      "chosenIndex": 0,
+      "reasoning": "the cell keeps making new charge and the lamp destroys it at the same rate, so the current stays the same all the way round",
+      "language": "english",
+      "expectedVerdict": "flawed",
+      "expectedMisconception": "believes charge is created and destroyed in circuits",
+      "category": "right-option-flawed-reasoning",
+      "note": "Right answer, but thinks the cell creates charge and the lamp destroys it."
+    }
+  ]
+}
