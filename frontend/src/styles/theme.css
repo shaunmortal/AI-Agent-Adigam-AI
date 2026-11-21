@@ -1395,3 +1395,41 @@ div.option {
     animation: none;
     filter: none;
 }
+
+/* ============================================================ third colour: orange
+   Blue does the work (buttons, links), white holds the content, and orange marks what to look at:
+   the headline's last line, the small eyebrow labels, progress fills and the open section. Solid,
+   not a blue-to-orange blend: the two are opposites, and every blend between them turns muddy or
+   passes through pink. */
+:root,
+[data-theme='light'] {
+    --orange: #f97316;
+}
+
+[data-theme='dark'] {
+    --orange: #fb923c;
+}
+
+.authpitch__accent {
+    background: none;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+    color: var(--orange);
+}
+
+.label {
+    color: var(--orange);
+}
+
+.meter > div {
+    background: var(--orange);
+}
+
+/* A stripe of orange on the open section's leading edge. Drawn as a background layer because the
+   item's box-shadow is already animated (the breathe glow) and would override a shadow here. */
+.sidebar__link--active,
+.sidebar__link--active:hover {
+    background:
+        linear-gradient(var(--orange), var(--orange)) left / 5px 100% no-repeat,
+        var(--grad);
+}
