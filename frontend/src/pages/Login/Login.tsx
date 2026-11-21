@@ -18,7 +18,7 @@ type Mode = 'signin' | 'signup' | 'forgot';
 
 const FEATURES = [
     {
-        icon: 'grid',
+        icon: 'network',
         title: 'A map of what you know',
         body: 'A short diagnostic places you on the concept graph, and every answer updates your mastery of each concept.',
     },

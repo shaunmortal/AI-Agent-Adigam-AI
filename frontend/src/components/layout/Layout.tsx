@@ -28,18 +28,18 @@ interface NavItem {
 }
 
 const LEARNING: NavItem[] = [
-    { label: 'Dashboard', icon: 'grid', to: '/dashboard' },
+    { label: 'Dashboard', icon: 'dashboard', to: '/dashboard' },
     { label: 'Course Material', icon: 'book', to: '/sources' },
-    { label: 'Concept Map', icon: 'grid', to: '/concept-map' },
-    { label: 'Practice', icon: 'code', to: '/practice' },
-    { label: 'Knowledge Check', icon: 'target', to: '/assessment' },
-    { label: 'Mock Tests', icon: 'file', to: '/mock-tests' },
+    { label: 'Concept Map', icon: 'network', to: '/concept-map' },
+    { label: 'Practice', icon: 'pencil', to: '/practice' },
+    { label: 'Knowledge Check', icon: 'listChecks', to: '/assessment' },
+    { label: 'Mock Tests', icon: 'clipboard', to: '/mock-tests' },
     { label: 'Study Plan', icon: 'calendar', to: '/plan' },
-    { label: 'Revision', icon: 'flame', to: '/revision' },
-    { label: 'Exam Readiness', icon: 'chart', to: '/readiness' },
-    { label: 'Ask Adigam', icon: 'sparkles', to: '/tutor' },
+    { label: 'Revision', icon: 'history', to: '/revision' },
+    { label: 'Exam Readiness', icon: 'gauge', to: '/readiness' },
+    { label: 'Ask Adigam', icon: 'message', to: '/tutor' },
     { label: 'Groups', icon: 'users', to: '/groups' },
-    { label: 'Your Goal', icon: 'target', to: '/goals' },
+    { label: 'Your Goal', icon: 'flag', to: '/goals' },
     { label: 'Settings', icon: 'settings', to: '/settings' },
 ];
 
