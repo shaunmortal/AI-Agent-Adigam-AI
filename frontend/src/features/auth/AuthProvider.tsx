@@ -200,7 +200,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
                 if (!(await providerIsEnabled(data.url))) {
                     throw new Error(
-                        `${LABELS[provider]} sign-in is not switched on for this project yet — it needs a client ID and secret adding in the Supabase dashboard. Use your email and password for now.`
+                        `${LABELS[provider]} sign-in isn't available yet. Please use your email and password.`
                     );
                 }
 
