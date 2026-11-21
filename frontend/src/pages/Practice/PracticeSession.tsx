@@ -90,6 +90,7 @@ export function PracticeSession({
     }
 
     const question = questions[index];
+    const aimedAt = question ? session.data?.targeted?.[question.id] : undefined;
 
     // Defensive: an index past the end means the set was exhausted, which the finished screen
     // below normally catches first.
@@ -177,6 +178,13 @@ export function PracticeSession({
                 </div>
                 <span className={`pill pill--${question.difficulty}`}>{question.difficulty}</span>
             </div>
+
+            {aimedAt && (
+                <div className="banner" role="note">
+                    Aimed at a misconception you showed earlier: <strong>{aimedAt}</strong>. Let&rsquo;s
+                    see if it still holds.
+                </div>
+            )}
 
             <div className="card stack">
                 <p style={{ margin: 0, fontSize: '1.05rem' }}>{question.body}</p>

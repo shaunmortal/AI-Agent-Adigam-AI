@@ -159,6 +159,13 @@ export default function Dashboard() {
                             {session.data.bankNote}
                         </p>
                     )}
+
+                    {session.data.targeted && Object.keys(session.data.targeted).length > 0 && (
+                        <p className="faint" style={{ margin: 0 }}>
+                            Includes a question aimed at a misconception you showed:{' '}
+                            <strong>{Object.values(session.data.targeted)[0]}</strong>
+                        </p>
+                    )}
                 </div>
             )}
 

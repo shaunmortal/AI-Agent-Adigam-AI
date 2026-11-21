@@ -69,6 +69,8 @@ export interface NextSession {
     questions: PracticeQuestion[];
     /** Present when the bank could not fill the request, so the UI can be honest. */
     bankNote?: string | null;
+    /** Questions aimed at a misconception the learner showed: question id -> that misconception. */
+    targeted?: Record<string, string> | null;
     /** Present when there is no recommendation to make. */
     reason?: string;
 }
