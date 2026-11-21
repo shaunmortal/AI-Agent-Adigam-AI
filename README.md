@@ -6,13 +6,14 @@
 
 ### An adaptive exam-prep tutor that finds the wrong idea behind a wrong answer, then aims the next questions at that idea to see whether it still holds.
 
+**[Agentic AI Hackathon](https://theproductspace.in/agentic-ai-hackathon) · Product Space**<br/>
+Problem Statement 02 — Adaptive exam-prep tutor with a learner model
+
 [![Go](https://img.shields.io/badge/Go-1.27-00ADD8?logo=go&logoColor=white)](server)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](frontend)
 [![PostgreSQL](https://img.shields.io/badge/Postgres-RLS%20on%20every%20table-4169E1?logo=postgresql&logoColor=white)](database)
 [![Redis](https://img.shields.io/badge/Redis-rate%20limits%20%C2%B7%20queue-DC382D?logo=redis&logoColor=white)](server/internal/ratelimit)
 [![Claude AI](https://img.shields.io/badge/AI-Claude-D97757)](server/internal/ai)
-
-Entry for the **Agentic AI Hackathon by Product Space**, Problem Statement 02.
 
 **[Open the live app → adigam.vercel.app](https://adigam.vercel.app)**
 
@@ -324,6 +325,8 @@ In Supabase, add your local frontend URL to the Auth redirect URLs for password 
 <div align="center">
 
 **Adigam AI** · ADAPT · LEARN · MASTER
+
+Entry for the Agentic AI Hackathon by Product Space · Problem Statement 02
 
 <sub>All rights reserved. See [LICENSE](LICENSE).</sub>
 
