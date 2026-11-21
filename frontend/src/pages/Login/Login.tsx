@@ -173,7 +173,7 @@ export default function Login() {
                 {/* ---------------------------------------------- card */}
                 <div className="authcard rise" style={{ '--i': 1 } as React.CSSProperties}>
                     <div className="auth__badge">
-                        <Padlock />
+                        <Logo size={46} />
                     </div>
 
                     <h1 className="auth__title">{copy.title}</h1>
@@ -357,41 +357,6 @@ export default function Login() {
 }
 
 /* ------------------------------------------------------------------ artwork */
-
-/** A glossy gold padlock with its key — the badge at the top of the card. */
-function Padlock() {
-    return (
-        <svg width="62" height="62" viewBox="0 0 64 64" aria-hidden="true">
-            <defs>
-                <linearGradient id="pl-gold" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0" stopColor="#ffe9a3" />
-                    <stop offset="0.45" stopColor="#f5c443" />
-                    <stop offset="1" stopColor="#c98a12" />
-                </linearGradient>
-                <linearGradient id="pl-steel" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0" stopColor="#fbfcff" />
-                    <stop offset="0.5" stopColor="#aab3c6" />
-                    <stop offset="1" stopColor="#6c7690" />
-                </linearGradient>
-            </defs>
-            <path
-                d="M20 30V21a12 12 0 0124 0v9"
-                fill="none"
-                stroke="url(#pl-steel)"
-                strokeWidth="6"
-                strokeLinecap="round"
-            />
-            <rect x="11" y="28" width="42" height="31" rx="8" fill="url(#pl-gold)" />
-            <rect x="14" y="30.5" width="36" height="6" rx="3" fill="#fff" opacity="0.35" />
-            <circle cx="32" cy="42" r="4.2" fill="#6b4708" />
-            <rect x="30.4" y="44" width="3.2" height="8" rx="1.6" fill="#6b4708" />
-            <path d="M46 20l-8 8" stroke="url(#pl-gold)" strokeWidth="3.4" strokeLinecap="round" />
-            <path d="M41 25l-2.4-2.4" stroke="#c98a12" strokeWidth="2.4" strokeLinecap="round" />
-            <circle cx="50" cy="15" r="8" fill="url(#pl-gold)" />
-            <circle cx="50" cy="15" r="2.8" fill="#fff6d8" />
-        </svg>
-    );
-}
 
 function Arrow({ back = false }: { back?: boolean }) {
     return (
