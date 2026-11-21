@@ -132,12 +132,13 @@ const NAMES = [
   "Dev Malhotra", "Riya Banerjee", "Om Tiwari", "Tara Fernandes",
 ];
 const CLASS_WIDE = [
-  ["mc-current-used-up", 0.55],
+  ["mc-current-used-up", 0.75],
   ["mc-parallel-increases-r", 0.45],
   ["mc-bends-away-in-denser", 0.35],
   ["mc-high-wattage-high-r", 0.3],
   ["mc-myopia-convex-lens", 0.25],
 ];
+const MAIN_MISCONCEPTION = CLASS_WIDE[0][0];
 const CHAPTER_SKILL = { light: 0.6, eye: 0.55, electricity: 0.42, magnetism: 0.58 };
 const DIAGNOSTIC_SIZE = 15;
 for (const [mc] of CLASS_WIDE) {
@@ -218,17 +219,19 @@ function revision(attemptsOldestFirst) {
 }
 
 function simulate(index) {
+  seed = 20261121 + index * 7919; // each student their own stream, so one student's story stays put
   const holds = new Set(CLASS_WIDE.filter(([, p]) => rand() < p).map(([id]) => id));
   for (let i = 0; i < 2; i++) holds.add(pickOne(MISCONCEPTIONS).id);
   const startedWith = [...holds];
   const talent = gauss() * 0.12;
   const skill = new Map(CONCEPTS.map((c) => {
     const held = MISCONCEPTIONS.some((m) => m.concept === c.id && holds.has(m.id));
-    const base = CHAPTER_SKILL[c.chapter] + talent + gauss() * 0.12;
+    const base = CHAPTER_SKILL[c.chapter] + talent + gauss() * 0.16;
     return [c.id, clamp(held ? Math.min(base, 0.35) : base, 0.05, 0.97)];
   }));
   const attempts = [];
   const seen = new Set();
+  const heldOn = (conceptId) => attempts.filter((a) => a.q.concept === conceptId && a.mc).map((a) => a.mc);
 
   const answer = (q, agoSecs, source) => {
     const heldIdx = q.options.findIndex((o) => o.misconception && holds.has(o.misconception));
@@ -276,28 +279,89 @@ function simulate(index) {
     answer(exposing ?? pool.find((q) => q.difficulty === 3) ?? pool[0], start - i * 75, "assessment");
   });
 
-  // Practice: weakest concept whose prerequisites are in place, at a difficulty to match. Like a
-  // real student, each one works mostly through two chapters, so those topics build enough
-  // evidence for the app's mastery formula to move well away from its 35% prior.
-  const lastActive = rand() < 0.25 ? (3 + rand() * 3) * DAY : rand() * 0.8 * DAY;
+  // Practice, a day at a time as the app is used: on the days this student studies (how often is
+  // their habit), topic sessions of three to five questions: two to four revisions that have come
+  // due, one or two topics they have not tried yet, then topics chosen as the app suggests (weaker
+  // ones, prerequisites in place), mostly in the student's two focus chapters. How much each topic
+  // gets differs by student and topic, and a few are never started, so the app's mastery formula
+  // puts each topic somewhere of its own instead of leaving most of them one diagnostic answer
+  // away from its 35% prior.
+  const habit = index === 0 ? 1 : 0.55 + rand() * 0.45; // Ayush, whom the demo signs in as, studies daily
+  const lastDay = index > 0 && rand() < 0.25 ? 3 + Math.floor(rand() * 3) : 0;
   const focus = new Set(shuffle(CHAPTERS.map((ch) => ch.id)).slice(0, 2));
-  const count = 60 + Math.floor(rand() * 50);
-  for (let i = 0; i < count; i++) {
-    const at = Math.max(60, start - DAY - ((start - DAY - lastActive) * (i + rand() * 0.5)) / count);
-    const m = (id) => {
-      const list = attempts.filter((a) => a.q.concept === id);
-      return list.length ? list.filter((a) => a.correct).length / list.length : 0.35;
-    };
-    const inFocus = CONCEPTS.filter((c) => focus.has(c.chapter) || rand() < 0.1);
-    const ready = inFocus.filter((c) => c.prereqs.every((p) => m(p) >= 0.5));
-    const target = [...(ready.length ? ready : CONCEPTS)].sort((a, b) => m(a.id) - m(b.id) + (rand() - 0.5) * 0.3)[0];
-    const want = m(target.id) < 0.4 ? 2 : m(target.id) < 0.7 ? 3 : 4;
+  const tried = new Set(attempts.map((a) => a.q.concept));
+  const skipped = new Set(shuffle(CONCEPTS.filter((c) => !focus.has(c.chapter) && !tried.has(c.id)))
+    .slice(0, 1 + Math.floor(rand() * 3)).map((c) => c.id));
+  // Ayush has not yet been back to the topics where the Knowledge Check caught a misconception the
+  // bank can still aim a question at, so the app's targeted questions wait for him there.
+  if (index === 0) for (const c of CONCEPTS) if (aimable(attempts, c.id)) skipped.add(c.id);
+  const interest = new Map(CONCEPTS.map((c) =>
+    [c.id, skipped.has(c.id) ? 0 : focus.has(c.chapter) ? 1 : 0.3 + rand() * 0.5]));
+  const on = (id) => attempts.filter((a) => a.q.concept === id);
+  const m = (id) => {
+    const list = on(id);
+    return list.length ? list.filter((a) => a.correct).length / list.length : 0.35;
+  };
+  // Days overdue on `day` (days ago), 0 when due that day, null when not due or never studied.
+  const overdue = (id, day) => {
+    const list = on(id);
+    if (!list.length) return null;
+    const r = revision(list);
+    return r.day - r.interval >= day ? r.day - r.interval - day : null;
+  };
+  // Weaker topics likelier, more so where interest lies and the prerequisites are in place.
+  const nextTopic = (pool = CONCEPTS) => {
+    const weight = (c) => interest.get(c.id) * (1.2 - m(c.id)) * (c.prereqs.every((p) => m(p) >= 0.5) ? 1 : 0.4);
+    let r = rand() * pool.reduce((sum, c) => sum + weight(c), 0);
+    return pool.find((c) => (r -= weight(c)) < 0) ?? pool[0];
+  };
+  const pickQuestion = (target, k) => {
     const pool = BANK.filter((q) => q.concept === target.id);
+    // As the app does: up to two questions aimed at a misconception still held on the topic, first.
+    const held = heldOn(target.id);
+    const aimed = k < 2 && pool.find((q) => !seen.has(q.id) && q.options.some((o) => held.includes(o.misconception)));
+    if (aimed) return aimed;
+    const want = m(target.id) < 0.4 ? 2 : m(target.id) < 0.7 ? 3 : 4;
     const fresh = pool.filter((q) => !seen.has(q.id));
-    const q = [...(fresh.length ? fresh : pool)].sort((a, b) => Math.abs(a.difficulty - want) - Math.abs(b.difficulty - want))[0];
-    answer(q, at, "practice");
+    return [...(fresh.length ? fresh : pool)].sort((a, b) => Math.abs(a.difficulty - want) - Math.abs(b.difficulty - want))[0];
+  };
+  for (let day = Math.floor(start / DAY) - 1; day >= lastDay; day--) {
+    if (day > lastDay && rand() > habit) continue;
+    let at = day * DAY + (0.25 + rand() * 0.15) * DAY; // about the same time each day
+    const due = shuffle(CONCEPTS).filter((c) => interest.get(c.id) && overdue(c.id, day) !== null && rand() < 0.6 + interest.get(c.id) * 0.4)
+      .sort((a, b) => overdue(b.id, day) - overdue(a.id, day));
+    const untried = CONCEPTS.filter((c) => interest.get(c.id) && !on(c.id).length);
+    const firstLook = untried.length ? nextTopic(untried) : null;
+    const secondLook = untried.length > 1 && rand() < 0.5 ? nextTopic(untried.filter((c) => c !== firstLook)) : null;
+    const sessions = [...due.slice(0, 2 + Math.floor(rand() * 3)), firstLook, secondLook,
+      ...Array.from({ length: 1 + Math.floor(rand() * 2) }, () => null)];
+    for (const planned of sessions) {
+      const target = planned ?? nextTopic();
+      const n = 3 + Math.floor(rand() * 3);
+      for (let k = 0; k < n; k++) {
+        answer(pickQuestion(target, k), at, "practice");
+        at = Math.max(60, at - 40 - rand() * 80);
+      }
+    }
   }
   return { attempts, holds: startedWith };
+}
+
+// Whether practice on the topic would open with a question aimed at a misconception the student has
+// shown there: one tagged with it that they have not answered (practice.aimAtMisconceptions).
+const aimable = (attempts, concept) => BANK.some((q) => q.concept === concept && !attempts.some((a) => a.q.id === q.id) &&
+  q.options.some((o) => attempts.some((a) => a.q.concept === concept && a.mc && a.mc === o.misconception)));
+
+// When a student stopped showing a misconception: two or more answers on questions that tempt it
+// since they last showed it, all right and none with flawed reasoning. The app counts only
+// questions not answered before and by then would have generated new ones aimed at it; this bank
+// has two or three a topic, so here a right repeat counts too. Null when it is not fixed.
+function fixedAt(attempts, concept, mc) {
+  const last = attempts.findLastIndex((a) => a.q.concept === concept && a.mc === mc);
+  const after = attempts.slice(last + 1)
+    .filter((a) => a.q.concept === concept && a.q.options.some((o) => o.misconception === mc));
+  const clean = after.length >= 2 && after.every((a) => a.correct && a.verdict !== "flawed");
+  return last >= 0 && clean ? after[1].agoSecs : null;
 }
 
 function demoSql() {
@@ -314,8 +378,23 @@ function demoSql() {
   const chapterTopics = CHAPTERS.map((ch) => topicId(ch.id));
 
   const goals = [], goalTopics = [], members = [`('${groupId}', '${people[0].id}', 'owner', now() - interval '11 days')`];
-  const attemptRows = [], masteryRows = [], mistakeRows = [], revisionRows = [], profileUpdates = [];
+  const attemptRows = [], masteryRows = [], mistakeRows = [], revisionRows = [];
+  const assessments = [], assessmentQuestions = [], fixed = [], scores = [];
   const report = [];
+  const sims = students.map((_, i) => simulate(i));
+
+  // A few students have since fixed a class-wide misconception (not the main one, which the class
+  // still holds), at most two per misconception: the teacher dashboard's "N fixed".
+  const fixes = new Map(); // `${student}|${concept}|${misconception}` -> agoSecs
+  for (const [mc] of CLASS_WIDE.filter(([id]) => id !== MAIN_MISCONCEPTION)) {
+    const concept = mcById.get(mc).concept;
+    let each = 0;
+    sims.forEach(({ attempts }, i) => {
+      if (i === 0 || each >= 2 || fixes.size >= 4 || [...fixes.keys()].some((k) => k.startsWith(`${i}|`))) return;
+      const at = fixedAt(attempts, concept, mc);
+      if (at !== null) { fixes.set(`${i}|${concept}|${mc}`, at); each++; }
+    });
+  }
 
   students.forEach((s, i) => {
     const goalId = uid(`goal:${s.key}`);
@@ -323,16 +402,24 @@ function demoSql() {
     chapterTopics.forEach((t) => goalTopics.push(`('${goalId}', '${t}')`));
     members.push(`('${groupId}', '${s.id}', 'member', now() - interval '${10 + (i % 2)} days')`);
 
-    const { attempts, holds } = simulate(i);
+    const { attempts, holds } = sims[i];
     const oldestFirst = [...attempts].sort((a, b) => b.agoSecs - a.agoSecs);
     for (const a of oldestFirst) {
       attemptRows.push(`('${a.id}', '${s.id}', '${questionId(a.q)}', ${a.correct}, '{"selectedOptions":[${a.chosen}]}', ${a.seconds}, '${a.source}', ${ago(a.agoSecs)}, ${lit(a.reasoning)}, '${a.verdict}')`);
+    }
+    // The Knowledge Check the demo student sat, as the assessment flow stores it (006).
+    if (i === 0) {
+      const paper = oldestFirst.filter((a) => a.source === "assessment");
+      const assessmentId = uid(`assessment:${s.key}`);
+      assessments.push(`('${assessmentId}', '${s.id}', '${goalId}', 'diagnostic', 'completed', ${paper.length}, ${paper.filter((a) => a.correct).length}, ${ago(paper[0].agoSecs + 120)}, ${ago(paper.at(-1).agoSecs)})`);
+      paper.forEach((a, n) => assessmentQuestions.push(`('${assessmentId}', '${questionId(a.q)}', ${n + 1}, '${a.id}')`));
     }
 
     for (const c of CONCEPTS) {
       const mine = oldestFirst.filter((a) => a.q.concept === c.id);
       if (!mine.length) continue;
       const m = mastery([...mine].reverse());
+      scores.push(m.score);
       masteryRows.push(`('${s.id}', '${topicId(c.id)}', ${m.score}, ${m.total}, ${m.correct}, ${m.recentN}, ${m.recentCorrect}, ${m.buckets.easy.join(", ")}, ${m.buckets.medium.join(", ")}, ${m.buckets.hard.join(", ")}, ${ago(m.lastAttemptAgo)}, ${m.lastCorrectAgo === null ? "null" : ago(m.lastCorrectAgo)}, ${m.streak})`);
       const r = revision(mine);
       revisionRows.push(`('${s.id}', '${topicId(c.id)}', ${daysAgo(r.day, r.interval)}, ${r.interval}, ${r.ease.toFixed(2)}, ${r.reviews}, ${r.lapses}, ${daysAgo(r.day)}, ${r.acc === null ? "null" : r.acc})`);
@@ -340,35 +427,39 @@ function demoSql() {
       const byLabel = new Map();
       for (const a of mine.filter((x) => x.mc)) byLabel.set(a.mc, [...(byLabel.get(a.mc) ?? []), a]);
       for (const [mc, list] of byLabel) {
-        mistakeRows.push(`('${s.id}', '${topicId(c.id)}', ${lit(mcById.get(mc).label)}, ${textArr(list.map((a) => a.id).slice(-20))}::uuid[], ${list.length}, ${ago(list[0].agoSecs)}, ${ago(list[list.length - 1].agoSecs)})`);
+        const fixedAgo = fixes.get(`${i}|${c.id}|${mc}`);
+        if (fixedAgo) fixed.push(`${s.name} (${mcById.get(mc).label})`);
+        mistakeRows.push(`('${s.id}', '${topicId(c.id)}', ${lit(mcById.get(mc).label)}, ${textArr(list.map((a) => a.id).slice(-20))}::uuid[], ${list.length}, ${ago(list[0].agoSecs)}, ${ago(list[list.length - 1].agoSecs)}, ${fixedAgo ? ago(fixedAgo) : "null"}, ${fixedAgo ? 2 : 0})`);
       }
     }
 
-    const days = [...new Set(attempts.map((a) => Math.floor(a.agoSecs / DAY)))].sort((a, b) => a - b);
-    let run = 0, longest = 0;
-    for (let d = 0, prev = null; d < days.length; d++) {
-      run = prev !== null && days[d] === prev + 1 ? run + 1 : 1;
-      longest = Math.max(longest, run);
-      prev = days[d];
-    }
-    let current = 0;
-    for (let d = days[0] <= 1 ? days[0] : -1; d >= 0 && days.includes(d); d++) current++;
-    const correct = attempts.filter((a) => a.correct).length;
-    profileUpdates.push(`('${s.id}', ${attempts.length}, ${correct}, ${daysAgo(days[0])}, ${current}, ${Math.max(longest, current)})`);
     report.push(`--   ${s.name.padEnd(16)} ${String(attempts.length).padStart(2)} answers; holds ${holds.join(", ") || "-"}`);
   });
+
+  // The story the demo has to tell: varied mastery (no one score on more than ~8% of topics), the
+  // main misconception across most of the class, a few fixed, and targeted questions still
+  // waiting for the demo student.
+  const commonest = Math.max(...Object.values(Object.groupBy(scores, Math.round)).map((xs) => xs.length));
+  const mainReach = sims.filter(({ attempts }) => attempts.some((a) => a.mc === MAIN_MISCONCEPTION)).length;
+  const targeted = CONCEPTS.filter((c) => aimable(sims[0].attempts, c.id)).map((c) => c.id);
+  console.log(`commonest score on ${commonest}/${scores.length} topics; main misconception ${mainReach}/${students.length}; ${fixes.size} fixed; ${NAMES[0]} has targeted questions on ${targeted.join(", ") || "nothing"}`);
+  if (commonest > scores.length * 0.08 || mainReach < 19 || mainReach > 23 || fixes.size < 3 || !targeted.length) {
+    throw new Error("the demo class no longer tells its story; retune simulate()");
+  }
 
   return `-- demo_class.sql — GENERATED by gen_class10.mjs; edit the generator and regenerate.
 --
 -- A demo class for the teacher dashboard: "Class 10-B · Physics" (study group with is_class), owned
 -- by a demo teacher, with ${students.length} demo students on the Class 10 Physics syllabus. Every student has
 -- a diagnostic paper plus practice over the last ~10 days: attempts with reasoning and its verdict,
--- per-topic concept_mastery (the app's own formula), mistake_patterns and revision_schedule.
--- Class-wide story: current gets "used up" (~55%), parallel adds resistance (~45%), light bends away
--- in a denser medium (~35%), higher wattage means higher resistance (~30%), myopia needs a convex
--- lens (~25%); electricity is the weakest chapter.
+-- per-topic concept_mastery (the app's own formula), mistake_patterns (a few since fixed: see
+-- fixedAt), revision_schedule and profile habits; ${NAMES[0]}'s paper is also stored as a
+-- finished Knowledge Check. Class-wide story: current gets "used up" (~75%), parallel adds
+-- resistance (~45%), light bends away in a denser medium (~35%), higher wattage means higher
+-- resistance (~30%), myopia needs a convex lens (~25%); electricity is the weakest chapter.
+-- Misconceptions fixed: ${fixed.join("; ") || "none"}.
 --
--- Needs: migrations through 034, then class10_physics.sql.
+-- Needs: migrations through 036, then class10_physics.sql.
 -- Idempotent: it first deletes only its own rows (this group and these demo accounts, which
 -- cascades to their data), then inserts them again. Nothing else is touched.
 --
@@ -418,6 +509,14 @@ insert into public.question_attempts
 values
     ${attemptRows.join(",\n    ")};
 
+insert into public.assessments (id, user_id, goal_id, kind, status, question_count, correct_count, started_at, completed_at)
+values
+    ${assessments.join(",\n    ")};
+
+insert into public.assessment_questions (assessment_id, question_id, position, attempt_id)
+values
+    ${assessmentQuestions.join(",\n    ")};
+
 insert into public.concept_mastery
     (user_id, topic_id, mastery_score, total_attempts, correct_attempts, recent_attempts, recent_correct,
      easy_attempts, easy_correct, medium_attempts, medium_correct, hard_attempts, hard_correct,
@@ -426,7 +525,7 @@ values
     ${masteryRows.join(",\n    ")};
 
 insert into public.mistake_patterns
-    (user_id, topic_id, misconception, evidence_attempt_ids, occurrences, first_seen_at, last_seen_at)
+    (user_id, topic_id, misconception, evidence_attempt_ids, occurrences, first_seen_at, last_seen_at, resolved_at, clean_streak)
 values
     ${mistakeRows.join(",\n    ")};
 
@@ -435,13 +534,35 @@ insert into public.revision_schedule
 values
     ${revisionRows.join(",\n    ")};
 
+-- The profile's counters and habits from the attempts above, as the app keeps them, worked out
+-- when this runs (the times are relative to it): streaks over calendar days in the learner's time
+-- zone, 0 when the last one was before yesterday (learner.NextHabits); days studied as UTC practice
+-- days over the days since the first, today in their time zone (learner.ConsistencyPercent).
+with days as (
+    select distinct a.user_id, p.timezone, (a.attempted_at at time zone p.timezone)::date as day
+    from public.question_attempts a join public.profiles p on p.id = a.user_id
+    where a.user_id in (${students.map((p) => `'${p.id}'`).join(", ")})
+), runs as (
+    select user_id, timezone, max(day) as run_end, count(*)::int as len
+    from (select *, day - (row_number() over (partition by user_id order by day))::int as island from days) d
+    group by user_id, timezone, island
+), habits as (
+    select user_id, max(run_end) as last_day, max(len) as longest,
+           (array_agg(len order by run_end desc))[1] as latest, (now() at time zone min(timezone))::date as today
+    from runs group by user_id
+), totals as (
+    select user_id, count(*)::int as total, (count(*) filter (where is_correct))::int as correct,
+           count(distinct (attempted_at at time zone 'UTC')::date) as utc_days,
+           min((attempted_at at time zone 'UTC')::date) as first_utc_day
+    from public.question_attempts where user_id in (select user_id from habits) group by user_id
+)
 update public.learner_profiles lp
-set total_attempts = v.total, correct_attempts = v.correct, last_activity_date = v.last_day,
-    current_streak_days = v.cur, longest_streak_days = v.longest
-from (values
-    ${profileUpdates.join(",\n    ")}
-) as v(user_id, total, correct, last_day, cur, longest)
-where lp.user_id = v.user_id::uuid;
+set total_attempts = t.total, correct_attempts = t.correct, last_activity_date = h.last_day,
+    current_streak_days = case when h.last_day >= h.today - 1 then h.latest else 0 end,
+    longest_streak_days = h.longest,
+    consistency_score = round(least(100, t.utc_days * 100.0 / (h.today - t.first_utc_day + 1)), 2)
+from habits h join totals t using (user_id)
+where lp.user_id = h.user_id;
 
 commit;
 `;
