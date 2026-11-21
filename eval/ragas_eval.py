@@ -1,5 +1,5 @@
 """
-RAGAS scores for the source-grounded tutor.
+RAGAS score for the source-grounded tutor.
 
 Reads eval/results/grounding.jsonl, written by `go run ./cmd/evalgrounding` in server/, which ran
 the tutor's real retrieval and answering on the team-built test set (eval/testset.json), and
