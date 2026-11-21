@@ -70,7 +70,7 @@ The learner's id comes only from the token.
 | GET | `/learner/confidence` | | Self-ratings |
 | PUT | `/learner/confidence` | | Save self-ratings |
 | GET | `/study-plan/current` | | Current plan (may re-plan) |
-| POST | `/study-plan/generate` | 20 | Rebuild plan |
+| POST | `/study-plan/generate` | 60 | Rebuild plan |
 | GET | `/readiness` | | Exam readiness |
 | GET | `/revision/due` | | Topics due for review |
 | GET | `/revision/flashcards` | | Flashcard decks for due and weak topics (AI on first use) |
@@ -82,13 +82,13 @@ The learner's id comes only from the token.
 | POST | `/groups/{id}/leave` | | Leave |
 | POST | `/attempts` | | Answer one question |
 | GET | `/recommendations/next` | | Next-best action and its questions |
-| POST | `/questions/generate` | 10 | Generate and verify questions (AI) |
+| POST | `/questions/generate` | 30 | Generate and verify questions (AI) |
 | GET | `/assessments/diagnostic` | | Open diagnostic, if any |
-| POST | `/assessments/diagnostic` | 10 | Start a diagnostic |
+| POST | `/assessments/diagnostic` | 30 | Start a diagnostic |
 | GET | `/assessments/{id}` | | One assessment |
 | POST | `/assessments/{id}/submit` | | Submit a diagnostic |
 | GET | `/mock-tests` | | History, open test, topics |
-| POST | `/mock-tests` | 20 | Build a mock test |
+| POST | `/mock-tests` | 60 | Build a mock test |
 | GET | `/mock-tests/{id}` | | One test (with review once submitted) |
 | POST | `/mock-tests/{id}/submit` | | Submit a test |
 | GET | `/misconceptions` | | Misconceptions by topic |
@@ -102,7 +102,7 @@ The learner's id comes only from the token.
 | DELETE | `/sources/{id}` | | Delete a source |
 | GET | `/ai/conversations` | | Tutor threads |
 | GET | `/ai/conversations/{id}` | | One thread |
-| POST | `/ai/tutor` | 40 | Ask the tutor (AI) |
+| POST | `/ai/tutor` | 120 | Ask the tutor (AI) |
 | POST | `/ai/checks/{id}/answer` | | Answer the tutor's quick check |
 
 ## Health
@@ -221,7 +221,7 @@ Returns 404 `FLASHCARD_NOT_FOUND`.
 | POST `/groups` | `{name: 2–60}` | 201 `{group}` | 409 `TOO_MANY_GROUPS` (limit 10), 409 `GROUP_FULL` |
 | POST `/groups/join` | `{inviteCode}`, 6 characters after normalising | `{group}`. Joining twice is not an error. | 400 `INVALID_CODE`, 404 `GROUP_NOT_FOUND`, 409 `TOO_MANY_GROUPS`, 409 `GROUP_FULL` |
 | GET `/groups/{id}` | — | `{group: {…GroupSummary, comparison{members[{userId, displayName, questionsAnswered, currentStreakDays, topicsMastered, isYou, rank}], yourRank, memberCount, totals{questionsAnswered, topicsMastered}, topStreak{displayName, days}}}}` | 404 `GROUP_NOT_FOUND` (also when not a member) |
-| POST `/groups/{id}/leave` | — | `{left: true}` | 404 `GROUP_NOT_FOUND` |
+| POST `/groups/{id}/leave` | — | `{left: true}` | 404 `GROUP_NOT_FOUND`, 403 `CLASS_OWNER_CANNOT_LEAVE` (a class's teacher) |
 
 ## Practice and assessment
 

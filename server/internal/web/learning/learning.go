@@ -59,7 +59,7 @@ func routes(d *app.Deps) []route {
 
 		{"GET /study-plan/current", h.getCurrentPlan, nil},
 		{"POST /study-plan/generate", h.generatePlan,
-			limit("plan-generate", 20, "You have rebuilt your plan a lot in the last hour.")},
+			limit("plan-generate", 60, "You have rebuilt your plan a lot in the last hour.")},
 
 		{"GET /readiness", h.getReadiness, nil},
 		{"GET /revision/due", h.getDueRevisions, nil},
@@ -74,7 +74,7 @@ func routes(d *app.Deps) []route {
 		{"GET /classes", h.listMyClasses, nil},
 		{"GET /groups/{id}/insights", h.getClassInsights, nil},
 		{"POST /groups/{id}/insights/plan", h.generateClassPlan,
-			limit("class-plan", 20, "You have generated a lot of plans in the last hour.")},
+			limit("class-plan", 60, "You have generated a lot of plans in the last hour.")},
 	}
 }
 

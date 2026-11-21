@@ -258,7 +258,7 @@ the most time."
 2. **Rate limit:** no rebuild within 20 hours of the current plan's creation.
 3. **Missed sessions:** 3 or more missed in the last 7 days → rebuild with reason `missed_sessions`.
 4. **Poor performance:** 2 or more topics with at least 4 recent attempts and recent accuracy under 35 % → rebuild with reason `poor_performance`.
-5. `POST /study-plan/generate` rebuilds on request (reason `requested`, limited to 20 an hour).
+5. `POST /study-plan/generate` rebuilds on request (reason `requested`, limited to 60 an hour).
 
 Plans are versioned. A rebuild supersedes the old plan, and the learner is told why.
 

@@ -280,7 +280,11 @@ export default function StudyGroups() {
                                     <div className="big">
                                         {detail.comparison.totals.topicsMastered}
                                     </div>
-                                    <div className="faint">topics mastered</div>
+                                    <div className="faint">
+                                        {detail.comparison.totals.topicsMastered === 1
+                                            ? 'topic mastered'
+                                            : 'topics mastered'}
+                                    </div>
                                 </div>
                             </div>
                             {detail.comparison.topStreak && (
@@ -324,9 +328,16 @@ export default function StudyGroups() {
                             </p>
                         )}
 
-                        <button type="button" disabled={busy} onClick={() => void leave(detail.id)}>
-                            Leave this group
-                        </button>
+                        {/* A teacher cannot leave their own class: its dashboard needs them. */}
+                        {!(detail.isClass && detail.role === 'owner') && (
+                            <button
+                                type="button"
+                                disabled={busy}
+                                onClick={() => void leave(detail.id)}
+                            >
+                                Leave this group
+                            </button>
+                        )}
                     </div>
                 )}
 

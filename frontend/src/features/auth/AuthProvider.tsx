@@ -222,7 +222,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             },
 
             async signOut() {
-                await supabase.auth.signOut();
+                await supabase.auth.signOut({ scope: 'local' });
             },
         }),
         [session, loading, recovering]

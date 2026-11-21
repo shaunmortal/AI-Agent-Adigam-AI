@@ -89,8 +89,9 @@ func (s *svc) routes() []route {
 	// a whole course in one sitting. One quota across the three ways in, as in the TS.
 	ingest := ratelimit.Limit(rdb, "sources-ingest", 30, time.Hour, "You have added a lot of material in the last hour.")
 	organize := ratelimit.Limit(rdb, "sources-organize", 10, time.Hour, "You have rebuilt the course map a lot in the last hour.")
-	// Every tutor call spends money: 40 an hour stops a loop in client code, not a learner.
-	tutor := ratelimit.Limit(rdb, "ai-tutor", 40, time.Hour, "You have asked a lot of questions in the last hour.")
+	// Every tutor call spends money: 120 an hour stops a loop in client code, not a learner, and
+	// leaves room for several judges sharing one demo account.
+	tutor := ratelimit.Limit(rdb, "ai-tutor", 120, time.Hour, "You have asked a lot of questions in the last hour.")
 	type mw = func(http.Handler) http.Handler
 	return []route{
 		{"GET /sources", s.list, nil},

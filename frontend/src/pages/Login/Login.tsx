@@ -1,7 +1,8 @@
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 import { Icon, Logo } from '@/components/Icon/Icon';
 import { ThemeToggle } from '@/components/ThemeToggle/ThemeToggle';
 import { type OAuthProvider, useAuth } from '@/features/auth/AuthProvider';
+import { wakeApi } from '@/lib/api';
 import { setRemember } from '@/lib/supabase';
 
 /**
@@ -68,6 +69,9 @@ export default function Login() {
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [notice, setNotice] = useState<string | null>(null);
+
+    // The API sleeps on the free plan; start it waking while this screen is read.
+    useEffect(wakeApi, []);
 
     function switchMode(next: Mode) {
         setMode(next);

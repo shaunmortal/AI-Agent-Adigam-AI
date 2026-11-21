@@ -78,15 +78,17 @@ is down they fail open, so studying is never blocked.
 
 | Quota | Limit / hour | Routes |
 |---|---|---|
-| `ai-tutor` | 40 | `POST /ai/tutor` |
-| `questions-generate` | 10 | `POST /questions/generate` |
+| `ai-tutor` | 120 | `POST /ai/tutor` |
+| `questions-generate` | 30 | `POST /questions/generate` |
 | `sources-ingest` | 30 | `POST /sources/upload`, `/sources/video`, `/sources/video/captions` |
 | `sources-organize` | 10 | `POST /sources/organize` |
 | `curricula-resolve` | 20 | `POST /curricula/resolve` |
-| `plan-generate` | 20 | `POST /study-plan/generate` |
-| `assessments-start` | 10 | `POST /assessments/diagnostic` |
-| `mock-tests-generate` | 20 | `POST /mock-tests` |
+| `plan-generate` | 60 | `POST /study-plan/generate` |
+| `assessments-start` | 30 | `POST /assessments/diagnostic` |
+| `mock-tests-generate` | 60 | `POST /mock-tests` |
 | `groups-join` | 30 | `POST /groups/join` (guessing invite codes) |
+| `class-plan` | 60 | `POST /groups/{id}/insights/plan` (re-teach plan, class owner only) |
+| `reasoning-check` | 180 | reasoning written with an answer; past it the answer is marked as if none were given |
 
 **Request limits:**
 

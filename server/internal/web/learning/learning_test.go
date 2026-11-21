@@ -297,5 +297,11 @@ func TestLearning(t *testing.T) {
 		e.expect(r, 200, "", "")
 		listed := r.Data["groups"].([]any)
 		check(t, len(listed) == 1 && listed[0].(map[string]any)["isClass"] == true, "groups %v", listed)
+
+		// The teacher cannot leave their class (its dashboard needs them); a student can, and a
+		// plain group's owner still can.
+		e.expect(e.call(u1, "POST", "/groups/"+class["id"].(string)+"/leave", `{}`), 403, "CLASS_OWNER_CANNOT_LEAVE", "")
+		e.expect(e.call(u2, "POST", "/groups/"+class["id"].(string)+"/leave", `{}`), 200, "", "")
+		e.expect(e.call(u1, "POST", "/groups/"+id+"/leave", `{}`), 200, "", "")
 	})
 }

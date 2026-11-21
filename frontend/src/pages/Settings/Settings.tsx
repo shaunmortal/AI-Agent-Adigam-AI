@@ -242,7 +242,10 @@ export default function Settings() {
                     </div>
                 )}
 
-                <button type="button" onClick={() => void supabase.auth.signOut()}>
+                <button
+                    type="button"
+                    onClick={() => void supabase.auth.signOut({ scope: 'local' })}
+                >
                     Sign out
                 </button>
             </div>

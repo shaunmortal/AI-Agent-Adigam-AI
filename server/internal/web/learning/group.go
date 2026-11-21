@@ -255,15 +255,31 @@ func (h handlers) getGroup(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-// POST /groups/{id}/leave — the last member out leaves an empty group, which is harmless.
+var errClassOwnerCannotLeave = httpx.E(http.StatusForbidden, "CLASS_OWNER_CANNOT_LEAVE",
+	"You run this class, so you cannot leave it: its dashboard needs its teacher.")
+
+// POST /groups/{id}/leave — the last member out leaves an empty group, which is harmless. A
+// class's owner cannot leave: the class dashboard is gated on the owner being a member.
 func (h handlers) leaveGroup(w http.ResponseWriter, r *http.Request) error {
 	id, err := groupID(r)
 	if err != nil {
 		return err
 	}
 	ctx, userID, g := r.Context(), auth.UserID(r), store.NewGroups(h.d.DB.Admin)
-	if _, err := assertMember(ctx, g, userID, id); err != nil {
+	group, err := assertMember(ctx, g, userID, id)
+	if err != nil {
 		return err
+	}
+	if group.IsClass {
+		members, err := g.FindMemberIDs(ctx, id)
+		if err != nil {
+			return err
+		}
+		for _, m := range members {
+			if m.UserID == userID && m.Role == "owner" {
+				return errClassOwnerCannotLeave
+			}
+		}
 	}
 	if err := g.RemoveMember(ctx, id, userID); err != nil {
 		return err

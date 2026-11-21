@@ -150,13 +150,21 @@ async function request<T>(
          * sign-out to report a different error would only delay the message.
          */
         if (response.status === 401) {
-            void supabase.auth.signOut();
+            void supabase.auth.signOut({ scope: 'local' });
         }
 
         throw new ApiError(response.status, body.error.code, body.error.message);
     }
 
     return body.data;
+}
+
+/**
+ * Wakes the free host, which sleeps when idle, while somebody reads the login screen. A warm-up,
+ * not a feature: fire-and-forget, and a failure is nobody's business.
+ */
+export function wakeApi(): void {
+    fetch(`${BASE_URL}/health`).catch(() => undefined);
 }
 
 export const api = {

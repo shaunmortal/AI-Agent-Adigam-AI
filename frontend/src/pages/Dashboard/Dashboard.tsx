@@ -12,6 +12,7 @@ import type {
     LearnerProfile,
     LearnerSummary,
     NextSession,
+    OwnedClass,
 } from '@/types/api';
 
 /**
@@ -48,7 +49,15 @@ export default function Dashboard() {
         api.get<{ profile: LearnerProfile }>('/learner/profile')
     );
 
+    // A teacher's way to their class. Empty for students, so nothing changes for them.
+    const classes = useApi<{ classes: OwnedClass[] }>(() =>
+        api.get<{ classes: OwnedClass[] }>('/classes')
+    );
+
     const name = profile.data?.profile.displayName?.trim();
+    // ponytail: newest class only; the rest are under Groups, list them here if teachers run several.
+    const myClass = classes.data?.classes[0];
+    const students = myClass ? Math.max(0, myClass.memberCount - 1) : 0;
 
     return (
         <div className="stack">
@@ -78,6 +87,21 @@ export default function Dashboard() {
                     <span className="hero-mark" aria-hidden="true">
                         <Icon name="grid" size={40} />
                     </span>
+                </div>
+            )}
+
+            {myClass && (
+                <div className="card">
+                    <div className="spread" style={{ flexWrap: 'wrap', gap: 12 }}>
+                        <span style={{ minWidth: 0 }}>
+                            <strong>Your class: {myClass.name}</strong>
+                            {' · '}
+                            {students} {students === 1 ? 'student' : 'students'}
+                        </span>
+                        <Link to={`/classes/${myClass.id}`} className="primary btn-link">
+                            Open class dashboard
+                        </Link>
+                    </div>
                 </div>
             )}
 
