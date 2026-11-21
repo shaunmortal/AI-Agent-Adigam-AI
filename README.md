@@ -23,6 +23,19 @@ Problem Statement 02 — Adaptive exam-prep tutor with a learner model
 
 </div>
 
+<table>
+<tr>
+<td width="33%" align="center"><img src="docs/screenshots/05-feedback-misconception-and-reasoning.png" alt="Feedback naming the misconception" /><br/><sub><b>1 · Names the wrong idea from the reasoning</b></sub></td>
+<td width="33%" align="center"><img src="docs/screenshots/06-targeted-practice.png" alt="Targeted practice banner" /><br/><sub><b>2 · Next question aims at that idea</b></sub></td>
+<td width="33%" align="center"><img src="docs/screenshots/03-concept-map.png" alt="Concept map coloured by mastery" /><br/><sub><b>3 · Concept map, coloured by mastery</b></sub></td>
+</tr>
+<tr>
+<td width="33%" align="center"><img src="docs/screenshots/07-teacher-class-dashboard.png" alt="Teacher class dashboard" /><br/><sub><b>4 · Teacher: class-wide gaps and misconceptions</b></sub></td>
+<td width="33%" align="center"><img src="docs/screenshots/08-teacher-student-topic-heatmap.png" alt="Student by topic heatmap" /><br/><sub><b>5 · Every student × every topic</b></sub></td>
+<td width="33%" align="center"><img src="docs/screenshots/09-teacher-reteach-plan.png" alt="AI re-teach plan" /><br/><sub><b>6 · AI re-teach plan for the next lesson</b></sub></td>
+</tr>
+</table>
+
 ---
 
 ## Demo logins
@@ -58,6 +71,25 @@ signs in with the same password, e.g. `ananya.iyer@adigam.example`.
 5. **Tutor.** Open **Ask Adigam** and ask a study question, e.g. *"Why is the current the same before and
    after a bulb in a series circuit?"*. Then ask something off-topic (*"Who won the IPL match today?"*). It
    answers the first and politely refuses the second.
+
+---
+
+## More screens
+
+<table>
+<tr>
+<td width="50%"><img src="docs/screenshots/01-sign-in.png" alt="Sign-in page" /><br/><sub><b>Sign in.</b> "Find what you don't know. Master it for real."</sub></td>
+<td width="50%"><img src="docs/screenshots/02-student-dashboard.png" alt="Student dashboard" /><br/><sub><b>Student dashboard.</b> "Do this next" with its reason and current mastery, a note that it includes a question aimed at his misconception, the exam countdown and the activity heatmap.</sub></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/screenshots/04-practice-question-with-reasoning.png" alt="Practice question with reasoning" /><br/><sub><b>Practice with reasoning.</b> Option B chosen, with the reason: "The lamp uses up some of the current, so less is left for the resistor."</sub></td>
+<td width="50%"><img src="docs/screenshots/10-ask-adigam-study-and-off-topic.png" alt="Ask Adigam answering a study question and refusing an off-topic one" /><br/><sub><b>Ask Adigam.</b> Answers a series-circuit question under a general-knowledge label, then refuses "Who won the IPL match today?" with "I can only help with your studies…"</sub></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/screenshots/11-revision-spaced-repetition.png" alt="Revision due list" /><br/><sub><b>Revision.</b> Topics due for revision with chapter and days overdue, plus "Practise these".</sub></td>
+<td width="50%"><img src="docs/screenshots/12-teacher-class-dashboard-dark.png" alt="Teacher dashboard in dark mode" /><br/><sub><b>Dark mode.</b> The class dashboard with KPIs, gaps and misconceptions.</sub></td>
+</tr>
+</table>
 
 ---
 
@@ -139,36 +171,6 @@ flowchart LR
 | [`server/internal/store`](server/internal/store), `shed`, `ratelimit`, `jobs` | SQL, overload shedding (503 + `Retry-After` past 256 requests in flight), per-learner quotas, Redis Streams ingestion queue |
 | [`database/`](database) | Migrations `000` to `035`, seeds, SQL tests |
 
----
-
-## Screenshots
-
-<table>
-<tr>
-<td width="50%"><img src="docs/screenshots/01-sign-in.png" alt="Sign-in page" /><br/><sub><b>Sign in.</b> "Find what you don't know. Master it for real."</sub></td>
-<td width="50%"><img src="docs/screenshots/02-student-dashboard.png" alt="Student dashboard" /><br/><sub><b>Student dashboard.</b> "Do this next" with its reason and current mastery, a note that it includes a question aimed at his misconception, the exam countdown and the activity heatmap.</sub></td>
-</tr>
-<tr>
-<td><img src="docs/screenshots/03-concept-map.png" alt="Concept map" /><br/><sub><b>Concept map.</b> Prerequisite graph across chapters 9 to 12, each topic coloured by mastery: strong, getting there, weak or not started.</sub></td>
-<td><img src="docs/screenshots/04-practice-question-with-reasoning.png" alt="Practice question with reasoning" /><br/><sub><b>Practice with reasoning.</b> Option B chosen, with the reason: "The lamp uses up some of the current, so less is left for the resistor."</sub></td>
-</tr>
-<tr>
-<td><img src="docs/screenshots/05-feedback-misconception-and-reasoning.png" alt="Feedback naming the misconception" /><br/><sub><b>Feedback.</b> Correct option in green, chosen in red, "Likely misconception: Current gets used up by components", a reply to the reasoning (in Hinglish in this capture), the explanation and mastery 41 → 34.</sub></td>
-<td><img src="docs/screenshots/06-targeted-practice.png" alt="Targeted practice banner" /><br/><sub><b>Targeted practice.</b> "Aimed at a misconception you showed earlier: Current gets used up by components. Let's see if it still holds."</sub></td>
-</tr>
-<tr>
-<td><img src="docs/screenshots/07-teacher-class-dashboard.png" alt="Teacher class dashboard" /><br/><sub><b>Teacher class dashboard.</b> 24 students, 2,327 answers, 21 active today; gaps ranked by weakness and how many later topics each blocks; misconceptions with students' own quotes.</sub></td>
-<td><img src="docs/screenshots/08-teacher-student-topic-heatmap.png" alt="Student by topic mastery heatmap" /><br/><sub><b>Heatmap.</b> 24 students × 28 topics, weakest students first, with each student's average.</sub></td>
-</tr>
-<tr>
-<td><img src="docs/screenshots/09-teacher-reteach-plan.png" alt="AI re-teach plan" /><br/><sub><b>Re-teach plan.</b> A headline, a timed 4-step lesson with "Fixes:" links to misconceptions, and three named student groups.</sub></td>
-<td><img src="docs/screenshots/10-ask-adigam-study-and-off-topic.png" alt="Ask Adigam answering a study question and refusing an off-topic one" /><br/><sub><b>Ask Adigam.</b> Answers a series-circuit question under a general-knowledge label, then refuses "Who won the IPL match today?" with "I can only help with your studies…"</sub></td>
-</tr>
-<tr>
-<td><img src="docs/screenshots/11-revision-spaced-repetition.png" alt="Revision due list" /><br/><sub><b>Revision.</b> Topics due for revision with chapter and days overdue, plus "Practise these".</sub></td>
-<td><img src="docs/screenshots/12-teacher-class-dashboard-dark.png" alt="Teacher dashboard in dark mode" /><br/><sub><b>Dark mode.</b> The class dashboard with KPIs, gaps and misconceptions.</sub></td>
-</tr>
-</table>
 
 ---
 
