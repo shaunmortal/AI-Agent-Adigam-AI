@@ -305,3 +305,21 @@ func TestLearning(t *testing.T) {
 		e.expect(e.call(u1, "POST", "/groups/"+id+"/leave", `{}`), 200, "", "")
 	})
 }
+
+func TestReteachGroupsListEachStudentOnce(t *testing.T) {
+	var plan reteachPlan
+	if err := json.Unmarshal([]byte(`{"groups":[
+		{"title":"A","students":["Diya Patel","Dev Malhotra"]},
+		{"title":"B","students":["dev malhotra ","Riya Banerjee","Diya Patel"]},
+		{"title":"C","students":["Riya Banerjee"]}]}`), &plan); err != nil {
+		t.Fatal(err)
+	}
+	got := studentsOnce(plan)
+	if len(got.Groups) != 2 || strings.Join(got.Groups[0].Students, ",") != "Diya Patel,Dev Malhotra" ||
+		strings.Join(got.Groups[1].Students, ",") != "Riya Banerjee" {
+		t.Fatalf("groups %+v", got.Groups)
+	}
+	if len(plan.Groups) != 3 || len(plan.Groups[1].Students) != 3 {
+		t.Fatalf("the model's plan was changed in place: %+v", plan.Groups)
+	}
+}

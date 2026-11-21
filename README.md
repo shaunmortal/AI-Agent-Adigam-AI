@@ -185,7 +185,7 @@ flowchart LR
 
 | Suite | Size | Runs |
 |---|---|---|
-| Go (`go test -race ./...`) | 276 test functions in 52 files across 21 packages: mastery, SM-2, Elo calibration, selection, class gaps, prompts, scope gate, rate limits, shedding, handlers | CI on every push and pull request to `main` |
+| Go (`go test -race ./...`) | 277 test functions in 52 files across 21 packages: mastery, SM-2, Elo calibration, selection, class gaps, prompts, scope gate, rate limits, shedding, handlers | CI on every push and pull request to `main` |
 | Frontend (Vitest) | 3 files, 21 cases | CI, together with lint, Prettier check, type check and production build |
 | SQL (`database/tests/`) | 8 files on schema, RLS and grants | By hand against a database; they roll back |
 

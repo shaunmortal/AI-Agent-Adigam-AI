@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/shaunmortal/AI-tutor/server/internal/ai"
@@ -215,6 +216,28 @@ type reteachPlan struct {
 	} `json:"groups"`
 }
 
+// studentsOnce keeps each student in the first group the model put them in, so a teacher never
+// gets one student sent to two tables; a group left empty is dropped.
+func studentsOnce(plan reteachPlan) reteachPlan {
+	out := plan
+	out.Groups = plan.Groups[:0:0]
+	seen := map[string]bool{}
+	for _, grp := range plan.Groups {
+		kept := []string{}
+		for _, s := range grp.Students {
+			if k := strings.ToLower(strings.TrimSpace(s)); k != "" && !seen[k] {
+				seen[k] = true
+				kept = append(kept, s)
+			}
+		}
+		if len(kept) > 0 {
+			grp.Students = kept
+			out.Groups = append(out.Groups, grp)
+		}
+	}
+	return out
+}
+
 // POST /groups/{id}/insights/plan — a re-teach plan from the class's gaps. Cached per class for
 // two minutes, so a teacher pressing the button twice does not pay for two plans.
 func (h handlers) generateClassPlan(w http.ResponseWriter, r *http.Request) error {
@@ -251,6 +274,7 @@ func (h handlers) generateClassPlan(w http.ResponseWriter, r *http.Request) erro
 		Schema: ai.ReteachPlanSchema, Quality: ai.Standard, MaxTokens: 4000}, &plan); err != nil {
 		return err
 	}
+	plan = studentsOnce(plan)
 	if b, err := json.Marshal(plan); err == nil {
 		if err := h.d.Redis.Set(ctx, key, b, planCacheTTL).Err(); err != nil {
 			slog.Warn("class plan cache unavailable", "err", err)
