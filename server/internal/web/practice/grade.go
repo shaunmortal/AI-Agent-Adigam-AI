@@ -209,7 +209,11 @@ func recordAnswers(ctx context.Context, q store.Q, userID, source string, answer
 			return nil, nil, err
 		}
 		inserted[i] = at
-		calibrate(ctx, q, userID, at.TopicID, a.questionID, a.IsCorrect)
+		// Only a learner's first try measures the question: a repeat follows a revealed answer,
+		// so one learner answering again could otherwise re-level it for everyone.
+		if at.AttemptNumber == 1 {
+			calibrate(ctx, q, userID, at.TopicID, a.questionID, a.IsCorrect)
+		}
 		if !slices.Contains(topics, at.TopicID) {
 			topics = append(topics, at.TopicID)
 		}

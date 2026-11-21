@@ -2,7 +2,8 @@ package practice
 
 // Handler tests against the live database in DATABASE_URL (or server/.env). Handlers commit,
 // so every throwaway auth.users row is deleted at the end (everything else cascades from it)
-// and the test checks nothing is left. The seeded curriculum and questions are only read.
+// and the test checks nothing is left. The seeded curriculum and questions are only read, except
+// the questions' measured ratings, which answers move and setup puts back.
 // Token verification is bypassed by putting the user id in the request context.
 
 import (
@@ -83,7 +84,38 @@ func setup(t *testing.T) *env {
 		 where c.slug = $1 and exists (select 1 from topics l join questions q on q.topic_id = l.id and q.is_verified
 		   and q.question_type = 'mcq' where l.parent_id = s.id)
 		 order by s.sort_order limit 1`, store.DefaultCurriculumSlug).Scan(&e.curriculumID, &e.subjectID))
+	restoreRatings(t, pool, e.subjectID)
 	return e
+}
+
+// restoreRatings puts the subject's question ratings back when the test ends. Answers calibrate
+// the shared questions, and deleting the throwaway users does not undo that, so without this
+// every run would re-level questions real learners are served.
+// ponytail: a real learner's answer to one of these questions during the run is undone too.
+func restoreRatings(t *testing.T, pool *pgxpool.Pool, subjectID string) {
+	t.Helper()
+	var ids []string
+	var ratings []*float64
+	var counts []int
+	rows, err := pool.Query(context.Background(), `select q.id::text, q.rating, q.rating_attempts
+		from questions q join topics l on l.id = q.topic_id where l.parent_id = $1`, subjectID)
+	must(t, err)
+	for rows.Next() {
+		var id string
+		var rating *float64
+		var n int
+		must(t, rows.Scan(&id, &rating, &n))
+		ids, ratings, counts = append(ids, id), append(ratings, rating), append(counts, n)
+	}
+	must(t, rows.Err())
+	t.Cleanup(func() {
+		if _, err := pool.Exec(context.Background(), `update questions q set rating = s.rating, rating_attempts = s.n
+			from unnest($1::uuid[], $2::float8[], $3::int[]) as s(id, rating, n)
+			where q.id = s.id and (q.rating is distinct from s.rating or q.rating_attempts <> s.n)`,
+			ids, ratings, counts); err != nil {
+			t.Errorf("restoring question ratings: %v", err)
+		}
+	})
 }
 
 func must(t *testing.T, err error) {
@@ -243,6 +275,11 @@ func TestSubmitAttempt(t *testing.T) {
 		Scan(&qid, &topicID, &optionCount))
 	right := e.correctOptions(qid)
 	wrong := []int{(right[0] + 1) % optionCount}
+	ratingAttempts := func() (n int) {
+		must(t, e.d.DB.Admin.QueryRow(e.ctx, `select rating_attempts from questions where id = $1`, qid).Scan(&n))
+		return n
+	}
+	measuredBefore := ratingAttempts()
 
 	var first attemptResult
 	e.call("POST", "/attempts", user, map[string]any{"questionId": qid, "selectedOptions": right, "timeTakenSeconds": 30}).
@@ -263,6 +300,10 @@ func TestSubmitAttempt(t *testing.T) {
 	if second.IsCorrect || second.Mastery.Before == nil || second.Mastery.Change == nil || *second.Mastery.Change >= 0 ||
 		second.Mastery.AttemptsOnTopic != 2 {
 		t.Fatalf("second attempt: %+v", second)
+	}
+	// Only a learner's first answer measures the question; the repeat must not move its rating.
+	if n := ratingAttempts() - measuredBefore; n != 1 {
+		t.Fatalf("two answers by one learner counted %d times towards the question's rating, want 1", n)
 	}
 
 	var mastery float64
@@ -333,6 +374,12 @@ func TestRecommendationsNext(t *testing.T) {
 	}
 	if !strings.Contains(res.raw, `"bankNote"`) {
 		t.Fatalf("bankNote missing: %s", res.raw)
+	}
+
+	// No goal means nothing in scope: other learners' syllabi are never recommended.
+	res = e.call("GET", "/recommendations/next", e.newUser(false), nil).expect(t, 200, "")
+	if !strings.Contains(res.raw, `"recommendation":null`) || !strings.Contains(res.raw, "Set a learning goal to get started.") {
+		t.Fatalf("no-goal empty state: %s", res.raw)
 	}
 
 	// A subject outside the goal is an explained empty state, not an error.

@@ -69,6 +69,8 @@ type NewAttempt struct {
 type InsertedAttempt struct {
 	ID      string `db:"id" json:"id"`
 	TopicID string `db:"topic_id" json:"topicId"`
+	// AttemptNumber is this learner's try at the question, counted by the insert trigger (1 = first).
+	AttemptNumber int `db:"attempt_number" json:"-"`
 }
 
 // Attempts is attempt storage and the privileged question read grading needs. Every method
@@ -119,7 +121,7 @@ func (r *Attempts) Insert(ctx context.Context, a NewAttempt) (*InsertedAttempt, 
 	return single[InsertedAttempt](ctx, r.q, "attempts.insert",
 		`insert into question_attempts (user_id, question_id, is_correct, given_answer, time_taken_seconds, source,
 		   reasoning, reasoning_verdict)
-		 values ($1, $2, $3, $4, $5, $6, $7, $8) returning id, topic_id`,
+		 values ($1, $2, $3, $4, $5, $6, $7, $8) returning id, topic_id, attempt_number`,
 		a.UserID, a.QuestionID, a.IsCorrect, a.GivenAnswer, a.TimeTakenSeconds, a.Source, a.Reasoning, a.ReasoningVerdict)
 }
 

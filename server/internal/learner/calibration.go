@@ -19,7 +19,8 @@ const (
 	// enough to teach something, easy enough not to discourage.
 	TargetSuccess = 0.7
 	// CalibratedAfter is how many answers a question needs before its measured rating, rather
-	// than its author's label, decides which level it counts as.
+	// than its author's label, decides which level it counts as. Only a learner's first answer
+	// counts, so this is also how many learners.
 	CalibratedAfter = 5
 	// LevelCut splits the rating scale into levels: halfway between the base ratings
 	// (easy -1, medium 0, hard 1).
