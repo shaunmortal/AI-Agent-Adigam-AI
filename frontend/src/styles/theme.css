@@ -384,6 +384,8 @@ button.link:hover,
 input,
 select,
 textarea {
+    /* Form fields do not inherit the page font by default; a textarea falls back to monospace. */
+    font: inherit;
     border-radius: 14px;
     border: 1px solid transparent;
     background: var(--surface);
