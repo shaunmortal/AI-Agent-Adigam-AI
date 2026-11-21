@@ -1,5 +1,5 @@
 # Format, vet/lint, test and build both halves on every push and pull request.
-#
+
 # The two halves run as separate jobs rather than one, for two reasons: they are independent so they
 # finish in the time of the slower one instead of the sum, and a red tick names which half broke without
 # anybody opening the log.
