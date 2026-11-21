@@ -1362,3 +1362,36 @@ div.option {
     background: #000;
     box-shadow: var(--neu-out-sm);
 }
+
+/* ============================================================ icons, plainly
+   One icon set (Lucide), one colour, no ornament. The floating mark beside each page heading and the
+   tinted, breathing tiles read as template art rather than as part of the product, so a heading now
+   stands alone and an icon beside a line of text is just the icon, in the text's own dim colour.
+   Tiles that hold a score (text, not an icon) keep their colour: there it means pass or fail. */
+.hero-mark {
+    display: none !important;
+}
+
+.tile:has(> svg),
+.authpitch .tile:has(> svg) {
+    width: auto;
+    height: auto;
+    padding-top: 2px;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    color: var(--text-dim);
+    animation: none;
+    transform: none;
+}
+
+/* An icon stays beside its text instead of wrapping onto a line of its own in a narrow column. */
+.row:has(> .tile > svg) {
+    flex-wrap: nowrap;
+}
+
+.auth__badge svg {
+    animation: none;
+    filter: none;
+}
