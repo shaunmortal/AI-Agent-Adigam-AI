@@ -1,0 +1,68 @@
+ learner_1 | learner_2 | learner_3 
+-----------+-----------+-----------
+    262318 |     15619 |    523570
+(1 row)
+
+== 1. topics.findMastery (GET /recommendations/next), as authenticated, learner 262318
+BEGIN
+                                                                                                                          QUERY PLAN                                                                                                                          
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Result  (cost=0.56..15.07 rows=12 width=42) (actual time=0.212..2.547 rows=12.00 loops=1)
+   One-Time Filter: ((COALESCE(NULLIF(current_setting('request.jwt.claim.sub'::text, true), ''::text), ((NULLIF(current_setting('request.jwt.claims'::text, true), ''::text))::jsonb ->> 'sub'::text)))::uuid = '1bfd01e8-6c90-2919-7ab9-31b732f87893'::uuid)
+   Buffers: shared hit=7 read=9
+   I/O Timings: shared read=1.736
+   ->  Index Scan using concept_mastery_user_weakest_idx on concept_mastery  (cost=0.56..15.07 rows=12 width=42) (actual time=0.166..2.498 rows=12.00 loops=1)
+         Index Cond: (user_id = '1bfd01e8-6c90-2919-7ab9-31b732f87893'::uuid)
+         Index Searches: 1
+         Buffers: shared hit=7 read=9
+         I/O Timings: shared read=1.736
+ Settings: work_mem = '16MB', random_page_cost = '1.1'
+ Planning:
+   Buffers: shared hit=41 read=3
+   I/O Timings: shared read=0.563
+ Planning Time: 0.687 ms
+ Execution Time: 2.561 ms
+(15 rows)
+
+ROLLBACK
+== 2. learners.findGoalSubjects (GET /learner/subjects, GET /readiness), as authenticated, learner 15619
+BEGIN
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         QUERY PLAN                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Result  (cost=0.63..15.20 rows=12 width=26) (actual time=0.223..1.484 rows=7.00 loops=1)
+   One-Time Filter: ((COALESCE(NULLIF(current_setting('request.jwt.claim.sub'::text, true), ''::text), ((NULLIF(current_setting('request.jwt.claims'::text, true), ''::text))::jsonb ->> 'sub'::text)))::uuid = 'ecdb6f92-c604-1876-b50b-cbdc9e4bb443'::uuid)
+   Buffers: shared hit=4 read=7
+   I/O Timings: shared read=1.371
+   ->  Index Scan using concept_mastery_user_weakest_idx on concept_mastery  (cost=0.63..15.20 rows=12 width=26) (actual time=0.216..1.475 rows=7.00 loops=1)
+         Index Cond: (user_id = 'ecdb6f92-c604-1876-b50b-cbdc9e4bb443'::uuid)
+         Filter: (topic_id = ANY ('{f282b92a-7caa-40c0-8f39-1e3f53dd1937,504c692f-5972-4d9c-8f28-bb0c1184c8cb,b581c823-3822-427b-844e-9e318010913a,03a8469a-8ed3-4646-8ed1-07974de835e4,cc7b6a20-f016-4abd-8793-ce6560fe576f,0d28ac15-1636-4727-8901-013ea7eca2b0,ac6ce59d-842b-4dde-8468-a50d4270239f,d7f4b395-3afc-46df-8d27-4b896d31fb5c,29c3783e-5552-4c44-8796-a4c94e22ccd9,cad5e4a3-e8f3-4c7c-8508-5a7e72902b4d,3b10b271-dca9-4fb8-89e7-3fb9e60c532a,180afbe2-8f1d-4624-891d-95c3cebe2d52,9246dada-ee7e-4102-802c-eaa5c07ddae3,3bb5b5c9-4627-4a6c-8c93-93ec363a13e1,0f4d2cae-cf64-4062-8b65-f1dffd3bb2d3,fa0bb3bc-16ac-4fbe-8a89-03c04066abd2,1c2b9f29-b68a-49fa-823a-825cb7ef77bd,dd3df846-b4b5-4a1e-8fdb-45cf621d27dc,a5a93904-9679-4f33-8c4c-4bdc46a19bc0,3bb42e56-9e47-449b-8878-b44affcdf81c,2b9c8a71-8371-4ef1-8998-4d12854108ee,05e5c4b8-4b57-4122-8efb-4ae6560fa624,0b6bb3a5-577d-426f-8e4b-a3a09dd05b59,afe6a32a-7938-4947-8c74-0b9a7d081bc7,40f58799-31c4-4664-84ac-74439d83ee94,7638b427-80e3-4ecd-80b7-6e59c6424aee,44cc0740-f648-4583-85fd-596d44e6fa40,f0de0ca5-1732-49bc-8815-d3e45b562352}'::uuid[]))
+         Index Searches: 1
+         Buffers: shared hit=4 read=7
+         I/O Timings: shared read=1.371
+ Settings: work_mem = '16MB', random_page_cost = '1.1'
+ Planning:
+   Buffers: shared hit=3
+ Planning Time: 0.098 ms
+ Execution Time: 1.491 ms
+(15 rows)
+
+ROLLBACK
+== 3. mastery upsert (POST /attempts recompute), admin client, learner 523570 , rolled back
+BEGIN
+                                                QUERY PLAN                                                
+----------------------------------------------------------------------------------------------------------
+ Insert on concept_mastery  (cost=0.00..0.02 rows=0 width=0) (actual time=7.423..7.423 rows=0.00 loops=1)
+   Conflict Resolution: UPDATE
+   Conflict Arbiter Indexes: concept_mastery_pkey
+   Tuples Inserted: 0
+   Conflicting Tuples: 1
+   Buffers: shared hit=67 read=4 dirtied=4
+   I/O Timings: shared read=1.089
+   ->  Result  (cost=0.00..0.02 rows=1 width=148) (actual time=0.001..0.001 rows=1.00 loops=1)
+ Settings: work_mem = '16MB', random_page_cost = '1.1'
+ Planning Time: 0.013 ms
+ Trigger concept_mastery_set_updated_at: time=0.166 calls=1
+ Execution Time: 8.088 ms
+(12 rows)
+
+ROLLBACK

@@ -19,7 +19,7 @@ Problem Statement 02 — Adaptive exam-prep tutor with a learner model
 
 <img src="docs/demo.gif" width="860" alt="A student explains a wrong answer, Adigam names the misconception, and the teacher dashboard shows it across the class" />
 
-<sub>A student picks a wrong option and writes why. Adigam names the misconception ("Current gets used up by components") and replies to the reasoning (in Hinglish in this capture; English reasoning gets an English reply), and the teacher dashboard shows it held by 21 of 24 students, with his sentence as the top quote.</sub>
+<sub>A student picks a wrong option and writes why. Adigam names the misconception ("Current gets used up by components") and replies to the reasoning (in Hinglish in this capture; English reasoning gets an English reply), and the teacher dashboard shows it held by 21 of 24 students, with that student's sentence as the top quote.</sub>
 
 </div>
 
@@ -45,6 +45,8 @@ Problem Statement 02 — Adaptive exam-prep tutor with a learner model
 | Teacher | `teacher@adigam.example` | `AdigamDemo#2026` |
 | Student | `ayush.kumar@adigam.example` | `AdigamDemo#2026` |
 
+Or press **Try the demo → As a student / As a teacher** on the sign-in page.
+
 The demo class is **Class 10-B · Physics**: 24 students on the Class 10 Physics
 syllabus (NCERT chapters 9 to 12), with answers, reasoning and mastery already recorded. Every student
 signs in with the same password, e.g. `ananya.iyer@adigam.example`.
@@ -56,13 +58,14 @@ signs in with the same password, e.g. `ananya.iyer@adigam.example`.
 
 ## Try it in 2 minutes
 
-1. **Teacher dashboard.** Sign in as the teacher, open **Groups**, then **Class 10-B · Physics → Open class
-   dashboard**. You see class-wide gaps ranked by priority, the misconceptions behind them in students' own
+1. **Teacher dashboard.** Sign in as the teacher: the dashboard opens with **Your class → Open class
+   dashboard** (also under **Groups → Class 10-B · Physics**). You see class-wide gaps ranked by priority, the misconceptions behind them in students' own
    words, and a student × topic heatmap. Press **Generate re-teach plan** for a timed lesson and student groups.
 2. **Practice with reasoning.** Sign out and sign in as the student (Ayush). The dashboard's **Do this next** says which
    topic to practise and why. Open **Practice → Start practice**, choose an option and fill in **Why did you
-   choose this?** before **Submit answer**. The feedback shows the likely misconception, a reply to your
-   reasoning, the explanation and how your mastery moved.
+   choose this?** before **Submit answer**. Under each question, **Why this question** says why it was picked
+   and at what level. The feedback shows the likely misconception, a reply to your reasoning, the explanation
+   and how your mastery moved.
 3. **Concept map.** Open **Concept Map**: every concept of the syllabus, its prerequisites, and your mastery
    on each (strong, getting there, weak, not started). Click a topic to practise exactly that one.
 4. **Targeted practice.** Questions aimed at a misconception you have shown come first in a session, under
@@ -79,7 +82,7 @@ signs in with the same password, e.g. `ananya.iyer@adigam.example`.
 <table>
 <tr>
 <td width="50%"><img src="docs/screenshots/01-sign-in.png" alt="Sign-in page" /><br/><sub><b>Sign in.</b> "Find what you don't know. Master it for real."</sub></td>
-<td width="50%"><img src="docs/screenshots/02-student-dashboard.png" alt="Student dashboard" /><br/><sub><b>Student dashboard.</b> "Do this next" with its reason and current mastery, a note that it includes a question aimed at his misconception, the exam countdown and the activity heatmap.</sub></td>
+<td width="50%"><img src="docs/screenshots/02-student-dashboard.png" alt="Student dashboard" /><br/><sub><b>Student dashboard.</b> "Do this next" with its reason and current mastery, a note that it includes a question aimed at the student's misconception, the exam countdown and the activity heatmap.</sub></td>
 </tr>
 <tr>
 <td width="50%"><img src="docs/screenshots/04-practice-question-with-reasoning.png" alt="Practice question with reasoning" /><br/><sub><b>Practice with reasoning.</b> Option B chosen, with the reason: "The lamp uses up some of the current, so less is left for the resistor."</sub></td>
@@ -108,7 +111,9 @@ signs in with the same password, e.g. `ananya.iyer@adigam.example`.
 **Closing the loop.** When a learner has shown a misconception on a topic, up to 2 questions whose wrong
 option exposes it are moved to the front of their next session on that topic. If the bank has none they
 have not seen, a batch written to expose those beliefs is generated in the background, at most once every 6
-hours per learner and topic.
+hours per learner and topic. Two clean answers in a row on questions that test a misconception mark it
+**fixed** (a repeat of a seen question does not count); showing it again reopens it, and the teacher
+dashboard counts how many are fixed.
 [`web/practice/misconceptions.go`](server/internal/web/practice/misconceptions.go)
 
 **Deterministic where it can be.** Mastery, difficulty, scheduling, selection, grading of choice and numeric
@@ -169,7 +174,7 @@ flowchart LR
 | [`server/internal/ai`](server/internal/ai) | Claude client, prompts, scope gate, grounded tutor |
 | [`server/internal/web`](server/internal/web) | HTTP handlers: `learning` (goals, plan, classes), `practice` (attempts, questions, reasoning), `content` (material, tutor, flashcards) |
 | [`server/internal/store`](server/internal/store), `shed`, `ratelimit`, `jobs` | SQL, overload shedding (503 + `Retry-After` past 256 requests in flight), per-learner quotas, Redis Streams ingestion queue |
-| [`database/`](database) | Migrations `000` to `035`, seeds, SQL tests |
+| [`database/`](database) | Migrations `000` to `036`, seeds, SQL tests |
 
 
 ---
@@ -253,6 +258,29 @@ Results, per item and summary: first run
 [`reasoning-eval.json`](eval/results/reasoning-eval.json) and
 [`reasoning-eval-summary.json`](eval/results/reasoning-eval-summary.json); re-run
 [`after-slip-fix/`](eval/results/after-slip-fix); held-out [`heldout/`](eval/results/heldout).
+
+**1,000,000 learners (local)**
+
+A throwaway local Postgres 18 with every migration (small stand-ins for Supabase Auth and pgvector), loaded
+with **1,000,000 learners**: 1,000,000 auth users, profiles and active goals, 10.1 million concept-mastery
+rows and 4.9 million revision rows (5,756 MB). The real API binary ran against it, AI off, with a stub in place
+of Supabase Auth. **Every request picked a random learner out of the million**: 70% reads across ten learner
+pages (summary, next recommendation, revision, readiness, activity, …) and 30% answers (`POST /attempts`,
+which recomputes mastery from the log). One API instance, default settings (12 database connections),
+60-second runs, two passes (three at 256):
+
+| Concurrent requests | req/s | p50 | p95 | p99 | HTTP errors |
+|---:|---:|---:|---:|---:|---|
+| 32 | 598 to 856 | 29 to 40 ms | 110 to 148 ms | 183 to 216 ms | 0 |
+| 64 | **1,018 to 1,030** | 52 to 53 ms | 143 to 152 ms | 231 to 242 ms | 0 |
+| 128 | 818 to 922 | 112 to 123 ms | 310 to 411 ms | 498 to 744 ms | 0 |
+| 256 | 835 to 855 | 222 to 246 ms | 694 to 725 ms | 1,146 to 1,500 ms | 0; one of three runs had 617 connection resets (1.2%) in its first 0.07 s |
+
+**Read these as a floor, not a capacity claim.** The laptop (8 GB M1) was busy with other work at the same
+time (video encoding and a backup; 1-minute load average 8 to 34 on 8 cores, 12 to 13.5 GiB of swap in use),
+so repeat runs differed by up to 30%. One instance, database on the same machine, stub auth, no AI calls.
+Throughput peaked at 64 concurrent requests and fell 9 to 21% above it. Harness, load SQL, load generator and
+raw results: [`eval/scale-1m`](eval/scale-1m).
 
 **Load test (local)**
 

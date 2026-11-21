@@ -1,0 +1,281 @@
+{
+  "scope": "pg_stat_statements from reset after the pass3 warm-up through the end of pass3-c256 (default pool 12, c=256, 60 s), top 25 by total_exec_time",
+  "stats_reset": "2026-11-21 22:52:31.978991+05:30",
+  "statements": [
+    {
+      "calls": 6978,
+      "total_exec_ms": 51209.0,
+      "mean_ms": 7.339,
+      "max_ms": 614.7,
+      "shared_blks_hit": 34073,
+      "shared_blks_read": 65002,
+      "shared_blk_read_ms": 36898.8,
+      "rows": 70680,
+      "query": "select topic_id, mastery_score, recent_accuracy, recent_attempts, total_attempts, last_attempt_at from concept_mastery where user_id = $1"
+    },
+    {
+      "calls": 5984,
+      "total_exec_ms": 44000.5,
+      "mean_ms": 7.353,
+      "max_ms": 642.0,
+      "shared_blks_hit": 29344,
+      "shared_blks_read": 55739,
+      "shared_blk_read_ms": 31249.7,
+      "rows": 60704,
+      "query": "select topic_id, mastery_score, total_attempts from concept_mastery where user_id = $1 and topic_id = any($2::uuid[])"
+    },
+    {
+      "calls": 14875,
+      "total_exec_ms": 34191.6,
+      "mean_ms": 2.299,
+      "max_ms": 482.8,
+      "shared_blks_hit": 409194,
+      "shared_blks_read": 26878,
+      "shared_blk_read_ms": 16455.8,
+      "rows": 14875,
+      "query": "insert into concept_mastery (user_id, topic_id, mastery_score, total_attempts, correct_attempts, recent_attempts, recent_correct, easy_attempts, easy_correct, medium_attempts, medium_correct, hard_attempts, hard_correct, correct_streak, last_attempt_at, last_correct_at, computed_at, computed_version) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, now(), $17) on conflict (user_id, topic_id) do update set mastery_score = excluded.mastery_score, total_attempts = excluded.total_attempts, correct_attempts = excluded.correct_attempts, recent_attempts = excluded.recent_attempts, recent_correct = excluded.recent_correct, easy_attempts = excluded.easy_attempts, easy_correct = excluded.easy_correct, medium_attempts = excluded.medium_attempts, medium_correct = excluded.medium_correct, hard_attempts = excluded.hard_attempts, hard_correct = excluded.hard_correct, correct_streak = excluded.correct_streak, last_attempt_at = excluded.last_attempt_at, last_correct_at = excluded.last_correct_at, computed_at = excluded.computed_at, computed_version = excluded.computed_version"
+    },
+    {
+      "calls": 3427,
+      "total_exec_ms": 22192.3,
+      "mean_ms": 6.476,
+      "max_ms": 214.2,
+      "shared_blks_hit": 52399,
+      "shared_blks_read": 29332,
+      "shared_blk_read_ms": 15757.2,
+      "rows": 3427,
+      "query": "select (select count(*)::int from concept_mastery where user_id = $1 and mastery_score >= $2) as topics_mastered, (select coalesce(sum(review_count), 0)::int from revision_schedule where user_id = $1) as reviews_completed"
+    },
+    {
+      "calls": 27277,
+      "total_exec_ms": 21248.9,
+      "mean_ms": 0.779,
+      "max_ms": 366.6,
+      "shared_blks_hit": 195708,
+      "shared_blks_read": 22508,
+      "shared_blk_read_ms": 12794.7,
+      "rows": 109108,
+      "query": "select topic_id::text from learning_goal_topics where goal_id = $1"
+    },
+    {
+      "calls": 5054,
+      "total_exec_ms": 21064.7,
+      "mean_ms": 4.168,
+      "max_ms": 118.9,
+      "shared_blks_hit": 121213,
+      "shared_blks_read": 25351,
+      "shared_blk_read_ms": 13981.4,
+      "rows": 25270,
+      "query": "select m.topic_id, m.mastery_score, m.total_attempts, m.accuracy, m.recent_accuracy, m.last_attempt_at, t.name, t.weight from concept_mastery m left join topics t on t.id = m.topic_id where m.user_id = $1 order by m.mastery_score asc limit $2"
+    },
+    {
+      "calls": 29667,
+      "total_exec_ms": 16759.9,
+      "mean_ms": 0.565,
+      "max_ms": 384.8,
+      "shared_blks_hit": 111786,
+      "shared_blks_read": 17900,
+      "shared_blk_read_ms": 11852.2,
+      "rows": 10927,
+      "query": "select mastery_score from concept_mastery where user_id = $1 and topic_id = $2"
+    },
+    {
+      "calls": 14720,
+      "total_exec_ms": 15702.1,
+      "mean_ms": 1.067,
+      "max_ms": 351.2,
+      "shared_blks_hit": 317475,
+      "shared_blks_read": 13686,
+      "shared_blk_read_ms": 7636.6,
+      "rows": 14720,
+      "query": "insert into revision_schedule (user_id, topic_id, due_on, interval_days, ease_factor, review_count, lapses, last_reviewed_on, last_review_accuracy) values ($1, $2, $3, $4, $5, $6, $7, $8, $9) on conflict (user_id, topic_id) do update set due_on = excluded.due_on, interval_days = excluded.interval_days, ease_factor = excluded.ease_factor, review_count = excluded.review_count, lapses = excluded.lapses, last_reviewed_on = excluded.last_reviewed_on, last_review_accuracy = excluded.last_review_accuracy"
+    },
+    {
+      "calls": 3982,
+      "total_exec_ms": 15538.0,
+      "mean_ms": 3.902,
+      "max_ms": 585.8,
+      "shared_blks_hit": 88721,
+      "shared_blks_read": 17980,
+      "shared_blk_read_ms": 10507.7,
+      "rows": 6761,
+      "query": "select r.topic_id, r.due_on, r.interval_days, r.lapses, r.review_count, r.last_review_accuracy, t.name, t.parent_id, p.name as subject_name, m.mastery_score from (select topic_id, due_on::text as due_on, interval_days, lapses, review_count, last_review_accuracy from revision_schedule where user_id = $1 and due_on <= $2 order by due_on limit $3) r join topics t on t.id = r.topic_id left join topics p on p.id = t.parent_id left join concept_mastery m on m.user_id = $1 and m.topic_id = r.topic_id order by r.due_on"
+    },
+    {
+      "calls": 14875,
+      "total_exec_ms": 15044.6,
+      "mean_ms": 1.011,
+      "max_ms": 155.3,
+      "shared_blks_hit": 545829,
+      "shared_blks_read": 7859,
+      "shared_blk_read_ms": 3899.9,
+      "rows": 14875,
+      "query": "insert into question_attempts (user_id, question_id, is_correct, given_answer, time_taken_seconds, source, reasoning, reasoning_verdict) values ($1, $2, $3, $4, $5, $6, $7, $8) returning id, topic_id, attempt_number"
+    },
+    {
+      "calls": 27277,
+      "total_exec_ms": 14750.3,
+      "mean_ms": 0.541,
+      "max_ms": 63.5,
+      "shared_blks_hit": 94343,
+      "shared_blks_read": 14765,
+      "shared_blk_read_ms": 8535.5,
+      "rows": 27277,
+      "query": "select id, title, exam_date::text as exam_date, daily_minutes, status, created_at, curriculum_id from learning_goals where user_id = $1 and status = 'active'"
+    },
+    {
+      "calls": 6978,
+      "total_exec_ms": 13877.8,
+      "mean_ms": 1.989,
+      "max_ms": 127.3,
+      "shared_blks_hit": 1423512,
+      "shared_blks_read": 0,
+      "shared_blk_read_ms": 0.0,
+      "rows": 209340,
+      "query": "select topic_id, prerequisite_id from topic_prerequisites where topic_id = any($1::uuid[]) order by topic_id, prerequisite_id"
+    },
+    {
+      "calls": 9507,
+      "total_exec_ms": 13224.4,
+      "mean_ms": 1.391,
+      "max_ms": 352.6,
+      "shared_blks_hit": 101133,
+      "shared_blks_read": 12951,
+      "shared_blk_read_ms": 8103.5,
+      "rows": 38028,
+      "query": "select gt.topic_id::text from learning_goals g join learning_goal_topics gt on gt.goal_id = g.id where g.user_id = $1 and g.status = 'active'"
+    },
+    {
+      "calls": 14875,
+      "total_exec_ms": 12267.9,
+      "mean_ms": 0.825,
+      "max_ms": 313.4,
+      "shared_blks_hit": 32429,
+      "shared_blks_read": 14842,
+      "shared_blk_read_ms": 8503.0,
+      "rows": 2603,
+      "query": "select interval_days, ease_factor, review_count, lapses, last_reviewed_on::text as last_reviewed_on from revision_schedule where user_id = $1 and topic_id = $2"
+    },
+    {
+      "calls": 14875,
+      "total_exec_ms": 9330.4,
+      "mean_ms": 0.627,
+      "max_ms": 509.5,
+      "shared_blks_hit": 50145,
+      "shared_blks_read": 9355,
+      "shared_blk_read_ms": 5865.1,
+      "rows": 14875,
+      "query": "select timezone from profiles where id = $1"
+    },
+    {
+      "calls": 15459,
+      "total_exec_ms": 9138.2,
+      "mean_ms": 0.591,
+      "max_ms": 51.9,
+      "shared_blks_hit": 54891,
+      "shared_blks_read": 9187,
+      "shared_blk_read_ms": 5117.9,
+      "rows": 15459,
+      "query": "select total_attempts, correct_attempts, overall_accuracy, avg_seconds_per_question, consistency_score, current_streak_days, longest_streak_days, last_activity_date::text as last_activity_date, preferred_difficulty, computed_at from learner_profiles where user_id = $1"
+    },
+    {
+      "calls": 14875,
+      "total_exec_ms": 8189.1,
+      "mean_ms": 0.551,
+      "max_ms": 41.7,
+      "shared_blks_hit": 52727,
+      "shared_blks_read": 8862,
+      "shared_blk_read_ms": 4670.7,
+      "rows": 14875,
+      "query": "select total_attempts, correct_attempts, overall_accuracy, avg_seconds_per_question, consistency_score, current_streak_days, longest_streak_days, last_activity_date::text as last_activity_date, preferred_difficulty, computed_at from learner_profiles where user_id = $1"
+    },
+    {
+      "calls": 10433,
+      "total_exec_ms": 6503.2,
+      "mean_ms": 0.623,
+      "max_ms": 53.9,
+      "shared_blks_hit": 667712,
+      "shared_blks_read": 0,
+      "shared_blk_read_ms": 0.0,
+      "rows": 0,
+      "query": "select t.id, coalesce(own.confidence, sub.confidence)::int as confidence from topics t left join self_ratings own on own.user_id = $1 and own.topic_id = t.id left join self_ratings sub on sub.user_id = $1 and sub.topic_id = t.parent_id where t.id = any($2::uuid[]) and coalesce(own.confidence, sub.confidence) is not null"
+    },
+    {
+      "calls": 14792,
+      "total_exec_ms": 5940.6,
+      "mean_ms": 0.402,
+      "max_ms": 100.8,
+      "shared_blks_hit": 46608,
+      "shared_blks_read": 0,
+      "shared_blk_read_ms": 0.0,
+      "rows": 14792,
+      "query": "select rating, rating_attempts, difficulty from questions where id = $1 for no key update"
+    },
+    {
+      "calls": 6978,
+      "total_exec_ms": 5890.5,
+      "mean_ms": 0.844,
+      "max_ms": 75.7,
+      "shared_blks_hit": 614064,
+      "shared_blks_read": 0,
+      "shared_blk_read_ms": 0.0,
+      "rows": 195384,
+      "query": "select id, name, weight from topics where parent_id is not null and (id = any($1) or parent_id = any($1))"
+    },
+    {
+      "calls": 7409,
+      "total_exec_ms": 4472.3,
+      "mean_ms": 0.604,
+      "max_ms": 46.0,
+      "shared_blks_hit": 24987,
+      "shared_blks_read": 4649,
+      "shared_blk_read_ms": 2619.8,
+      "rows": 7409,
+      "query": "select timezone from profiles where id = $1"
+    },
+    {
+      "calls": 3455,
+      "total_exec_ms": 3256.4,
+      "mean_ms": 0.943,
+      "max_ms": 46.4,
+      "shared_blks_hit": 352410,
+      "shared_blks_read": 0,
+      "shared_blk_read_ms": 0.0,
+      "rows": 110560,
+      "query": "select id, name, weight, parent_id from topics where id = any($1::uuid[]) or parent_id = any($1)"
+    },
+    {
+      "calls": 14875,
+      "total_exec_ms": 3242.1,
+      "mean_ms": 0.218,
+      "max_ms": 37.3,
+      "shared_blks_hit": 202759,
+      "shared_blks_read": 880,
+      "shared_blk_read_ms": 237.9,
+      "rows": 14875,
+      "query": "update learner_profiles set total_attempts = $2, correct_attempts = $3, last_activity_date = $4, current_streak_days = $5, longest_streak_days = $6, avg_seconds_per_question = $7, consistency_score = coalesce($8, consistency_score), computed_at = now() where user_id = $1"
+    },
+    {
+      "calls": 14792,
+      "total_exec_ms": 2553.1,
+      "mean_ms": 0.173,
+      "max_ms": 43.9,
+      "shared_blks_hit": 89047,
+      "shared_blks_read": 5,
+      "shared_blk_read_ms": 0.1,
+      "rows": 14792,
+      "query": "update questions set rating = $2, rating_attempts = rating_attempts + $3 where id = $1"
+    },
+    {
+      "calls": 3427,
+      "total_exec_ms": 1489.2,
+      "mean_ms": 0.435,
+      "max_ms": 47.1,
+      "shared_blks_hit": 9677,
+      "shared_blks_read": 1403,
+      "shared_blk_read_ms": 892.1,
+      "rows": 1552,
+      "query": "select attempted_at, is_correct from question_attempts where user_id = $1 and attempted_at >= ($2 || 'T00:00:00Z')::timestamptz and attempted_at <= ($3 || 'T23:59:59Z')::timestamptz"
+    }
+  ]
+}

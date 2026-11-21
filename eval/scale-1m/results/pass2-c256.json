@@ -1,0 +1,236 @@
+{
+  "label": "pass2-c256",
+  "base": "http://localhost:4600/api/v1",
+  "concurrency": 256,
+  "durationS": 60,
+  "startedAt": "2026-11-21T22:44:56.674586+05:30",
+  "elapsedS": 60.600731625,
+  "seed": 1795281296673877000,
+  "mix": [
+    {
+      "name": "GET /goals",
+      "method": "GET",
+      "path": "/goals",
+      "weight": 10
+    },
+    {
+      "name": "GET /learner/summary",
+      "method": "GET",
+      "path": "/learner/summary",
+      "weight": 10
+    },
+    {
+      "name": "GET /recommendations/next",
+      "method": "GET",
+      "path": "/recommendations/next?minutes=20",
+      "weight": 14
+    },
+    {
+      "name": "GET /revision/due",
+      "method": "GET",
+      "path": "/revision/due",
+      "weight": 8
+    },
+    {
+      "name": "GET /readiness",
+      "method": "GET",
+      "path": "/readiness",
+      "weight": 7
+    },
+    {
+      "name": "GET /learner/activity",
+      "method": "GET",
+      "path": "/learner/activity",
+      "weight": 7
+    },
+    {
+      "name": "GET /learner/subjects",
+      "method": "GET",
+      "path": "/learner/subjects",
+      "weight": 5
+    },
+    {
+      "name": "GET /learner/profile",
+      "method": "GET",
+      "path": "/learner/profile",
+      "weight": 4
+    },
+    {
+      "name": "GET /classes",
+      "method": "GET",
+      "path": "/classes",
+      "weight": 3
+    },
+    {
+      "name": "GET /sources/map",
+      "method": "GET",
+      "path": "/sources/map/0153f4d4-9f3d-4abe-8de0-34a72486ae55",
+      "weight": 2
+    },
+    {
+      "name": "POST /attempts",
+      "method": "POST",
+      "path": "/attempts",
+      "weight": 30
+    }
+  ],
+  "overall": {
+    "requests": 51629,
+    "errors": 0,
+    "rps": 851.953410719239,
+    "meanMs": 299.088,
+    "p50Ms": 241.599,
+    "p95Ms": 724.51,
+    "p99Ms": 1184.968,
+    "maxMs": 1881.049,
+    "responses": {
+      "200": 36155,
+      "201": 15474
+    }
+  },
+  "endpoints": {
+    "GET /classes": {
+      "requests": 1550,
+      "errors": 0,
+      "rps": 25.577248961142388,
+      "meanMs": 138.113,
+      "p50Ms": 119.699,
+      "p95Ms": 287.017,
+      "p99Ms": 352.809,
+      "maxMs": 467.189,
+      "responses": {
+        "200": 1550
+      }
+    },
+    "GET /goals": {
+      "requests": 5076,
+      "errors": 0,
+      "rps": 83.76136498500566,
+      "meanMs": 139.647,
+      "p50Ms": 121.793,
+      "p95Ms": 284.394,
+      "p99Ms": 366.174,
+      "maxMs": 477.41,
+      "responses": {
+        "200": 5076
+      }
+    },
+    "GET /learner/activity": {
+      "requests": 3537,
+      "errors": 0,
+      "rps": 58.365631984232664,
+      "meanMs": 146.657,
+      "p50Ms": 125.411,
+      "p95Ms": 308.668,
+      "p99Ms": 413.743,
+      "maxMs": 528.793,
+      "responses": {
+        "200": 3537
+      }
+    },
+    "GET /learner/profile": {
+      "requests": 2097,
+      "errors": 0,
+      "rps": 34.603542626784254,
+      "meanMs": 138.153,
+      "p50Ms": 119.532,
+      "p95Ms": 279.466,
+      "p99Ms": 344.128,
+      "maxMs": 442.827,
+      "responses": {
+        "200": 2097
+      }
+    },
+    "GET /learner/subjects": {
+      "requests": 2616,
+      "errors": 0,
+      "rps": 43.16779566603128,
+      "meanMs": 143.532,
+      "p50Ms": 123.747,
+      "p95Ms": 293.535,
+      "p99Ms": 392.357,
+      "maxMs": 510.405,
+      "responses": {
+        "200": 2616
+      }
+    },
+    "GET /learner/summary": {
+      "requests": 5221,
+      "errors": 0,
+      "rps": 86.15407537169317,
+      "meanMs": 144.1,
+      "p50Ms": 123.544,
+      "p95Ms": 302.362,
+      "p99Ms": 391.316,
+      "maxMs": 505.376,
+      "responses": {
+        "200": 5221
+      }
+    },
+    "GET /readiness": {
+      "requests": 3590,
+      "errors": 0,
+      "rps": 59.24020888419431,
+      "meanMs": 148.552,
+      "p50Ms": 129.751,
+      "p95Ms": 307.847,
+      "p99Ms": 407.143,
+      "maxMs": 540.204,
+      "responses": {
+        "200": 3590
+      }
+    },
+    "GET /recommendations/next": {
+      "requests": 7314,
+      "errors": 0,
+      "rps": 120.69161219470674,
+      "meanMs": 396.854,
+      "p50Ms": 345.005,
+      "p95Ms": 815.918,
+      "p99Ms": 1083.747,
+      "maxMs": 1241.433,
+      "responses": {
+        "200": 7314
+      }
+    },
+    "GET /revision/due": {
+      "requests": 4105,
+      "errors": 0,
+      "rps": 67.73845611967064,
+      "meanMs": 143.85,
+      "p50Ms": 124.265,
+      "p95Ms": 298.242,
+      "p99Ms": 387.404,
+      "maxMs": 504.482,
+      "responses": {
+        "200": 4105
+      }
+    },
+    "GET /sources/map": {
+      "requests": 1049,
+      "errors": 0,
+      "rps": 17.310022038863462,
+      "meanMs": 624.744,
+      "p50Ms": 544.573,
+      "p95Ms": 1292.122,
+      "p99Ms": 1670.435,
+      "maxMs": 1881.049,
+      "responses": {
+        "200": 1049
+      }
+    },
+    "POST /attempts": {
+      "requests": 15474,
+      "errors": 0,
+      "rps": 255.3434518869144,
+      "meanMs": 510.579,
+      "p50Ms": 448.132,
+      "p95Ms": 1024.968,
+      "p99Ms": 1419.217,
+      "maxMs": 1589.893,
+      "responses": {
+        "201": 15474
+      }
+    }
+  }
+}

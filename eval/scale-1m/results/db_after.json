@@ -1,0 +1,25 @@
+{
+  "measured_at": "2026-11-21T22:55:07.436059+05:30",
+  "db_size_bytes": 6035240639,
+  "db_size_pretty": "5756 MB",
+  "question_attempts": 409017,
+  "question_attempts_today": 219017,
+  "concept_mastery": 10133832,
+  "revision_schedule": 4885806,
+  "revision_due_today_or_earlier": 1700510,
+  "learning_goal_topics": 4000000,
+  "learning_goals": 1000000,
+  "profiles": 1000000,
+  "learner_profiles": 1000000,
+  "auth_users": 1000000,
+  "sizes": {
+    "concept_mastery": "3144 MB",
+    "revision_schedule": "1071 MB",
+    "learning_goal_topics": "502 MB",
+    "auth.users": "274 MB",
+    "learning_goals": "233 MB",
+    "profiles": "166 MB",
+    "learner_profiles": "168 MB",
+    "question_attempts": "169 MB"
+  }
+}

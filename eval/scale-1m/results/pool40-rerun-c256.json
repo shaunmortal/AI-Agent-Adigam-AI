@@ -1,0 +1,313 @@
+{
+  "label": "pool40-rerun-c256",
+  "base": "http://localhost:4600/api/v1",
+  "concurrency": 256,
+  "durationS": 60,
+  "startedAt": "2026-11-21T22:51:06.946857+05:30",
+  "elapsedS": 60.17173675,
+  "seed": 1795281666946443000,
+  "mix": [
+    {
+      "name": "GET /goals",
+      "method": "GET",
+      "path": "/goals",
+      "weight": 10
+    },
+    {
+      "name": "GET /learner/summary",
+      "method": "GET",
+      "path": "/learner/summary",
+      "weight": 10
+    },
+    {
+      "name": "GET /recommendations/next",
+      "method": "GET",
+      "path": "/recommendations/next?minutes=20",
+      "weight": 14
+    },
+    {
+      "name": "GET /revision/due",
+      "method": "GET",
+      "path": "/revision/due",
+      "weight": 8
+    },
+    {
+      "name": "GET /readiness",
+      "method": "GET",
+      "path": "/readiness",
+      "weight": 7
+    },
+    {
+      "name": "GET /learner/activity",
+      "method": "GET",
+      "path": "/learner/activity",
+      "weight": 7
+    },
+    {
+      "name": "GET /learner/subjects",
+      "method": "GET",
+      "path": "/learner/subjects",
+      "weight": 5
+    },
+    {
+      "name": "GET /learner/profile",
+      "method": "GET",
+      "path": "/learner/profile",
+      "weight": 4
+    },
+    {
+      "name": "GET /classes",
+      "method": "GET",
+      "path": "/classes",
+      "weight": 3
+    },
+    {
+      "name": "GET /sources/map",
+      "method": "GET",
+      "path": "/sources/map/0153f4d4-9f3d-4abe-8de0-34a72486ae55",
+      "weight": 2
+    },
+    {
+      "name": "POST /attempts",
+      "method": "POST",
+      "path": "/attempts",
+      "weight": 30
+    }
+  ],
+  "overall": {
+    "requests": 45656,
+    "errors": 50,
+    "rps": 758.7615459678418,
+    "meanMs": 336.965,
+    "p50Ms": 251.588,
+    "p95Ms": 735.22,
+    "p99Ms": 1098.982,
+    "maxMs": 1597.299,
+    "responses": {
+      "200": 31768,
+      "201": 13838,
+      "transport: read: read: connection reset by peer": 50
+    },
+    "errorWindowS": {
+      "transport: read: read: connection reset by peer": [
+        0.00002875,
+        0.001935
+      ]
+    }
+  },
+  "endpoints": {
+    "GET /classes": {
+      "requests": 1342,
+      "errors": 1,
+      "rps": 22.302829741739174,
+      "meanMs": 154.551,
+      "p50Ms": 144.32,
+      "p95Ms": 268.273,
+      "p99Ms": 362.548,
+      "maxMs": 538.853,
+      "responses": {
+        "200": 1341,
+        "transport: read: read: connection reset by peer": 1
+      },
+      "errorWindowS": {
+        "transport: read: read: connection reset by peer": [
+          0.00140725,
+          0.00140725
+        ]
+      }
+    },
+    "GET /goals": {
+      "requests": 4640,
+      "errors": 5,
+      "rps": 77.11261550049907,
+      "meanMs": 165.678,
+      "p50Ms": 154.053,
+      "p95Ms": 288.439,
+      "p99Ms": 369.328,
+      "maxMs": 581.864,
+      "responses": {
+        "200": 4635,
+        "transport: read: read: connection reset by peer": 5
+      },
+      "errorWindowS": {
+        "transport: read: read: connection reset by peer": [
+          0.001288333,
+          0.001686458
+        ]
+      }
+    },
+    "GET /learner/activity": {
+      "requests": 3132,
+      "errors": 6,
+      "rps": 52.05101546283688,
+      "meanMs": 201.459,
+      "p50Ms": 194.409,
+      "p95Ms": 337.306,
+      "p99Ms": 436.01,
+      "maxMs": 834.58,
+      "responses": {
+        "200": 3126,
+        "transport: read: read: connection reset by peer": 6
+      },
+      "errorWindowS": {
+        "transport: read: read: connection reset by peer": [
+          0.000697,
+          0.001669708
+        ]
+      }
+    },
+    "GET /learner/profile": {
+      "requests": 1854,
+      "errors": 3,
+      "rps": 30.81180800386321,
+      "meanMs": 160.711,
+      "p50Ms": 150.315,
+      "p95Ms": 293.169,
+      "p99Ms": 379.695,
+      "maxMs": 595.451,
+      "responses": {
+        "200": 1851,
+        "transport: read: read: connection reset by peer": 3
+      },
+      "errorWindowS": {
+        "transport: read: read: connection reset by peer": [
+          0.00049725,
+          0.001534041
+        ]
+      }
+    },
+    "GET /learner/subjects": {
+      "requests": 2238,
+      "errors": 1,
+      "rps": 37.19354170045624,
+      "meanMs": 207.143,
+      "p50Ms": 198.48,
+      "p95Ms": 346.88,
+      "p99Ms": 448.219,
+      "maxMs": 747.915,
+      "responses": {
+        "200": 2237,
+        "transport: read: read: connection reset by peer": 1
+      },
+      "errorWindowS": {
+        "transport: read: read: connection reset by peer": [
+          0.001885875,
+          0.001885875
+        ]
+      }
+    },
+    "GET /learner/summary": {
+      "requests": 4555,
+      "errors": 2,
+      "rps": 75.69999215620115,
+      "meanMs": 183.657,
+      "p50Ms": 174.416,
+      "p95Ms": 305.323,
+      "p99Ms": 403.918,
+      "maxMs": 693.819,
+      "responses": {
+        "200": 4553,
+        "transport: read: read: connection reset by peer": 2
+      },
+      "errorWindowS": {
+        "transport: read: read: connection reset by peer": [
+          0.00134075,
+          0.00139925
+        ]
+      }
+    },
+    "GET /readiness": {
+      "requests": 3089,
+      "errors": 6,
+      "rps": 51.336394241603806,
+      "meanMs": 211.125,
+      "p50Ms": 202.034,
+      "p95Ms": 350.631,
+      "p99Ms": 446.983,
+      "maxMs": 725.494,
+      "responses": {
+        "200": 3083,
+        "transport: read: read: connection reset by peer": 6
+      },
+      "errorWindowS": {
+        "transport: read: read: connection reset by peer": [
+          0.001355291,
+          0.001935
+        ]
+      }
+    },
+    "GET /recommendations/next": {
+      "requests": 6358,
+      "errors": 5,
+      "rps": 105.66422615348559,
+      "meanMs": 440.796,
+      "p50Ms": 437.185,
+      "p95Ms": 752.717,
+      "p99Ms": 1078.748,
+      "maxMs": 1591.125,
+      "responses": {
+        "200": 6353,
+        "transport: read: read: connection reset by peer": 5
+      },
+      "errorWindowS": {
+        "transport: read: read: connection reset by peer": [
+          0.00002875,
+          0.001920416
+        ]
+      }
+    },
+    "GET /revision/due": {
+      "requests": 3713,
+      "errors": 5,
+      "rps": 61.70671149856747,
+      "meanMs": 190.361,
+      "p50Ms": 179.376,
+      "p95Ms": 324.178,
+      "p99Ms": 455.823,
+      "maxMs": 733.966,
+      "responses": {
+        "200": 3708,
+        "transport: read: read: connection reset by peer": 5
+      },
+      "errorWindowS": {
+        "transport: read: read: connection reset by peer": [
+          0.000757791,
+          0.001753166
+        ]
+      }
+    },
+    "GET /sources/map": {
+      "requests": 881,
+      "errors": 0,
+      "rps": 14.641425486193897,
+      "meanMs": 573.396,
+      "p50Ms": 592.29,
+      "p95Ms": 970.144,
+      "p99Ms": 1417.428,
+      "maxMs": 1597.299,
+      "responses": {
+        "200": 881
+      }
+    },
+    "POST /attempts": {
+      "requests": 13854,
+      "errors": 16,
+      "rps": 230.2409860223953,
+      "meanMs": 542.264,
+      "p50Ms": 547.251,
+      "p95Ms": 899.985,
+      "p99Ms": 1305.265,
+      "maxMs": 1539.492,
+      "responses": {
+        "201": 13838,
+        "transport: read: read: connection reset by peer": 16
+      },
+      "errorWindowS": {
+        "transport: read: read: connection reset by peer": [
+          0.0005645,
+          0.001822833
+        ]
+      }
+    }
+  }
+}
