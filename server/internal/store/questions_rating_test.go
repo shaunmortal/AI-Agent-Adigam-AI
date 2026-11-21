@@ -50,3 +50,33 @@ func TestMeasuredDifficultyDecidesLevelAndOrder(t *testing.T) {
 		check(t, len(qs) == 2 && qs[0].ID == want, "target %v: want %s first, got %+v", target, want, qs)
 	}
 }
+
+func TestFindExposingMatchesLabelsIgnoringCaseAndSkipsSeen(t *testing.T) {
+	f := setup(t)
+	var hasOptions bool
+	must(t, f.tx.QueryRow(f.ctx, `select cardinality(options) > 1 from questions where id = $1`, f.questionID).Scan(&hasOptions))
+	if !hasOptions {
+		t.Skip("fixture question has no options")
+	}
+	_, err := f.tx.Exec(f.ctx, `update questions set is_verified = true, option_misconceptions =
+		(select array_agg(case when i = 2 then '  Current gets used up ' else '' end order by i) from generate_subscripts(options, 1) i)
+		where id = $1`, f.questionID)
+	must(t, err)
+	r := NewQuestions(f.tx)
+	has := func(labels, exclude []string) (string, bool) {
+		got, err := r.FindExposing(f.ctx, f.topicID, labels, exclude, 50)
+		must(t, err)
+		for _, e := range got {
+			if e.ID == f.questionID {
+				return e.Label, true
+			}
+		}
+		return "", false
+	}
+	label, ok := has([]string{"current GETS used up"}, nil)
+	check(t, ok && label == "Current gets used up", "case-insensitive match with its trimmed label, got %q %v", label, ok)
+	_, ok = has([]string{"current gets used up"}, []string{f.questionID})
+	check(t, !ok, "a question already answered is not served again")
+	_, ok = has([]string{"light bends away"}, nil)
+	check(t, !ok, "another misconception does not match")
+}
