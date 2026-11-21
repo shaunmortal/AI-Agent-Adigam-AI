@@ -224,6 +224,7 @@ export default function StudyGroups() {
                                     {group.memberCount}{' '}
                                     {group.memberCount === 1 ? 'member' : 'members'}
                                     {group.role === 'owner' && ' · Yours'}
+                                    {group.isClass && ' · Class'}
                                 </div>
                             </span>
                             <Icon name="chevron" className="row-item__chev" />
@@ -315,6 +316,13 @@ export default function StudyGroups() {
                                 </div>
                             ))}
                         </div>
+
+                        {detail.isClass && detail.role !== 'owner' && (
+                            <p className="faint" style={{ margin: 0 }}>
+                                This is a class: whoever runs it also sees your mastery per topic,
+                                your misconceptions and the reasoning you write.
+                            </p>
+                        )}
 
                         <button type="button" disabled={busy} onClick={() => void leave(detail.id)}>
                             Leave this group

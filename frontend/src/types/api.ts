@@ -296,6 +296,8 @@ export interface GroupSummary {
     memberCount: number;
     role: string;
     createdAt: string;
+    /** A class: its owner also sees members' per-topic mastery, misconceptions and reasoning. */
+    isClass: boolean;
 }
 
 export interface GroupDetail extends GroupSummary {

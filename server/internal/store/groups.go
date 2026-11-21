@@ -18,6 +18,8 @@ type GroupRow struct {
 	CurriculumID *string   `db:"curriculum_id" json:"curriculum_id"`
 	CreatedBy    *string   `db:"created_by" json:"created_by"`
 	CreatedAt    time.Time `db:"created_at" json:"created_at"`
+	// IsClass: the owner also sees members' per-topic mastery, misconceptions and reasoning.
+	IsClass bool `db:"is_class" json:"is_class"`
 }
 
 // MyGroup is a group the learner belongs to, with their role and the member count.
@@ -39,9 +41,10 @@ type NewGroup struct {
 	InviteCode   string
 	CurriculumID *string
 	CreatedBy    string
+	IsClass      bool
 }
 
-const groupCols = `id, name, invite_code, curriculum_id, created_by, created_at`
+const groupCols = `id, name, invite_code, curriculum_id, created_by, created_at, is_class`
 
 // Groups holds study groups and membership. Writes need Admin: a learner able to insert into
 // group_members directly could join any group whose id they learned.
@@ -61,7 +64,7 @@ func (r *Groups) FindMyGroups(ctx context.Context, userID string) ([]MyGroup, er
 		MemberCount int    `db:"member_count"`
 	}
 	rows, err := rowsOf[row](ctx, r.q, "groups.findMyGroups",
-		`select g.id, g.name, g.invite_code, g.curriculum_id, g.created_by, g.created_at, m.role,
+		`select g.id, g.name, g.invite_code, g.curriculum_id, g.created_by, g.created_at, g.is_class, m.role,
 		        (select count(*)::int from group_members c where c.group_id = g.id) as member_count
 		 from group_members m join study_groups g on g.id = m.group_id
 		 where m.user_id = $1`, userID)
@@ -98,8 +101,8 @@ func (r *Groups) IsMember(ctx context.Context, groupID, userID string) (bool, er
 
 func (r *Groups) CreateGroup(ctx context.Context, g NewGroup) (*GroupRow, error) {
 	return single[GroupRow](ctx, r.q, "groups.createGroup",
-		`insert into study_groups (name, invite_code, curriculum_id, created_by) values ($1, $2, $3, $4)
-		 returning `+groupCols, g.Name, g.InviteCode, g.CurriculumID, g.CreatedBy)
+		`insert into study_groups (name, invite_code, curriculum_id, created_by, is_class) values ($1, $2, $3, $4, $5)
+		 returning `+groupCols, g.Name, g.InviteCode, g.CurriculumID, g.CreatedBy, g.IsClass)
 }
 
 // AddMember is idempotent (already a member is not an error) and turns the group-size

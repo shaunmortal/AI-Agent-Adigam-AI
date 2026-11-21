@@ -1,15 +1,10 @@
 package store
 
 // Class reads (migration 034). Every query here reads other learners' rows on the elevated
-// client, so callers must have passed assertClassOwner first. Kept apart from groups.go so plain
-// study groups never select a column they don't need.
+// client, so callers must have passed assertClassOwner first. A class is created by CreateGroup
+// with IsClass set, so members can always be told which of their groups is one.
 
 import "context"
-
-// MarkClass turns a just-created group into a class. Only ever called at creation.
-func (r *Groups) MarkClass(ctx context.Context, groupID string) error {
-	return exec(ctx, r.q, "classes.mark", `update study_groups set is_class = true where id = $1`, groupID)
-}
 
 // IsClass reports whether a group is a class.
 func (r *Groups) IsClass(ctx context.Context, groupID string) (bool, error) {

@@ -263,7 +263,7 @@ func TestLearning(t *testing.T) {
 		r = e.call(u1, "POST", "/groups", `{"name":"Study buddies"}`)
 		e.expect(r, 201, "", "")
 		group := r.Data["group"].(map[string]any)
-		check(t, group["role"] == "owner" && group["memberCount"] == 1.0, "created %v", group)
+		check(t, group["role"] == "owner" && group["memberCount"] == 1.0 && group["isClass"] == false, "created %v", group)
 		id, code := group["id"].(string), group["inviteCode"].(string)
 
 		e.expect(e.call(u2, "POST", "/groups/join", `{"inviteCode":"ab"}`), 400, "INVALID_INPUT",
@@ -278,10 +278,24 @@ func TestLearning(t *testing.T) {
 		r = e.call(u2, "GET", "/groups/"+id, "")
 		e.expect(r, 200, "", "")
 		detail := r.Data["group"].(map[string]any)
-		check(t, detail["role"] == "member" && len(detail["comparison"].(map[string]any)["members"].([]any)) == 2, "detail %v", detail)
+		check(t, detail["role"] == "member" && detail["isClass"] == false &&
+			len(detail["comparison"].(map[string]any)["members"].([]any)) == 2, "detail %v", detail)
 
 		e.expect(e.call(u2, "GET", "/groups/not-a-uuid", ""), 404, "GROUP_NOT_FOUND", "")
 		e.expect(e.call(u2, "POST", "/groups/"+id+"/leave", `{}`), 200, "", "")
 		e.expect(e.call(u2, "POST", "/groups/"+id+"/leave", `{}`), 404, "GROUP_NOT_FOUND", "")
+
+		// A class says so wherever a member sees it: its owner sees more than a group's members do.
+		r = e.call(u1, "POST", "/groups", `{"name":"Class 10-B","isClass":true}`)
+		e.expect(r, 201, "", "")
+		class := r.Data["group"].(map[string]any)
+		check(t, class["isClass"] == true, "created class %v", class)
+		r = e.call(u2, "POST", "/groups/join", `{"inviteCode":"`+class["inviteCode"].(string)+`"}`)
+		e.expect(r, 200, "", "")
+		check(t, r.Data["group"].(map[string]any)["isClass"] == true, "joined class %v", r.Data)
+		r = e.call(u2, "GET", "/groups", "")
+		e.expect(r, 200, "", "")
+		listed := r.Data["groups"].([]any)
+		check(t, len(listed) == 1 && listed[0].(map[string]any)["isClass"] == true, "groups %v", listed)
 	})
 }

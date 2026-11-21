@@ -35,6 +35,9 @@ type groupSummary struct {
 	MemberCount int       `json:"memberCount"`
 	Role        string    `json:"role"`
 	CreatedAt   time.Time `json:"createdAt"`
+	// IsClass: the owner also sees this member's per-topic mastery, misconceptions and reasoning,
+	// so a member is told, group by group.
+	IsClass bool `json:"isClass"`
 }
 
 type groupDetail struct {
@@ -43,7 +46,7 @@ type groupDetail struct {
 }
 
 func toSummary(g *store.GroupRow, role string, memberCount int) groupSummary {
-	return groupSummary{g.ID, g.Name, g.InviteCode, memberCount, role, g.CreatedAt}
+	return groupSummary{g.ID, g.Name, g.InviteCode, memberCount, role, g.CreatedAt, g.IsClass}
 }
 
 var errGroupNotFound = httpx.E(http.StatusNotFound, "GROUP_NOT_FOUND", "That group does not exist.")
@@ -82,13 +85,14 @@ func assertRoomForAnotherGroup(ctx context.Context, g *store.Groups, userID stri
 
 // createWithUniqueCode inserts with a fresh code and retries on the unique index rather than
 // checking first, which would race.
-func createWithUniqueCode(ctx context.Context, g *store.Groups, userID, name string, curriculumID *string) (*store.GroupRow, error) {
+func createWithUniqueCode(ctx context.Context, g *store.Groups, userID, name string, curriculumID *string, isClass bool) (*store.GroupRow, error) {
 	for attempt := 0; ; attempt++ {
 		group, err := g.CreateGroup(ctx, store.NewGroup{
 			Name:         name,
 			InviteCode:   groups.MakeInviteCode(func(n int) []byte { b := make([]byte, n); _, _ = rand.Read(b); return b }),
 			CurriculumID: curriculumID,
 			CreatedBy:    userID,
+			IsClass:      isClass,
 		})
 		var pgErr *pgconn.PgError
 		if err == nil || !errors.As(err, &pgErr) || pgErr.Code != "23505" || attempt == codeAttempts-1 {
@@ -152,17 +156,12 @@ func (h handlers) createGroup(w http.ResponseWriter, r *http.Request) error {
 	if err := assertRoomForAnotherGroup(ctx, g, userID); err != nil {
 		return err
 	}
-	group, err := createWithUniqueCode(ctx, g, userID, name, curriculumID)
+	group, err := createWithUniqueCode(ctx, g, userID, name, curriculumID, isClass)
 	if err != nil {
 		return err
 	}
 	if err := g.AddMember(ctx, group.ID, userID, "owner"); err != nil {
 		return err
-	}
-	if isClass {
-		if err := g.MarkClass(ctx, group.ID); err != nil {
-			return err
-		}
 	}
 	httpx.OK(w, http.StatusCreated, map[string]any{"group": toSummary(group, "owner", 1)})
 	return nil
