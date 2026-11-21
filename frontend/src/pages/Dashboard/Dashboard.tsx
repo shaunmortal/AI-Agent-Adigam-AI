@@ -36,9 +36,9 @@ export default function Dashboard() {
     // vice versa — one slow endpoint should not blank the whole screen.
     const summary = useApi<LearnerSummary>(() => api.get<LearnerSummary>('/learner/summary'));
     const session = useApi<NextSession>(() => api.get<NextSession>('/recommendations/next'));
-    // Whether a goal exists changes what the empty state should say. Without one the engine
-    // ranks the whole syllabus, so "nothing to practise" is the wrong message — the learner
-    // needs to be sent to set a goal, not told there is no work.
+    // Whether a goal exists changes what the empty state should say. Without one nothing is in
+    // scope, so "nothing to practise" is the wrong message — the learner needs to be sent to set
+    // a goal (the "Start here" card), not told there is no work.
     const goal = useApi<{ goal: Goal | null }>(() => api.get<{ goal: Goal | null }>('/goals'));
     // The year grid and the badges. Its own request, so a slow year of squares never delays the one
     // thing this screen exists for — telling the learner what to do next.
@@ -100,7 +100,7 @@ export default function Dashboard() {
                 </div>
             )}
 
-            {session.data && !session.data.recommendation && (
+            {session.data && !session.data.recommendation && !(goal.data && !goal.data.goal) && (
                 <Empty
                     title="Nothing to practise yet"
                     action={

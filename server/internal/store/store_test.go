@@ -259,13 +259,14 @@ func TestTopics(t *testing.T) {
 	r := NewTopics(f.tx)
 	now := time.Now()
 
-	all, err := r.FindCandidatesForLearner(f.ctx, f.u1, now, "")
+	none, err := r.FindCandidatesForLearner(f.ctx, f.u1, now, "")
 	must(t, err)
+	check(t, len(none) == 0, "no goal should mean no candidates, got %d", len(none))
 	f.goal(t, f.u1)
 	saveMastery(t, f, f.u1, f.topicID)
 	scoped, err := r.FindCandidatesForLearner(f.ctx, f.u1, now, "")
 	must(t, err)
-	check(t, len(scoped) > 0 && len(scoped) < len(all), "goal scope %d should narrow all %d", len(scoped), len(all))
+	check(t, len(scoped) > 0, "the goal's scope should have candidates")
 	var hit *adaptive.TopicCandidate
 	for i := range scoped {
 		if scoped[i].TopicID == f.topicID {

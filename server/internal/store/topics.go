@@ -12,13 +12,17 @@ type Topics struct{ q Q }
 
 func NewTopics(q Q) *Topics { return &Topics{q} }
 
-// FindCandidatesForLearner lists the leaf topics in the active goal's scope (every leaf topic
-// when there is no goal), with the learner's mastery on each. subjectID, when not "", narrows
-// the scope to that subject — intersected with the goal, so a subject outside it yields none.
+// FindCandidatesForLearner lists the leaf topics in the active goal's scope, with the learner's
+// mastery on each. No goal means no candidates: the topics table holds every learner's
+// syllabus, not one shared one. subjectID, when not "", narrows the scope to that subject —
+// intersected with the goal, so a subject outside it yields none.
 func (r *Topics) FindCandidatesForLearner(ctx context.Context, userID string, now time.Time, subjectID string) ([]adaptive.TopicCandidate, error) {
 	goalScope, err := activeGoalScope(ctx, r.q, "topics.findActiveGoalScope", userID)
 	if err != nil {
 		return nil, err
+	}
+	if len(goalScope) == 0 {
+		return []adaptive.TopicCandidate{}, nil
 	}
 	scopeIDs := goalScope
 	if subjectID != "" {
@@ -42,7 +46,7 @@ func (r *Topics) FindCandidatesForLearner(ctx context.Context, userID string, no
 	// containers, not something to practise.
 	topics, err := rowsOf[topicRow](ctx, r.q, "topics.findLeafTopics",
 		`select id, name, weight from topics
-		 where parent_id is not null and (cardinality($1::uuid[]) = 0 or id = any($1) or parent_id = any($1))`, scopeIDs)
+		 where parent_id is not null and (id = any($1) or parent_id = any($1))`, scopeIDs)
 	if err != nil {
 		return nil, err
 	}
