@@ -18,19 +18,19 @@ type Mode = 'signin' | 'signup' | 'forgot';
 
 const FEATURES = [
     {
-        icon: 'book',
-        title: 'Your course, cited',
-        body: 'Lectures, slides and textbooks become one knowledge base — every answer opens the exact page or timestamp.',
+        icon: 'grid',
+        title: 'A map of what you know',
+        body: 'A short diagnostic places you on the concept graph, and every answer updates your mastery of each concept.',
     },
     {
         icon: 'target',
-        title: 'Adaptive assessment',
-        body: 'Quizzes follow your mastery, with verified answers and feedback that cites the source.',
+        title: 'Mistakes traced to the idea behind them',
+        body: 'Questions aim at your weakest concepts at the right difficulty, and the tutor reads your reasoning to name the misconception.',
     },
     {
-        icon: 'calendar',
-        title: 'A plan that adapts',
-        body: 'Weak topics, forgetting curves and your exam date shape every study day.',
+        icon: 'users',
+        title: 'Spaced review, and a view for teachers',
+        body: 'Concepts return just before you would forget them, and teachers see where the whole class is stuck.',
     },
 ] as const;
 
@@ -140,13 +140,14 @@ export default function Login() {
 
                     <div className="rise" style={{ '--i': 1 } as React.CSSProperties}>
                         <h1 className="authpitch__title">
-                            Study from your material.
+                            Find what you don&rsquo;t know.
                             <br />
                             <span className="authpitch__accent">Master it for real.</span>
                         </h1>
                         <p className="muted" style={{ maxWidth: '48ch', fontSize: '1.08rem' }}>
-                            An AI study companion that turns lecture videos, slides and textbooks
-                            into source-cited tutoring and adaptive assessments.
+                            An adaptive exam-prep tutor that learns how you think: it finds your
+                            gaps, fixes the wrong ideas behind them and brings each concept back
+                            before you forget it.
                         </p>
                     </div>
 
