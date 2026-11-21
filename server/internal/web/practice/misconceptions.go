@@ -48,9 +48,9 @@ func aimAtMisconceptions(ctx context.Context, d *app.Deps, userID, topicID, diff
 		return nil, false, err
 	}
 	if len(found) == 0 {
-		// Only when nothing else is writing this topic, so the batch is not skipped for a lock
-		// while the once-per-window guard is already spent.
-		if d.AI != nil && d.Redis.Exists(ctx, "qgen:"+topicID).Val() == 0 &&
+		// Only when nothing else is writing this topic and this learner's top-up window is free,
+		// so the batch is not skipped inside topUp while the once-per-window guard is already spent.
+		if d.AI != nil && d.Redis.Exists(ctx, "qgen:"+topicID, topUpKey(topicID, userID)).Val() == 0 &&
 			d.Redis.SetNX(ctx, "qgen-mc:"+topicID+":"+userID, "1", targetedGenerationEvery).Val() {
 			topUp(d, genInput{topicID, difficulty, firstBatch, userID, labels})
 			return nil, true, nil

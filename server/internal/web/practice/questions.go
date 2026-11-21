@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/redis/go-redis/v9"
 
 	"github.com/shaunmortal/AI-tutor/server/internal/adaptive"
 	"github.com/shaunmortal/AI-tutor/server/internal/ai"
@@ -281,8 +282,22 @@ func fillBank(reqCtx context.Context, d *app.Deps, in genInput) bool {
 	return res.anyUsable()
 }
 
+// topUpEvery spaces one learner's background batches on a topic. The per-topic lock only stops
+// two running at once, so without this a batch that stores nothing usable (or a learner answering
+// fast) would pay for another on every visit.
+const topUpEvery = 15 * time.Minute
+
+func topUpKey(topicID, userID string) string { return "qgen-topup:" + topicID + ":" + userID }
+
+// topUpDue takes this learner's top-up window on a topic: false while one started within
+// topUpEvery. Fails closed: on a Redis error the session just keeps its repeats.
+func topUpDue(ctx context.Context, rdb *redis.Client, topicID, userID string) bool {
+	return rdb.SetNX(ctx, topUpKey(topicID, userID), "1", topUpEvery).Val()
+}
+
 // topUp writes a few new questions in the background for a topic the learner has run dry.
-// Fire-and-forget; skipped when that topic is already being generated.
+// Fire-and-forget; skipped when that topic is already being generated, or this learner had a
+// batch on it within topUpEvery.
 func topUp(d *app.Deps, in genInput) {
 	if d.AI == nil {
 		slog.Warn("could not top up topic", "topic", in.topicID, "err", errAIUnavailable)
@@ -291,6 +306,9 @@ func topUp(d *app.Deps, in genInput) {
 	go func() {
 		ctx, cancel := context.WithTimeout(context.Background(), genTimeout)
 		defer cancel()
+		if !topUpDue(ctx, d.Redis, in.topicID, in.userID) {
+			return
+		}
 		release, ok := claim(ctx, d, in.topicID)
 		if !ok {
 			return

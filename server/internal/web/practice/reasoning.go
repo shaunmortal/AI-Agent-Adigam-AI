@@ -12,6 +12,7 @@ import (
 	"github.com/shaunmortal/AI-tutor/server/internal/ai"
 	"github.com/shaunmortal/AI-tutor/server/internal/app"
 	"github.com/shaunmortal/AI-tutor/server/internal/assessment"
+	"github.com/shaunmortal/AI-tutor/server/internal/ratelimit"
 	"github.com/shaunmortal/AI-tutor/server/internal/store"
 )
 
@@ -33,6 +34,9 @@ const (
 	reasoningTimeout = 20 * time.Second
 	// How many of the learner's own misconceptions on the topic the model is shown to reuse.
 	knownPerTopic = 10
+	// checksPerHour caps the paid call on an otherwise free route. Past it an answer is marked
+	// without its reasoning judged, never refused.
+	checksPerHour = 60
 )
 
 var verdicts = []string{"sound", "flawed", "missing"}
@@ -58,6 +62,9 @@ func checkReasoning(ctx context.Context, d *app.Deps, userID string, q *store.Qu
 		return nil
 	}
 	if q.QuestionType != string(assessment.MCQ) && q.QuestionType != string(assessment.MSQ) {
+		return nil
+	}
+	if !ratelimit.Allow(ctx, d.Redis, "reasoning-check", userID, checksPerHour, time.Hour) {
 		return nil
 	}
 	var correct []int

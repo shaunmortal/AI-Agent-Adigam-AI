@@ -35,3 +35,22 @@ func TestLimitPerLearner(t *testing.T) {
 		}
 	}
 }
+
+func TestAllowPerLearner(t *testing.T) {
+	rdb := redis.NewClient(&redis.Options{Addr: "localhost:6379"})
+	if rdb.Ping(context.Background()).Err() != nil {
+		t.Skip("redis not running")
+	}
+	ctx := context.Background()
+	name := "test-allow-" + time.Now().Format("150405.000000")
+	t.Cleanup(func() { rdb.Del(ctx, keyFor(name, "a"), keyFor(name, "b")) })
+
+	allow := func(user string) bool { return Allow(ctx, rdb, name, user, 2, time.Minute) }
+	got := []bool{allow("a"), allow("a"), allow("a"), allow("b")}
+	want := []bool{true, true, false, true}
+	for i := range want {
+		if got[i] != want[i] {
+			t.Fatalf("use %d: got %v, want %v (all: %v)", i, got[i], want[i], got)
+		}
+	}
+}
