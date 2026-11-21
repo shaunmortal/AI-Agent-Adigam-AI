@@ -32,7 +32,7 @@ func TestPutFirstLeadsWithTargetedQuestionsAndKeepsTheCount(t *testing.T) {
 	}
 }
 
-func TestTwoCleanAnswersFixAMisconceptionAndARelapseReopensIt(t *testing.T) {
+func TestTwoCleanAnswersInARowFixAMisconception(t *testing.T) {
 	streak, fixed := 0, false
 	for i, step := range []struct {
 		clean      bool
@@ -40,10 +40,9 @@ func TestTwoCleanAnswersFixAMisconceptionAndARelapseReopensIt(t *testing.T) {
 		wantFixed  bool
 	}{
 		{true, 1, false},
-		{true, 2, true},   // two in a row: fixed
-		{true, 3, true},   // stays fixed
-		{false, 0, false}, // tempted again: re-opened, the count starts over
+		{false, 0, false}, // not clean: the count starts over
 		{true, 1, false},
+		{true, 2, true}, // two in a row: fixed
 	} {
 		streak, fixed = streakAfter(streak, step.clean)
 		if streak != step.wantStreak || fixed != step.wantFixed {

@@ -280,7 +280,8 @@ export function PracticeSession({
 
                     {result.resolvedMisconceptions?.map((label) => (
                         <div key={label} className="banner banner--good" role="status">
-                            <strong>Fixed: {label}.</strong> Two clean answers in a row.
+                            <strong>Misconception fixed:</strong> “{label}”. Two right answers in a
+                            row on questions built to tempt it.
                         </div>
                     ))}
 

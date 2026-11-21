@@ -243,7 +243,7 @@ func recordAnswers(ctx context.Context, q store.Q, userID, source string, answer
 				return nil, nil, err
 			}
 		}
-		inserted[i] = recorded{at, trackMisconceptions(ctx, q, userID, at.TopicID, a.verdict)}
+		inserted[i] = recorded{at, trackMisconceptions(ctx, q, userID, at.TopicID, a.verdict, at.AttemptNumber > 1)}
 	}
 
 	recs := make(map[string]recomputed, len(topics))

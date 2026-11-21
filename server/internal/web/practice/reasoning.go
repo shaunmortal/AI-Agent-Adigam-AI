@@ -119,13 +119,13 @@ func knownMisconceptions(ctx context.Context, d *app.Deps, userID string, q *sto
 	for _, m := range q.OptionMisconceptions {
 		add(m)
 	}
-	rows, err := store.NewMistakes(d.DB.Admin).Top(ctx, userID, []string{q.TopicID}, knownPerTopic, knownPerTopic)
+	labels, err := store.NewMistakes(d.DB.Admin).Labels(ctx, userID, q.TopicID, knownPerTopic)
 	if err != nil {
 		slog.Warn("could not read the learner's misconceptions", "topic", q.TopicID, "err", err)
 		return out
 	}
-	for _, r := range rows {
-		add(r.Label)
+	for _, l := range labels {
+		add(l)
 	}
 	return out
 }

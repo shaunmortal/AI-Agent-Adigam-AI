@@ -57,7 +57,7 @@ type ProbedPattern struct {
 }
 
 // FindProbed is the learner's misconceptions on the topic named by labels (ignoring case and
-// surrounding space), resolved ones included so a relapse can re-open them.
+// surrounding space), resolved ones included and flagged.
 func (r *Mistakes) FindProbed(ctx context.Context, userID, topicID string, labels []string) ([]ProbedPattern, error) {
 	return rowsOf[ProbedPattern](ctx, r.q, "mistakes.findProbed",
 		`select id::text as id, misconception as label, clean_streak, resolved_at is not null as resolved
@@ -73,6 +73,14 @@ func (r *Mistakes) SaveStreak(ctx context.Context, id string, streak int, resolv
 		`update mistake_patterns set clean_streak = $2,
 		   resolved_at = case when $3 then coalesce(resolved_at, now()) end
 		 where id = $1`, id, streak, resolved)
+}
+
+// Labels is every misconception the learner has shown on the topic, fixed ones included, most
+// frequent first: the wording to reuse, so showing a fixed one again re-opens its row.
+func (r *Mistakes) Labels(ctx context.Context, userID, topicID string, limit int) ([]string, error) {
+	return colOf[string](ctx, r.q, "mistakes.labels",
+		`select misconception from mistake_patterns where user_id = $1 and topic_id = $2
+		 order by occurrences desc, last_seen_at desc limit $3`, userID, topicID, limit)
 }
 
 // Top is the learner's most frequent misconceptions they still hold (resolved ones are left out),

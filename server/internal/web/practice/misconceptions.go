@@ -106,7 +106,7 @@ func clean(v verdict) bool {
 }
 
 // streakAfter is a held misconception's clean streak after one more answer that tested it, and
-// whether it now counts as fixed. An answer that is not clean starts the count over and re-opens it.
+// whether it now counts as fixed. An answer that is not clean starts the count over.
 func streakAfter(streak int, clean bool) (next int, fixed bool) {
 	if !clean {
 		return 0, false
@@ -114,14 +114,16 @@ func streakAfter(streak int, clean bool) (next int, fixed bool) {
 	return streak + 1, streak+1 >= cleanToFix
 }
 
-// trackMisconceptions moves the clean streak of each misconception the learner holds on the topic
-// that the answered question tempts, and returns the ones this answer just fixed. Never fails the
-// submission: a streak that did not move is a misconception fixed one answer later.
-func trackMisconceptions(ctx context.Context, q store.Q, userID, topicID string, v verdict) []string {
-	if len(v.Probes) == 0 {
+// trackMisconceptions moves the clean streak of each misconception the learner still holds on the
+// topic that the answered question tempts, and returns the ones this answer just fixed. A fixed one
+// is left alone: Record, which runs first, re-opens it only when an answer actually shows it. A
+// clean repeat of a question proves nothing (its answer was shown last time), so it is not counted.
+// Never fails the submission: a streak that did not move is a misconception fixed one answer later.
+func trackMisconceptions(ctx context.Context, q store.Q, userID, topicID string, v verdict, repeat bool) []string {
+	ok := clean(v)
+	if len(v.Probes) == 0 || (ok && repeat) {
 		return nil
 	}
-	ok := clean(v)
 	var fixed []string
 	err := softly(ctx, q, func(q store.Q) error {
 		mistakes := store.NewMistakes(q)
@@ -130,11 +132,14 @@ func trackMisconceptions(ctx context.Context, q store.Q, userID, topicID string,
 			return err
 		}
 		for _, h := range held {
+			if h.Resolved {
+				continue
+			}
 			streak, resolved := streakAfter(h.CleanStreak, ok)
 			if err := mistakes.SaveStreak(ctx, h.ID, streak, resolved); err != nil {
 				return err
 			}
-			if resolved && !h.Resolved {
+			if resolved {
 				fixed = append(fixed, h.Label)
 			}
 		}

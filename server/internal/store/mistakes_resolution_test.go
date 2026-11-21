@@ -31,6 +31,9 @@ func TestResolvedMisconceptionsLeaveTopAndReopenWhenShownAgain(t *testing.T) {
 	top, err := r.Top(f.ctx, f.u1, nil, 5, 10)
 	must(t, err)
 	check(t, len(top) == 1 && top[0].Label == "thinks heavier falls faster", "resolved row still listed: %+v", top)
+	labels, err := r.Labels(f.ctx, f.u1, f.topicID, 10)
+	must(t, err)
+	check(t, len(labels) == 2, "the judge's labels leave out a fixed one: %q", labels)
 	mass = probed("confuses mass with weight")
 	check(t, mass.Resolved && mass.CleanStreak == 2, "resolved row not findable: %+v", mass)
 
