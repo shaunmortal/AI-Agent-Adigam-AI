@@ -35,7 +35,7 @@ const FEATURES = [
 ] as const;
 
 const COPY: Record<Mode, { title: string; subtitle: string; submit: string }> = {
-    signin: { title: 'Welcome', subtitle: 'Login to continue your journey', submit: 'Login' },
+    signin: { title: 'Welcome back', subtitle: 'Login to continue your journey', submit: 'Login' },
     signup: {
         title: 'Join Adigam',
         subtitle: 'Create an account to start learning',
