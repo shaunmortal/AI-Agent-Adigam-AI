@@ -1482,15 +1482,3 @@ div.option {
 .authpitch__accent {
     color: var(--accent);
 }
-
-/* The comet of light circling the sign-in card and focused fields goes with the rest of the glow:
-   a focused field shows an ordinary accent ring instead. */
-.runline::after,
-.inputwrap:focus-within::after,
-.authcard::after {
-    display: none;
-}
-
-.inputwrap:focus-within {
-    box-shadow: 0 0 0 2px var(--accent-dim), inset 0 0 0 1px var(--accent);
-}
