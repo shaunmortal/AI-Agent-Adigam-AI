@@ -126,7 +126,7 @@ const shuffle = (xs) => xs.map((x) => [rand(), x]).sort((a, b) => a[0] - b[0]).m
 
 const TEACHER = { key: "teacher", name: "Kavita Rao", email: "teacher@adigam.example" };
 const NAMES = [
-  "Aarav Sharma", "Ananya Iyer", "Vihaan Gupta", "Diya Patel", "Arjun Reddy", "Saanvi Nair", "Reyansh Verma",
+  "Ayush Kumar", "Ananya Iyer", "Vihaan Gupta", "Diya Patel", "Arjun Reddy", "Saanvi Nair", "Reyansh Verma",
   "Myra Khan", "Kabir Singh", "Aadhya Rao", "Ishaan Mehta", "Kiara Das", "Rohan Joshi", "Meera Pillai",
   "Aditya Kulkarni", "Pari Chopra", "Vivaan Bose", "Anika Menon", "Krish Agarwal", "Navya Saxena",
   "Dev Malhotra", "Riya Banerjee", "Om Tiwari", "Tara Fernandes",

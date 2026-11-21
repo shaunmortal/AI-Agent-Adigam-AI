@@ -18,7 +18,7 @@ type Mode = 'signin' | 'signup' | 'forgot';
 
 /** The public demo logins (also listed in the README): one click signs in as either. */
 const DEMO = {
-    student: 'aarav.sharma@adigam.example',
+    student: 'ayush.kumar@adigam.example',
     teacher: 'teacher@adigam.example',
     password: 'AdigamDemo#2026',
 } as const;

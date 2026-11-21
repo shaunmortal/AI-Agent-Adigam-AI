@@ -43,7 +43,7 @@ Problem Statement 02 — Adaptive exam-prep tutor with a learner model
 | Role | Email | Password |
 |---|---|---|
 | Teacher | `teacher@adigam.example` | `AdigamDemo#2026` |
-| Student | `aarav.sharma@adigam.example` | `AdigamDemo#2026` |
+| Student | `ayush.kumar@adigam.example` | `AdigamDemo#2026` |
 
 The demo class is **Class 10-B · Physics**: 24 students on the Class 10 Physics
 syllabus (NCERT chapters 9 to 12), with answers, reasoning and mastery already recorded. Every student
@@ -59,7 +59,7 @@ signs in with the same password, e.g. `ananya.iyer@adigam.example`.
 1. **Teacher dashboard.** Sign in as the teacher, open **Groups**, then **Class 10-B · Physics → Open class
    dashboard**. You see class-wide gaps ranked by priority, the misconceptions behind them in students' own
    words, and a student × topic heatmap. Press **Generate re-teach plan** for a timed lesson and student groups.
-2. **Practice with reasoning.** Sign out and sign in as Aarav. The dashboard's **Do this next** says which
+2. **Practice with reasoning.** Sign out and sign in as the student (Ayush). The dashboard's **Do this next** says which
    topic to practise and why. Open **Practice → Start practice**, choose an option and fill in **Why did you
    choose this?** before **Submit answer**. The feedback shows the likely misconception, a reply to your
    reasoning, the explanation and how your mastery moved.

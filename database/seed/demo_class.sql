@@ -14,10 +14,10 @@
 --
 -- Logins (all accounts): password AdigamDemo#2026
 --   teacher: teacher@adigam.example   class invite code: TENTHB
---   students: firstname.lastname@adigam.example, e.g. aarav.sharma@adigam.example
+--   students: firstname.lastname@adigam.example, e.g. ayush.kumar@adigam.example
 --
 -- Students (holds = misconceptions simulated for them):
---   Aarav Sharma     107 answers; holds mc-parallel-increases-r, mc-normal-ray-bends, mc-fuse-high-melting-point
+--   Ayush Kumar      107 answers; holds mc-parallel-increases-r, mc-normal-ray-bends, mc-fuse-high-melting-point
 --   Ananya Iyer      114 answers; holds mc-current-used-up, mc-kwh-is-power, mc-short-circuit-low-current
 --   Vihaan Gupta     82 answers; holds mc-current-used-up, mc-bends-away-in-denser, mc-myopia-convex-lens, mc-eye-lens-moves, mc-red-bends-most
 --   Diya Patel       88 answers; holds mc-current-used-up, mc-parallel-increases-r, mc-bends-away-in-denser, mc-stars-flicker-themselves, mc-electromagnet-permanent
@@ -54,7 +54,7 @@ insert into auth.users
      raw_user_meta_data, created_at, updated_at, confirmation_token, email_change, email_change_token_new, recovery_token)
 values
     ('00000000-0000-0000-0000-000000000000', 'c8ddb293-2ebf-4978-8ebb-14d95b8724fc', 'authenticated', 'authenticated', 'teacher@adigam.example', extensions.crypt('AdigamDemo#2026', extensions.gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{"full_name":"Kavita Rao"}', now() - interval '12 days', now(), '', '', '', ''),
-    ('00000000-0000-0000-0000-000000000000', 'a61b8bfe-2647-470c-847a-4a4d5ff122d6', 'authenticated', 'authenticated', 'aarav.sharma@adigam.example', extensions.crypt('AdigamDemo#2026', extensions.gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{"full_name":"Aarav Sharma"}', now() - interval '12 days', now(), '', '', '', ''),
+    ('00000000-0000-0000-0000-000000000000', 'a61b8bfe-2647-470c-847a-4a4d5ff122d6', 'authenticated', 'authenticated', 'ayush.kumar@adigam.example', extensions.crypt('AdigamDemo#2026', extensions.gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{"full_name":"Ayush Kumar"}', now() - interval '12 days', now(), '', '', '', ''),
     ('00000000-0000-0000-0000-000000000000', 'c4717e10-d9ce-4597-83bf-80643640a752', 'authenticated', 'authenticated', 'ananya.iyer@adigam.example', extensions.crypt('AdigamDemo#2026', extensions.gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{"full_name":"Ananya Iyer"}', now() - interval '12 days', now(), '', '', '', ''),
     ('00000000-0000-0000-0000-000000000000', 'fffc169d-bf34-4ef7-86fe-dd2d45560b68', 'authenticated', 'authenticated', 'vihaan.gupta@adigam.example', extensions.crypt('AdigamDemo#2026', extensions.gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{"full_name":"Vihaan Gupta"}', now() - interval '12 days', now(), '', '', '', ''),
     ('00000000-0000-0000-0000-000000000000', '66a1445d-47eb-49b3-8fe1-06997e4273bf', 'authenticated', 'authenticated', 'diya.patel@adigam.example', extensions.crypt('AdigamDemo#2026', extensions.gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{"full_name":"Diya Patel"}', now() - interval '12 days', now(), '', '', '', ''),
@@ -82,7 +82,7 @@ values
 insert into auth.identities (id, user_id, provider_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
 values
     ('4a29c095-6d3d-406e-8add-01e8fec21ce4', 'c8ddb293-2ebf-4978-8ebb-14d95b8724fc', 'c8ddb293-2ebf-4978-8ebb-14d95b8724fc', '{"sub":"c8ddb293-2ebf-4978-8ebb-14d95b8724fc","email":"teacher@adigam.example","email_verified":true}', 'email', now(), now(), now()),
-    ('f6e76325-c8ec-4bca-8344-232ff74ad27c', 'a61b8bfe-2647-470c-847a-4a4d5ff122d6', 'a61b8bfe-2647-470c-847a-4a4d5ff122d6', '{"sub":"a61b8bfe-2647-470c-847a-4a4d5ff122d6","email":"aarav.sharma@adigam.example","email_verified":true}', 'email', now(), now(), now()),
+    ('f6e76325-c8ec-4bca-8344-232ff74ad27c', 'a61b8bfe-2647-470c-847a-4a4d5ff122d6', 'a61b8bfe-2647-470c-847a-4a4d5ff122d6', '{"sub":"a61b8bfe-2647-470c-847a-4a4d5ff122d6","email":"ayush.kumar@adigam.example","email_verified":true}', 'email', now(), now(), now()),
     ('702972dd-f837-4b2a-8bf0-5c396c27cfc0', 'c4717e10-d9ce-4597-83bf-80643640a752', 'c4717e10-d9ce-4597-83bf-80643640a752', '{"sub":"c4717e10-d9ce-4597-83bf-80643640a752","email":"ananya.iyer@adigam.example","email_verified":true}', 'email', now(), now(), now()),
     ('ed86eea8-71dd-4889-8f9b-a7913e75e236', 'fffc169d-bf34-4ef7-86fe-dd2d45560b68', 'fffc169d-bf34-4ef7-86fe-dd2d45560b68', '{"sub":"fffc169d-bf34-4ef7-86fe-dd2d45560b68","email":"vihaan.gupta@adigam.example","email_verified":true}', 'email', now(), now(), now()),
     ('e0755697-9365-4823-8e06-8acdfbe63db1', '66a1445d-47eb-49b3-8fe1-06997e4273bf', '66a1445d-47eb-49b3-8fe1-06997e4273bf', '{"sub":"66a1445d-47eb-49b3-8fe1-06997e4273bf","email":"diya.patel@adigam.example","email_verified":true}', 'email', now(), now(), now()),
