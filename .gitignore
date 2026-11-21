@@ -14,7 +14,7 @@ npm-debug.log*
 .vscode/
 .idea/
 
-# Local only: demo account credentials, never committed
+# Local only: demo account credentials, which is never committed
 .demo-login.txt
 
 # Local only: the team's internal working notes. Not part of the submission, and it records
