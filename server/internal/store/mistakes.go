@@ -42,11 +42,49 @@ func (r *Mistakes) Record(ctx context.Context, userID, topicID, label, attemptID
 		   occurrences = mistake_patterns.occurrences + 1,
 		   evidence_attempt_ids = (mistake_patterns.evidence_attempt_ids || excluded.evidence_attempt_ids)
 		     [greatest(1, cardinality(mistake_patterns.evidence_attempt_ids) + 2 - `+strconv.Itoa(maxEvidence)+`):],
-		   last_seen_at = now()`, userID, topicID, label, attemptID)
+		   last_seen_at = now(),
+		   -- Shown again: whatever progress there was towards fixing it starts over (036).
+		   clean_streak = 0,
+		   resolved_at = null`, userID, topicID, label, attemptID)
 }
 
-// Top is the learner's most frequent misconceptions, at most perTopic per topic, weakest topic
-// first. topicIDs nil means every topic.
+// ProbedPattern is a held misconception's progress towards being fixed (036).
+type ProbedPattern struct {
+	ID          string `db:"id"`
+	Label       string `db:"label"`
+	CleanStreak int    `db:"clean_streak"`
+	Resolved    bool   `db:"resolved"`
+}
+
+// FindProbed is the learner's misconceptions on the topic named by labels (ignoring case and
+// surrounding space), resolved ones included and flagged.
+func (r *Mistakes) FindProbed(ctx context.Context, userID, topicID string, labels []string) ([]ProbedPattern, error) {
+	return rowsOf[ProbedPattern](ctx, r.q, "mistakes.findProbed",
+		`select id::text as id, misconception as label, clean_streak, resolved_at is not null as resolved
+		 from mistake_patterns
+		 where user_id = $1 and topic_id = $2
+		   and lower(trim(misconception)) in (select lower(trim(l)) from unnest($3::text[]) l)`, userID, topicID, labels)
+}
+
+// SaveStreak stores a misconception's clean streak; resolved keeps (or sets) when it was fixed,
+// and false re-opens it.
+func (r *Mistakes) SaveStreak(ctx context.Context, id string, streak int, resolved bool) error {
+	return exec(ctx, r.q, "mistakes.saveStreak",
+		`update mistake_patterns set clean_streak = $2,
+		   resolved_at = case when $3 then coalesce(resolved_at, now()) end
+		 where id = $1`, id, streak, resolved)
+}
+
+// Labels is every misconception the learner has shown on the topic, fixed ones included, most
+// frequent first: the wording to reuse, so showing a fixed one again re-opens its row.
+func (r *Mistakes) Labels(ctx context.Context, userID, topicID string, limit int) ([]string, error) {
+	return colOf[string](ctx, r.q, "mistakes.labels",
+		`select misconception from mistake_patterns where user_id = $1 and topic_id = $2
+		 order by occurrences desc, last_seen_at desc limit $3`, userID, topicID, limit)
+}
+
+// Top is the learner's most frequent misconceptions they still hold (resolved ones are left out),
+// at most perTopic per topic, weakest topic first. topicIDs nil means every topic.
 func (r *Mistakes) Top(ctx context.Context, userID string, topicIDs []string, perTopic, limit int) ([]MisconceptionRow, error) {
 	return rowsOf[MisconceptionRow](ctx, r.q, "mistakes.top",
 		`select topic_id, topic_name, mastery_score, label, occurrences, last_seen_at, source_chunk_id from (
@@ -63,7 +101,7 @@ func (r *Mistakes) Top(ctx context.Context, userID string, topicIDs []string, pe
 		   from mistake_patterns m
 		   join topics t on t.id = m.topic_id
 		   left join concept_mastery cm on cm.user_id = m.user_id and cm.topic_id = m.topic_id
-		   where m.user_id = $1 and ($2::uuid[] is null or m.topic_id = any($2))
+		   where m.user_id = $1 and m.resolved_at is null and ($2::uuid[] is null or m.topic_id = any($2))
 		 ) ranked
 		 where rank <= $3
 		 order by coalesce(mastery_score, 0), topic_id, rank

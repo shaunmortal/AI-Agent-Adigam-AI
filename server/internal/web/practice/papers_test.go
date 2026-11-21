@@ -7,6 +7,7 @@ package practice
 import (
 	"context"
 	"encoding/json"
+	"slices"
 	"strings"
 	"testing"
 
@@ -325,5 +326,54 @@ func TestWrongOptionRecordsMisconception(t *testing.T) {
 	e.call("POST", "/attempts", user, map[string]any{"questionId": q, "selectedOptions": []int{0}}).expect(t, 201, "")
 	if n := e.count(`select count(*) from mistake_patterns where user_id = $1`, user); n != 1 {
 		t.Fatalf("%d patterns", n)
+	}
+
+	// Fixing it (036) through the real grade path: two clean answers in a row on new questions that
+	// tempt it. The right answer above was a repeat of q, whose answer had been shown, so it did not count.
+	const label = "falls for the tempting one"
+	answer := func(q string, option int) []string {
+		t.Helper()
+		var r attemptResult
+		e.call("POST", "/attempts", user, map[string]any{"questionId": q, "selectedOptions": []int{option}}).
+			expect(t, 201, "").into(t, &r)
+		return r.ResolvedMisconceptions
+	}
+	state := func() (streak int, fixed bool) {
+		t.Helper()
+		must(t, e.d.DB.Admin.QueryRow(e.ctx, `select clean_streak, resolved_at is not null from mistake_patterns
+		   where user_id = $1 and misconception = $2`, user, label).Scan(&streak, &fixed))
+		return streak, fixed
+	}
+	if s, fixed := state(); s != 0 || fixed {
+		t.Fatalf("a clean repeat counted: streak %d fixed %v", s, fixed)
+	}
+	tempting := func() string {
+		return e.tempQuestion(e.goalTopic(1), "mcq", []string{"right", "tempting", "other"}, `[0]`,
+			[]string{"", label, "another belief"}, nil)
+	}
+	if got := answer(tempting(), 0); len(got) != 0 {
+		t.Fatalf("fixed after one clean answer: %q", got)
+	}
+	if s, fixed := state(); s != 1 || fixed {
+		t.Fatalf("after one clean answer: streak %d fixed %v", s, fixed)
+	}
+	if got := answer(tempting(), 0); !slices.Equal(got, []string{label}) {
+		t.Fatalf("resolvedMisconceptions %q", got)
+	}
+	if _, fixed := state(); !fixed {
+		t.Fatal("not fixed after two clean answers")
+	}
+
+	// A wrong answer that shows a different misconception leaves the fixed one fixed.
+	if got := answer(tempting(), 2); len(got) != 0 {
+		t.Fatalf("resolvedMisconceptions %q", got)
+	}
+	if _, fixed := state(); !fixed {
+		t.Fatal("re-opened by a wrong answer that did not show it")
+	}
+	// Showing it again re-opens it and the count starts over.
+	answer(q, 1)
+	if s, fixed := state(); s != 0 || fixed {
+		t.Fatalf("not re-opened: streak %d fixed %v", s, fixed)
 	}
 }

@@ -16,6 +16,13 @@ import { setRemember } from '@/lib/supabase';
 
 type Mode = 'signin' | 'signup' | 'forgot';
 
+/** The public demo logins (also listed in the README): one click signs in as either. */
+const DEMO = {
+    student: 'aarav.sharma@adigam.example',
+    teacher: 'teacher@adigam.example',
+    password: 'AdigamDemo#2026',
+} as const;
+
 const FEATURES = [
     {
         icon: 'network',
@@ -111,6 +118,11 @@ export default function Login() {
                 await signIn(email.trim(), password);
             }
         });
+    }
+
+    function demo(who: 'student' | 'teacher') {
+        setRemember(remember);
+        void run(() => signIn(DEMO[who], DEMO.password));
     }
 
     function social(provider: OAuthProvider) {
@@ -284,6 +296,33 @@ export default function Login() {
                             {!busy && <Arrow />}
                         </button>
                     </form>
+
+                    {mode === 'signin' && !recovering && (
+                        <div
+                            className="auth__row"
+                            style={{ flexWrap: 'wrap', justifyContent: 'center' }}
+                        >
+                            <span className="faint">Try the demo</span>
+                            <div className="row" style={{ justifyContent: 'center' }}>
+                                <button
+                                    type="button"
+                                    className="secondary"
+                                    disabled={busy}
+                                    onClick={() => demo('student')}
+                                >
+                                    As a student
+                                </button>
+                                <button
+                                    type="button"
+                                    className="secondary"
+                                    disabled={busy}
+                                    onClick={() => demo('teacher')}
+                                >
+                                    As a teacher
+                                </button>
+                            </div>
+                        </div>
+                    )}
 
                     {!recovering && (
                         <div className="auth__switch">

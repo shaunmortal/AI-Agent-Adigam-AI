@@ -47,11 +47,13 @@ type ClassStudent struct {
 
 // ClassMisconception is a wrong idea held across the class, in the students' own words.
 type ClassMisconception struct {
-	TopicID   string   `json:"topicId"`
-	TopicName string   `json:"topicName"`
-	Label     string   `json:"label"`
-	Students  int      `json:"students"`
-	Quotes    []string `json:"quotes"`
+	TopicID   string `json:"topicId"`
+	TopicName string `json:"topicName"`
+	Label     string `json:"label"`
+	// Students hold it now; Fixed once held it and have resolved it.
+	Students int      `json:"students"`
+	Fixed    int      `json:"fixed"`
+	Quotes   []string `json:"quotes"`
 }
 
 // ClassGaps ranks every topic at least one student has a score on: weak on average, weak for many,

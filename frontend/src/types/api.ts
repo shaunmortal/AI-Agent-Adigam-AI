@@ -97,6 +97,8 @@ export interface AttemptResult {
     /** The judgement of the learner's written "why"; null when none was written or it could not be judged. */
     reasoningVerdict?: 'sound' | 'flawed' | 'missing' | null;
     reasoningFeedback?: string | null;
+    /** Misconceptions this answer fixed: two clean answers in a row on questions that tempt them. */
+    resolvedMisconceptions?: string[];
 }
 
 export interface Subject {
@@ -662,7 +664,10 @@ export interface ClassMisconception {
     topicId: string;
     topicName: string;
     label: string;
+    /** Students who hold it now. */
     students: number;
+    /** Students who held it and have fixed it. */
+    fixed: number;
     quotes: string[];
 }
 

@@ -80,6 +80,9 @@ type attemptResult struct {
 	// written reasoning; null when none was written or it could not be judged.
 	ReasoningVerdict  *string `json:"reasoningVerdict"`
 	ReasoningFeedback *string `json:"reasoningFeedback"`
+	// ResolvedMisconceptions are the learner's misconceptions this answer fixed (two clean
+	// answers in a row on questions that tempt them); usually empty.
+	ResolvedMisconceptions []string `json:"resolvedMisconceptions"`
 }
 
 type masteryChange struct {
@@ -122,7 +125,7 @@ func submitAttempt(d *app.Deps) httpx.Handler {
 		if err != nil {
 			return err
 		}
-		var attempt *store.InsertedAttempt
+		var attempt recorded
 		var rec recomputed
 		if err := inTx(ctx, d, func(tx pgx.Tx) error {
 			inserted, recs, err := recordAnswers(ctx, tx, userID, in.Source, []graded{{questionID: in.QuestionID,
@@ -139,7 +142,8 @@ func submitAttempt(d *app.Deps) httpx.Handler {
 			Explanation: question.Explanation, SourceChunkID: question.SourceChunkID, Feedback: v.Feedback,
 			Misconception:    v.Misconception,
 			Mastery:          masteryChange{TopicID: attempt.TopicID, Before: before, After: rec.score, AttemptsOnTopic: rec.total},
-			ReasoningVerdict: v.ReasoningVerdict, ReasoningFeedback: v.ReasoningFeedback}
+			ReasoningVerdict: v.ReasoningVerdict, ReasoningFeedback: v.ReasoningFeedback,
+			ResolvedMisconceptions: nonNilSlice(attempt.fixed)}
 		if before != nil {
 			change := jsRound((rec.score-*before)*100) / 100
 			res.Mastery.Change = &change

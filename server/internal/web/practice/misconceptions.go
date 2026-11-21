@@ -2,6 +2,7 @@ package practice
 
 import (
 	"context"
+	"log/slog"
 	"slices"
 	"time"
 
@@ -92,4 +93,61 @@ func putFirst(lead, rest []adaptive.PracticeQuestion, n int) []adaptive.Practice
 		}
 	}
 	return out
+}
+
+// cleanToFix is how many clean answers in a row, on questions built to tempt a misconception,
+// count as having fixed it.
+const cleanToFix = 2
+
+// clean is an answer that shows the learner past the misconceptions its question tempts: right,
+// and the reasoning (when judged) not flawed.
+func clean(v verdict) bool {
+	return v.IsCorrect && (v.ReasoningVerdict == nil || *v.ReasoningVerdict != "flawed")
+}
+
+// streakAfter is a held misconception's clean streak after one more answer that tested it, and
+// whether it now counts as fixed. An answer that is not clean starts the count over.
+func streakAfter(streak int, clean bool) (next int, fixed bool) {
+	if !clean {
+		return 0, false
+	}
+	return streak + 1, streak+1 >= cleanToFix
+}
+
+// trackMisconceptions moves the clean streak of each misconception the learner still holds on the
+// topic that the answered question tempts, and returns the ones this answer just fixed. A fixed one
+// is left alone: Record, which runs first, re-opens it only when an answer actually shows it. A
+// clean repeat of a question proves nothing (its answer was shown last time), so it is not counted.
+// Never fails the submission: a streak that did not move is a misconception fixed one answer later.
+func trackMisconceptions(ctx context.Context, q store.Q, userID, topicID string, v verdict, repeat bool) []string {
+	ok := clean(v)
+	if len(v.Probes) == 0 || (ok && repeat) {
+		return nil
+	}
+	var fixed []string
+	err := softly(ctx, q, func(q store.Q) error {
+		mistakes := store.NewMistakes(q)
+		held, err := mistakes.FindProbed(ctx, userID, topicID, v.Probes)
+		if err != nil {
+			return err
+		}
+		for _, h := range held {
+			if h.Resolved {
+				continue
+			}
+			streak, resolved := streakAfter(h.CleanStreak, ok)
+			if err := mistakes.SaveStreak(ctx, h.ID, streak, resolved); err != nil {
+				return err
+			}
+			if resolved {
+				fixed = append(fixed, h.Label)
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		slog.Warn("could not track misconception progress", "topic", topicID, "err", err)
+		return nil
+	}
+	return fixed
 }

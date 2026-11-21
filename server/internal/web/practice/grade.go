@@ -38,6 +38,9 @@ type verdict struct {
 	// written reasoning; nil when none was written or it could not be judged.
 	ReasoningVerdict  *string
 	ReasoningFeedback *string
+	// Probes are the misconceptions the question's wrong options are tagged with: answering it
+	// tests whether the learner still holds them (trackMisconceptions).
+	Probes []string
 }
 
 // rubricGrade is the model's mark for a typed answer (ai.ShortAnswerGradeSchema).
@@ -78,11 +81,24 @@ func grade(ctx context.Context, client *ai.Client, q *store.QuestionForGrading, 
 	if err != nil {
 		return verdict{}, err
 	}
-	v := verdict{IsCorrect: ok}
+	v := verdict{IsCorrect: ok, Probes: probes(q)}
 	if !ok {
 		v.Misconception = optionMisconception(q, a.Options)
 	}
 	return v, nil
+}
+
+// probes is what the question's wrong options are tagged with, if it names any.
+func probes(q *store.QuestionForGrading) []string {
+	var key []int
+	_ = json.Unmarshal(q.CorrectAnswer, &key)
+	var out []string
+	for i, m := range q.OptionMisconceptions {
+		if m = strings.TrimSpace(m); m != "" && !slices.Contains(key, i) {
+			out = append(out, m)
+		}
+	}
+	return out
 }
 
 // optionMisconception is the misconception behind the first wrong option chosen, if the question
@@ -172,6 +188,12 @@ func markPaper(ctx context.Context, d *app.Deps, questionIDs []string, given map
 	return marks, nil
 }
 
+// recorded is one written answer: its attempt, and the misconceptions it just fixed.
+type recorded struct {
+	*store.InsertedAttempt
+	fixed []string
+}
+
 // graded is one marked answer, ready to record.
 type graded struct {
 	questionID string
@@ -183,10 +205,11 @@ type graded struct {
 
 // recordAnswers writes graded answers and moves the learner model the way one practice answer
 // does: attempt rows, each touched topic's mastery recomputed from the log, its revision
-// schedule, the profile's counters and habits, and any misconception an answer showed. It runs
-// on q, so a caller passing a transaction gets all of it or none.
+// schedule, the profile's counters and habits, any misconception an answer showed, and progress
+// towards fixing the ones it tested. It runs on q, so a caller passing a transaction gets all of
+// it or none.
 func recordAnswers(ctx context.Context, q store.Q, userID, source string, answers []graded, daysUntilExam *int) (
-	[]*store.InsertedAttempt, map[string]recomputed, error) {
+	[]recorded, map[string]recomputed, error) {
 	learners := store.NewLearners(q)
 	// The learner's own calendar day, read once so streak, schedule and grading agree.
 	timezone := ""
@@ -198,7 +221,7 @@ func recordAnswers(ctx context.Context, q store.Q, userID, source string, answer
 	today := dates.TodayIn(timezone, time.Now())
 
 	attempts, mistakes := store.NewAttempts(q), store.NewMistakes(q)
-	inserted := make([]*store.InsertedAttempt, len(answers))
+	inserted := make([]recorded, len(answers))
 	var topics []string
 	correct := 0
 	for i, a := range answers {
@@ -208,7 +231,6 @@ func recordAnswers(ctx context.Context, q store.Q, userID, source string, answer
 		if err != nil {
 			return nil, nil, err
 		}
-		inserted[i] = at
 		// Only a learner's first try measures the question: a repeat follows a revealed answer,
 		// so one learner answering again could otherwise re-level it for everyone.
 		if at.AttemptNumber == 1 {
@@ -225,6 +247,7 @@ func recordAnswers(ctx context.Context, q store.Q, userID, source string, answer
 				return nil, nil, err
 			}
 		}
+		inserted[i] = recorded{at, trackMisconceptions(ctx, q, userID, at.TopicID, a.verdict, at.AttemptNumber > 1)}
 	}
 
 	recs := make(map[string]recomputed, len(topics))

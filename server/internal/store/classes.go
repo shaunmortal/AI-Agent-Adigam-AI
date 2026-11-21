@@ -72,26 +72,31 @@ func (r *Groups) Downstream(ctx context.Context, topicIDs []string) (map[string]
 	return out, nil
 }
 
-// ClassMisconceptionRow is a misconception across the class with the attempts that showed it.
+// ClassMisconceptionRow is a misconception across the class with the attempts that showed it:
+// Students hold it now, Fixed once held it and have resolved it (036).
 type ClassMisconceptionRow struct {
 	TopicID   string   `db:"topic_id"`
 	TopicName string   `db:"topic_name"`
 	Label     string   `db:"label"`
 	Students  int      `db:"students"`
+	Fixed     int      `db:"fixed"`
 	Evidence  []string `db:"evidence"`
 }
 
-// ClassMisconceptions is the class's most widely held misconceptions.
+// ClassMisconceptions is the class's most widely held misconceptions, each with how many students
+// have fixed it. One nobody holds any more is left out: it is no longer something to teach.
 func (r *Groups) ClassMisconceptions(ctx context.Context, userIDs []string, curriculumID *string, limit int) ([]ClassMisconceptionRow, error) {
 	return rowsOf[ClassMisconceptionRow](ctx, r.q, "classes.misconceptions",
 		`select mp.topic_id, t.name as topic_name, min(mp.misconception) as label,
-		        count(distinct mp.user_id)::int as students,
+		        count(distinct mp.user_id) filter (where mp.resolved_at is null)::int as students,
+		        count(distinct mp.user_id) filter (where mp.resolved_at is not null)::int as fixed,
 		        coalesce(array_agg(e::text) filter (where e is not null), '{}') as evidence
 		 from mistake_patterns mp
 		 join topics t on t.id = mp.topic_id
 		 left join lateral unnest(mp.evidence_attempt_ids) as e on true
 		 where mp.user_id = any($1::uuid[]) and ($2::uuid is null or t.curriculum_id = $2)
 		 group by mp.topic_id, t.name, lower(mp.misconception)
+		 having count(*) filter (where mp.resolved_at is null) > 0
 		 order by students desc, label
 		 limit $3`, userIDs, curriculumID, limit)
 }

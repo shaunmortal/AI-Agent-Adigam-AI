@@ -160,7 +160,7 @@ func classMisconceptions(ctx context.Context, g *store.Groups, studentIDs []stri
 				picked = append(picked, q.Reasoning)
 			}
 		}
-		out[i] = groups.ClassMisconception{TopicID: r.TopicID, TopicName: r.TopicName, Label: r.Label, Students: r.Students, Quotes: picked}
+		out[i] = groups.ClassMisconception{TopicID: r.TopicID, TopicName: r.TopicName, Label: r.Label, Students: r.Students, Fixed: r.Fixed, Quotes: picked}
 	}
 	return out, nil
 }
