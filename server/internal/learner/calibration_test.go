@@ -37,3 +37,15 @@ func TestAbilityStaysFiniteAtTheEdges(t *testing.T) {
 		}
 	}
 }
+
+func TestTargetRatingIsWhereTheLearnerSucceedsSeventyPercent(t *testing.T) {
+	for _, m := range []*float64{nil, ptr(20.0), ptr(55.0), ptr(90.0)} {
+		got := ExpectedSuccess(Ability(m), TargetRating(m))
+		if math.Abs(got-TargetSuccess) > 1e-9 {
+			t.Fatalf("mastery %v: expected success at the target is %v, want %v", m, got, TargetSuccess)
+		}
+	}
+	if TargetRating(ptr(80.0)) <= TargetRating(ptr(30.0)) {
+		t.Fatal("a stronger learner should be targeted at harder questions")
+	}
+}
