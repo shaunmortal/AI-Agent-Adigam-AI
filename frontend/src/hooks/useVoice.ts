@@ -65,6 +65,26 @@ function recognitionConstructor(): RecognitionConstructor | null {
  */
 const LANG = 'en-IN';
 
+/**
+ * Voices to prefer, best first, matched on the name the browser reports.
+ *
+ * The default voice on most devices is the old concatenative one that sounds robotic. Microsoft
+ * Edge ships its neural "Online (Natural)" voices to the Web Speech API, Andrew among them (the
+ * Multilingual one also reads Hinglish well); Chrome has Google's network voices. Any of those
+ * beats the default, and the device's own en-IN voice is the last resort before it.
+ */
+const PREFERRED_VOICES = [/Andrew.*Multilingual/i, /Andrew/i, /Online \(Natural\)/i, /^Google (US|UK) English/i];
+
+/** The most natural English voice the browser offers, or undefined to leave the default. */
+export function pickVoice(voices: readonly SpeechSynthesisVoice[]): SpeechSynthesisVoice | undefined {
+    const english = voices.filter((voice) => voice.lang.startsWith('en') || /Multilingual/i.test(voice.name));
+    for (const pattern of PREFERRED_VOICES) {
+        const match = english.find((voice) => pattern.test(voice.name));
+        if (match) return match;
+    }
+    return voices.find((voice) => voice.lang === LANG);
+}
+
 /** Longest chunk handed to the speech engine at once, to stay clear of Chrome's truncation. */
 const MAX_UTTERANCE_CHARS = 180;
 
@@ -246,14 +266,15 @@ export function useVoice(): Voice {
                 const utterance = new SpeechSynthesisUtterance(chunk);
                 utterance.lang = LANG;
 
-                // A voice matching the language if the device has one; otherwise the default, which
-                // is still understandable. getVoices() is empty until the list loads, so a missing
-                // match is normal rather than a problem.
-                const match = window.speechSynthesis
-                    .getVoices()
-                    .find((voice) => voice.lang === LANG);
+                // The most natural voice the device has; otherwise the default, which is still
+                // understandable. getVoices() is empty until the list loads, so a missing match is
+                // normal rather than a problem.
+                const match = pickVoice(window.speechSynthesis.getVoices());
 
-                if (match) utterance.voice = match;
+                if (match) {
+                    utterance.voice = match;
+                    utterance.lang = match.lang;
+                }
 
                 // Only the last chunk reports the end, so `speaking` follows the whole answer
                 // rather than the first sentence.
