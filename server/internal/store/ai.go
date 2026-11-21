@@ -102,8 +102,10 @@ func (r *AI) FindAnsweredIDs(ctx context.Context, conversationIDs []string) (map
 // oldest 50, so a long thread replayed its opening turns to the model as "recent history".)
 func (r *AI) ListMessages(ctx context.Context, conversationID string, limit int) ([]MessageRow, error) {
 	return rowsOf[MessageRow](ctx, r.q, "ai.listMessages",
+		// A question and its answer can share a timestamp (one transaction); the question still
+		// comes first.
 		`select * from (select `+messageCols+` from ai_messages where conversation_id = $1
-		 order by created_at desc limit $2) latest order by created_at`,
+		 order by created_at desc, (role = 'learner') limit $2) latest order by created_at, (role <> 'learner')`,
 		conversationID, limit)
 }
 
