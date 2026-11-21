@@ -109,6 +109,8 @@ export default function LearningGoals() {
 
         setPrefilled(true);
         setTitle(current.title);
+        // Filled in from the old goal, not typed here: choosing a new syllabus must replace it.
+        setAutoTitle(current.title);
         setExamDate(current.examDate);
         setDailyMinutes(current.dailyMinutes);
         setChosen(current.subjectIds);
