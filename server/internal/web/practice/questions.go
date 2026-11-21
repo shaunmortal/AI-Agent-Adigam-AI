@@ -107,14 +107,21 @@ func nextRecommendation(d *app.Deps) httpx.Handler {
 		// A topic with nothing to practise is filled on the way past (an AI-written syllabus is
 		// topic names with no questions behind them). Outside any transaction: it takes seconds.
 		if len(selection.Questions) == 0 &&
-			fillBank(ctx, d, genInput{topicID, difficulty, min(plan.RequestedQuestionCount, firstBatch), userID}) {
+			fillBank(ctx, d, genInput{topicID, difficulty, min(plan.RequestedQuestionCount, firstBatch), userID, nil}) {
 			if err := selectAsUser(); err != nil {
 				return err
 			}
 		}
-		// Ran out of new questions: this session uses repeats, new ones are written for the next.
-		if selection.Repeats > 0 {
-			topUp(d, genInput{topicID, difficulty, firstBatch, userID})
+		// Questions aimed at this learner's own misconceptions go first; when there are none left,
+		// a batch written to expose them is started. Never fails the session.
+		targeted, generating, err := aimAtMisconceptions(ctx, d, userID, topicID, difficulty, &selection, plan.RequestedQuestionCount)
+		if err != nil {
+			slog.Warn("could not aim the session at misconceptions", "topic", topicID, "err", err)
+		}
+		// Ran out of new questions: this session uses repeats, new ones are written for the next
+		// (unless the targeted batch just started is already doing that).
+		if selection.Repeats > 0 && !generating {
+			topUp(d, genInput{topicID, difficulty, firstBatch, userID, nil})
 		}
 
 		if len(selection.Questions) == 0 {
@@ -125,6 +132,7 @@ func nextRecommendation(d *app.Deps) httpx.Handler {
 		action := adaptive.FinaliseAction(*plan, len(selection.Questions))
 		httpx.OK(w, http.StatusOK, map[string]any{
 			"recommendation": action, "questions": selection.Questions, "bankNote": selection.Note,
+			"targeted": targeted,
 		})
 		return nil
 	}
@@ -168,6 +176,9 @@ type genInput struct {
 	difficulty string
 	count      int
 	userID     string // recorded as the author; "" for none
+	// Misconceptions the learner has shown on this topic: the batch includes questions whose
+	// wrong options expose them. Nil for an ordinary batch.
+	misconceptions []string
 }
 
 type genOutcome struct {
@@ -330,7 +341,8 @@ func generateForTopic(ctx context.Context, d *app.Deps, in genInput) (*genResult
 	} else {
 		req.Schema = ai.GeneratedQuestionsSchema
 		req.Prompt = ai.QuestionGenerationPrompt(ai.QuestionGenerationInput{SubjectName: topic.SubjectName,
-			TopicName: topic.Name, Difficulty: ai.Difficulty(in.difficulty), Count: in.count, ExistingQuestions: existing})
+			TopicName: topic.Name, Difficulty: ai.Difficulty(in.difficulty), Count: in.count, ExistingQuestions: existing,
+			TargetMisconceptions: in.misconceptions})
 	}
 	var raw json.RawMessage
 	usage, err := d.AI.JSON(ctx, req, &raw)
@@ -508,7 +520,7 @@ func generateQuestions(d *app.Deps) httpx.Handler {
 		if d.AI == nil {
 			return errAIUnavailable
 		}
-		res, err := generateForTopic(r.Context(), d, genInput{topicID, difficulty, count, userID})
+		res, err := generateForTopic(r.Context(), d, genInput{topicID, difficulty, count, userID, nil})
 		if err != nil {
 			return err
 		}

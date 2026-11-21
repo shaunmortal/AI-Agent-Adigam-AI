@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/shaunmortal/AI-tutor/server/internal/adaptive"
 	"github.com/shaunmortal/AI-tutor/server/internal/learner"
@@ -84,6 +85,29 @@ func (r *Questions) FindForPractice(ctx context.Context, o adaptive.PracticeQuer
 		limit $5`
 	return rowsOf[adaptive.PracticeQuestion](ctx, r.q, "questions.findForPractice", sql,
 		o.TopicID, string(o.Difficulty), nonNil(o.Exclude), o.Only, o.Limit, o.TargetRating)
+}
+
+// ExposingQuestion is a question with a wrong option tagged with a misconception, and that label.
+type ExposingQuestion struct {
+	ID    string `db:"id"`
+	Label string `db:"label"`
+}
+
+// FindExposing is up to limit verified questions on a topic, none in exclude, that offer a wrong
+// option tagged with one of labels (compared ignoring case and surrounding spaces), each with the
+// label it matched. Elevated client only: option_misconceptions reveals which options are wrong.
+func (r *Questions) FindExposing(ctx context.Context, topicID string, labels, exclude []string, limit int) ([]ExposingQuestion, error) {
+	wanted := make([]string, len(labels))
+	for i, l := range labels {
+		wanted[i] = strings.ToLower(strings.TrimSpace(l))
+	}
+	return rowsOf[ExposingQuestion](ctx, r.q, "questions.findExposing",
+		`select q.id::text as id, m.label
+		 from questions q
+		 cross join lateral (select btrim(x) as label from unnest(q.option_misconceptions) x
+		                     where lower(btrim(x)) = any($2) limit 1) m
+		 where q.topic_id = $1 and q.is_verified and not (q.id = any($3::uuid[]))
+		 limit $4`, topicID, wanted, nonNil(exclude), limit)
 }
 
 // FindTopicWithSubject is a topic with its subject's name, or nil when it does not exist.
