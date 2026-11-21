@@ -276,16 +276,20 @@ function simulate(index) {
     answer(exposing ?? pool.find((q) => q.difficulty === 3) ?? pool[0], start - i * 75, "assessment");
   });
 
-  // Practice: weakest concept whose prerequisites are in place, at a difficulty to match.
+  // Practice: weakest concept whose prerequisites are in place, at a difficulty to match. Like a
+  // real student, each one works mostly through two chapters, so those topics build enough
+  // evidence for the app's mastery formula to move well away from its 35% prior.
   const lastActive = rand() < 0.25 ? (3 + rand() * 3) * DAY : rand() * 0.8 * DAY;
-  const count = 6 + Math.floor(rand() * 24);
+  const focus = new Set(shuffle(CHAPTERS.map((ch) => ch.id)).slice(0, 2));
+  const count = 60 + Math.floor(rand() * 50);
   for (let i = 0; i < count; i++) {
     const at = Math.max(60, start - DAY - ((start - DAY - lastActive) * (i + rand() * 0.5)) / count);
     const m = (id) => {
       const list = attempts.filter((a) => a.q.concept === id);
       return list.length ? list.filter((a) => a.correct).length / list.length : 0.35;
     };
-    const ready = CONCEPTS.filter((c) => c.prereqs.every((p) => m(p) >= 0.5));
+    const inFocus = CONCEPTS.filter((c) => focus.has(c.chapter) || rand() < 0.1);
+    const ready = inFocus.filter((c) => c.prereqs.every((p) => m(p) >= 0.5));
     const target = [...(ready.length ? ready : CONCEPTS)].sort((a, b) => m(a.id) - m(b.id) + (rand() - 0.5) * 0.3)[0];
     const want = m(target.id) < 0.4 ? 2 : m(target.id) < 0.7 ? 3 : 4;
     const pool = BANK.filter((q) => q.concept === target.id);
