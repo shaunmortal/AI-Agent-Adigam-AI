@@ -26,6 +26,8 @@ type PracticeQuery struct {
 	// When non-nil, restrict to these ids (an empty, non-nil slice matches nothing).
 	Only  []string
 	Limit int
+	// When set, questions whose measured rating is closest to it come first.
+	TargetRating *float64
 }
 
 // QuestionBank is the slice of the question repository the selector needs.
@@ -53,6 +55,9 @@ type SelectOptions struct {
 	TopicID    string
 	Difficulty Difficulty
 	Count      int
+	// The rating this learner should answer correctly about 70% of the time; nil means no
+	// preference within a level.
+	TargetRating *float64
 }
 
 // Levels in order of closeness to the one asked for, nearest first.
@@ -82,7 +87,7 @@ func SelectQuestions(ctx context.Context, bank QuestionBank, o SelectOptions) (S
 	}
 
 	chosen, err := bank.FindForPractice(ctx, PracticeQuery{
-		TopicID: o.TopicID, Difficulty: o.Difficulty, Exclude: attempted, Limit: o.Count,
+		TopicID: o.TopicID, Difficulty: o.Difficulty, Exclude: attempted, Limit: o.Count, TargetRating: o.TargetRating,
 	})
 	if err != nil {
 		return SelectedQuestions{}, err
@@ -101,7 +106,7 @@ func SelectQuestions(ctx context.Context, bank QuestionBank, o SelectOptions) (S
 			exclude = append(exclude, q.ID)
 		}
 		nearby, err := bank.FindForPractice(ctx, PracticeQuery{
-			TopicID: o.TopicID, Difficulty: level, Exclude: exclude, Limit: o.Count - len(chosen),
+			TopicID: o.TopicID, Difficulty: level, Exclude: exclude, Limit: o.Count - len(chosen), TargetRating: o.TargetRating,
 		})
 		if err != nil {
 			return SelectedQuestions{}, err

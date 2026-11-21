@@ -2,8 +2,10 @@ package store
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/shaunmortal/AI-tutor/server/internal/adaptive"
+	"github.com/shaunmortal/AI-tutor/server/internal/learner"
 )
 
 // practiceCols are the learner-visible columns. `authenticated` has no privilege on
@@ -56,19 +58,32 @@ func (r *Questions) FindAttemptedIDs(ctx context.Context, userID, topicID string
 	return distinct(ids), nil
 }
 
-// FindForPractice is questions on a topic, optionally at one difficulty, excluding and/or
-// restricted to given ids. A non-nil empty Only matches nothing.
+// measuredLevel is the level a question counts as when practice picks one: its author's label
+// until learner.CalibratedAfter answers have measured it, then the band its rating falls in. A
+// question labelled easy that most learners miss is served as a hard one.
+var measuredLevel = fmt.Sprintf(`(case when rating is not null and rating_attempts >= %d
+		then (case when rating < %g then 'easy' when rating < %g then 'medium' else 'hard' end)
+		else difficulty end)`, learner.CalibratedAfter, -learner.LevelCut, learner.LevelCut)
+
+// baseRating mirrors learner.BaseRating for a question no answer has rated yet.
+const baseRating = `(case difficulty when 'easy' then -1 when 'hard' then 1 else 0 end)`
+
+// FindForPractice is questions on a topic, optionally at one (measured) difficulty, excluding
+// and/or restricted to given ids. A non-nil empty Only matches nothing. With a TargetRating, the
+// questions closest to it come first: the ones this learner should get right about 70% of the time.
 func (r *Questions) FindForPractice(ctx context.Context, o adaptive.PracticeQuery) ([]adaptive.PracticeQuestion, error) {
 	if o.Only != nil && len(o.Only) == 0 {
 		return []adaptive.PracticeQuestion{}, nil
 	}
 	sql := `select ` + practiceCols + ` from questions where topic_id = $1
-		and ($2 = '' or difficulty = $2)
+		and ($2 = '' or ` + measuredLevel + ` = $2)
 		and not (id = any($3::uuid[]))
 		and ($4::uuid[] is null or id = any($4))
+		order by case when $6::float8 is null then 0
+			else abs(coalesce(rating, ` + baseRating + `) - $6::float8) end
 		limit $5`
 	return rowsOf[adaptive.PracticeQuestion](ctx, r.q, "questions.findForPractice", sql,
-		o.TopicID, string(o.Difficulty), nonNil(o.Exclude), o.Only, o.Limit)
+		o.TopicID, string(o.Difficulty), nonNil(o.Exclude), o.Only, o.Limit, o.TargetRating)
 }
 
 // FindTopicWithSubject is a topic with its subject's name, or nil when it does not exist.

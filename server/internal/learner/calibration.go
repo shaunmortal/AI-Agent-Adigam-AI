@@ -13,6 +13,25 @@ const (
 	minRatingK = 0.15
 )
 
+// How the measured rating is used to pick questions.
+const (
+	// TargetSuccess is how often a learner should answer a practice question correctly: hard
+	// enough to teach something, easy enough not to discourage.
+	TargetSuccess = 0.7
+	// CalibratedAfter is how many answers a question needs before its measured rating, rather
+	// than its author's label, decides which level it counts as.
+	CalibratedAfter = 5
+	// LevelCut splits the rating scale into levels: halfway between the base ratings
+	// (easy -1, medium 0, hard 1).
+	LevelCut = 0.5
+)
+
+// TargetRating is the question rating this learner should answer correctly TargetSuccess of the
+// time; nil mastery is the neutral prior.
+func TargetRating(masteryScore *float64) float64 {
+	return Ability(masteryScore) - math.Log(TargetSuccess/(1-TargetSuccess))
+}
+
 // BaseRating is where an uncalibrated question starts, from its author's label.
 func BaseRating(difficulty string) float64 {
 	switch difficulty {

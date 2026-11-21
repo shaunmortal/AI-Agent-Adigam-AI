@@ -1,6 +1,7 @@
 package practice
 
 import (
+	"cmp"
 	"context"
 	"encoding/json"
 	"log/slog"
@@ -19,6 +20,7 @@ import (
 	"github.com/shaunmortal/AI-tutor/server/internal/assessment"
 	"github.com/shaunmortal/AI-tutor/server/internal/auth"
 	"github.com/shaunmortal/AI-tutor/server/internal/httpx"
+	"github.com/shaunmortal/AI-tutor/server/internal/learner"
 	"github.com/shaunmortal/AI-tutor/server/internal/store"
 )
 
@@ -53,8 +55,11 @@ func nextRecommendation(d *app.Deps) httpx.Handler {
 		selectAsUser := func() error {
 			return d.DB.AsUser(ctx, userID, func(tx pgx.Tx) error {
 				var err error
+				// Within the level, the questions this learner should get right about 70% of the time.
+				target := learner.TargetRating(cmp.Or(plan.Candidate.MasteryScore, plan.Candidate.PriorMastery))
 				selection, err = adaptive.SelectQuestions(ctx, store.NewQuestions(tx), adaptive.SelectOptions{
-					UserID: userID, TopicID: plan.Candidate.TopicID, Difficulty: plan.Difficulty, Count: plan.RequestedQuestionCount})
+					UserID: userID, TopicID: plan.Candidate.TopicID, Difficulty: plan.Difficulty, Count: plan.RequestedQuestionCount,
+					TargetRating: &target})
 				return err
 			})
 		}
