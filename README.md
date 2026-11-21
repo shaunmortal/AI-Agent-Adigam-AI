@@ -10,7 +10,9 @@
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](frontend)
 [![PostgreSQL](https://img.shields.io/badge/Postgres-RLS%20on%20every%20table-4169E1?logo=postgresql&logoColor=white)](database)
 [![Redis](https://img.shields.io/badge/Redis-rate%20limits%20%C2%B7%20queue-DC382D?logo=redis&logoColor=white)](server/internal/ratelimit)
-[![Claude](https://img.shields.io/badge/Claude-Opus%205.5%20%C2%B7%20Sonnet%205.5-D97757)](server/internal/ai)
+[![Claude AI](https://img.shields.io/badge/AI-Claude-D97757)](server/internal/ai)
+
+Entry for the **Agentic AI Hackathon by Product Space**, Problem Statement 02.
 
 **[Open the live app → adigam.vercel.app](https://adigam.vercel.app)**
 
@@ -84,23 +86,19 @@ writing and checking questions, reading reasoning, explaining.
 
 ## How the AI is used
 
-Two tiers, chosen by what the output is for ([`ai/claude.go`](server/internal/ai/claude.go)):
+Adigam uses **Claude AI** for the language work below ([`server/internal/ai`](server/internal/ai)).
 
-- **High → Claude Opus 5.5 at high effort**, for output that becomes stored data (an answer key, a syllabus).
-  A wrong key marks a learner wrong for being right.
-- **Standard → Claude Sonnet 5.5**, for output a person reads and can judge, asked often.
-
-| Call | Tier | What it does | Guardrails |
-|---|---|---|---|
-| Question author | High | Writes a batch for a topic and difficulty, each wrong option tagged with its misconception; can be aimed at a learner's own misconceptions | JSON schema; structural validation; existing questions listed so they are not rewritten, exact duplicates never stored; misconception labels quoted as data and capped at 80 chars; one generation per topic at a time (Redis lock); 10 per hour per learner on the manual route |
-| Independent answer check | High | Solves each generated question **cold, without seeing the proposed answer** | Choice: the indexes must match. Numeric: within tolerance. Short: accepted wording or rubric. Any failure leaves the question unverified, and learners can only read verified questions |
-| Reasoning check | Standard | Verdict `sound` / `flawed` / `missing`, misconception, evidence, feedback | Reasoning capped at 600 chars and fenced in `<reasoning>` with `<` `>` neutralised; JSON schema; unknown verdicts become `missing`; 20 s timeout; on failure the answer is marked as if no reasoning were given |
-| Short-answer grader | Standard | Marks a typed answer the normalised match did not accept | Answer fenced in `<answer>` and labelled data, not instructions; JSON schema |
-| Study-only scope gate | Standard | One-word `STUDY` / `OFF_TOPIC` check before the tutor answers | A separate call rather than a rule in the tutor prompt, which a persuasive message can bend; off-topic gets a fixed refusal and the tutor is never called; if the check itself fails, the question is answered |
-| Tutor (Ask Adigam) | Standard | Answers from the learner's course material with numbered citations, or from general knowledge under a "General knowledge · not from your material" label | Question fenced in `<question>`; citations that point at nothing are removed and an uncited answer is relabelled as general knowledge; 2,000-char questions; 40 per hour |
-| Re-teach plan | Standard | Headline, timed 3 to 5 step lesson, 2 or 3 student groups | Class data fenced in `<class_data>`; JSON schema; class owner only; 20 per hour; cached 2 minutes per class |
-| Syllabus from a goal | High | Decides whether typed goal text is something to study and writes its syllabus | Fenced input; schema-validated and business-checked before insert; 20 per hour. "Class 10 Physics" resolves to the seeded syllabus with no AI call |
-| Course map, OCR, figures, flashcards | High / Standard | Turns uploaded PDFs, slides and video into topics, searchable text and revision cards | JSON schemas; uploads 30 per hour, course map rebuilds 10 per hour |
+| Call | What it does | Guardrails |
+|---|---|---|
+| Question author | Writes a batch for a topic and difficulty, each wrong option tagged with its misconception; can be aimed at a learner's own misconceptions | JSON schema; structural validation; existing questions listed so they are not rewritten, exact duplicates never stored; misconception labels quoted as data and capped at 80 chars; one generation per topic at a time (Redis lock); 10 per hour per learner on the manual route |
+| Independent answer check | Solves each generated question **cold, without seeing the proposed answer** | Choice: the indexes must match. Numeric: within tolerance. Short: accepted wording or rubric. Any failure leaves the question unverified, and learners can only read verified questions |
+| Reasoning check | Verdict `sound` / `flawed` / `missing`, misconception, evidence, feedback | Reasoning capped at 600 chars and fenced in `<reasoning>` with `<` `>` neutralised; JSON schema; unknown verdicts become `missing`; 20 s timeout; on failure the answer is marked as if no reasoning were given |
+| Short-answer grader | Marks a typed answer the normalised match did not accept | Answer fenced in `<answer>` and labelled data, not instructions; JSON schema |
+| Study-only scope gate | One-word `STUDY` / `OFF_TOPIC` check before the tutor answers | A separate call rather than a rule in the tutor prompt, which a persuasive message can bend; off-topic gets a fixed refusal and the tutor is never called; if the check itself fails, the question is answered |
+| Tutor (Ask Adigam) | Answers from the learner's course material with numbered citations, or from general knowledge under a "General knowledge · not from your material" label | Question fenced in `<question>`; citations that point at nothing are removed and an uncited answer is relabelled as general knowledge; 2,000-char questions; 40 per hour |
+| Re-teach plan | Headline, timed 3 to 5 step lesson, 2 or 3 student groups | Class data fenced in `<class_data>`; JSON schema; class owner only; 20 per hour; cached 2 minutes per class |
+| Syllabus from a goal | Decides whether typed goal text is something to study and writes its syllabus | Fenced input; schema-validated and business-checked before insert; 20 per hour. "Class 10 Physics" resolves to the seeded syllabus with no AI call |
+| Course map, OCR, figures, flashcards | Turns uploaded PDFs, slides and video into topics, searchable text and revision cards | JSON schemas; uploads 30 per hour, course map rebuilds 10 per hour |
 
 Every JSON call uses **structured outputs** to constrain the reply to a JSON Schema, and the result is
 still validated (the scope gate, the general-knowledge tutor answer and search translation are plain
@@ -112,9 +110,6 @@ user id** in Redis. Without an API key the server still starts and only AI route
 question texts and the question on screen, never a name, email or full history. Question generation gets a
 topic name, existing question texts and misconception labels. The re-teach plan gets display names, topic
 scores and short reasoning quotes, with no user ids or emails.
-
-Gemini is optional: with its key set it provides embeddings for hybrid (keyword + meaning) search over
-course material and speech-to-text, and `AI_PROVIDER=gemini` can answer instead of Claude.
 
 ---
 
@@ -128,8 +123,7 @@ flowchart LR
     API -. verify token .-> AU
     API --> PG[(Postgres on Supabase<br/>row-level security on every table)]
     API --> R[(Redis<br/>auth cache · rate limits<br/>generation locks · ingestion stream)]
-    API --> C[[Claude API<br/>Opus 5.5 · Sonnet 5.5]]
-    API -. optional .-> G[[Gemini API<br/>embeddings · speech-to-text]]
+    API --> C[[Claude API]]
 ```
 
 | Part | What it is |
@@ -304,9 +298,7 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f database/seed/demo_class.sql
 | `SUPABASE_SECRET_KEY` | Storage for uploaded files (server only, never in the frontend) |
 | `DATABASE_URL` | Postgres connection (Supabase session or transaction pooler) |
 | `DB_POOL_MODE` | Optional: `transaction` when `DATABASE_URL` is the transaction pooler |
-| `AI_PROVIDER` | `claude` (default) or `gemini` |
 | `ANTHROPIC_API_KEY` | Claude key (without it, AI routes answer 503 and the rest works) |
-| `GEMINI_API_KEY` | Optional: embeddings, speech-to-text, or the Gemini provider |
 | `AI_MODEL_HIGH`, `AI_MODEL_STANDARD` | Optional: override the model for each tier |
 | `REDIS_URL` | Redis connection |
 | `MAX_IN_FLIGHT` | Optional: requests per instance before shedding |
