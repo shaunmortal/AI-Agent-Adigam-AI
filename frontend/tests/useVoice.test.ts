@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { toUtterances } from '@/hooks/useVoice';
+import { pickVoice, toUtterances } from '@/hooks/useVoice';
 
 /**
  * The chunking that keeps a spoken answer from stopping halfway.
@@ -82,5 +82,31 @@ describe('toUtterances', () => {
         // showing "Stop" with nothing playing.
         expect(toUtterances('')).toEqual([]);
         expect(toUtterances('   \n  ')).toEqual([]);
+    });
+});
+
+describe('pickVoice', () => {
+    const voice = (name: string, lang: string) => ({ name, lang }) as SpeechSynthesisVoice;
+    const robotic = voice('Microsoft David - English (United States)', 'en-US');
+    const indian = voice('Rishi', 'en-IN');
+    const google = voice('Google US English', 'en-US');
+    const aria = voice('Microsoft Aria Online (Natural) - English (United States)', 'en-US');
+    const andrew = voice('Microsoft Andrew Online (Natural) - English (United States)', 'en-US');
+    const andrewMulti = voice('Microsoft AndrewMultilingual Online (Natural) - English (United States)', 'en-US');
+
+    it("prefers Edge's Andrew, the multilingual one first", () => {
+        expect(pickVoice([robotic, aria, andrew, andrewMulti])).toBe(andrewMulti);
+        expect(pickVoice([robotic, google, aria, andrew])).toBe(andrew);
+    });
+
+    it('falls back to another natural voice, then Google, then the Indian English one', () => {
+        expect(pickVoice([robotic, google, aria])).toBe(aria);
+        expect(pickVoice([robotic, indian, google])).toBe(google);
+        expect(pickVoice([robotic, indian])).toBe(indian);
+    });
+
+    it('leaves the default when nothing better is installed', () => {
+        expect(pickVoice([robotic])).toBeUndefined();
+        expect(pickVoice([])).toBeUndefined();
     });
 });
