@@ -179,10 +179,24 @@ export function PracticeSession({
                 <span className={`pill pill--${question.difficulty}`}>{question.difficulty}</span>
             </div>
 
-            {aimedAt && (
+            {/* Why this question. One aimed at a misconception says so; the rest share the
+                engine's reason for the set and how its level was chosen (server/internal/adaptive
+                picks the level, the question bank puts the nearest-to-70% questions first). */}
+            {aimedAt ? (
                 <div className="banner" role="note">
                     Aimed at a misconception you showed earlier: <strong>{aimedAt}</strong>.
                     Let&rsquo;s see if it still holds.
+                </div>
+            ) : (
+                <div>
+                    <span className="label">Why this question</span>
+                    <p style={{ margin: '4px 0 0' }}>{recommendation.reason}</p>
+                    <p className="faint" style={{ margin: '4px 0 0' }}>
+                        Level: {recommendation.difficulty}, from your mastery and recent accuracy ·
+                        within it, the questions closest to a 7 in 10 chance of a right answer come
+                        first.
+                        {session.data?.bankNote && ` ${session.data.bankNote}`}
+                    </p>
                 </div>
             )}
 
