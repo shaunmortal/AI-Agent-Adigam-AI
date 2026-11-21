@@ -1,0 +1,105 @@
+# Format, vet/lint, test and build both halves on every push and pull request.
+#
+# The two halves run as separate jobs rather than one, for two reasons: they are independent so they
+# finish in the time of the slower one instead of the sum, and a red tick names which half broke without
+# anybody opening the log.
+#
+# What this deliberately does NOT run: the SQL tests under database/tests/. They need a live Postgres
+# with real credentials, and putting a database URL in a public repository's CI to prove the schema still
+# parses would be a poor trade. They are run by hand against the deployed database, where they roll back
+# in a transaction and are safe to repeat.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# A second push while the first is still running makes the first run's answer irrelevant.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  server:
+    name: Go API
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    # Redis is real so the queue, rate-limit and auth-cache tests run. Database integration tests
+    # skip without DATABASE_URL: a database URL has no business in a public repository's CI, so
+    # those run against the project by hand (see README, Testing).
+    services:
+      redis:
+        image: redis:7
+        ports: ['6379:6379']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: server/go.mod
+          cache-dependency-path: server/go.sum
+
+      - name: Format check
+        run: test -z "$(gofmt -l .)" || (gofmt -l . && exit 1)
+        working-directory: server
+
+      - name: Vet
+        run: go vet ./...
+        working-directory: server
+
+      - name: Test
+        run: go test -race -count=1 ./...
+        working-directory: server
+
+      - name: Build (Linux and Windows)
+        run: go build ./cmd/api && GOOS=windows go build -o api.exe ./cmd/api
+        working-directory: server
+
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+        working-directory: frontend
+
+      - name: Lint
+        run: npm run lint
+        working-directory: frontend
+
+      - name: Format check
+        run: npm run format:check
+        working-directory: frontend
+
+      - name: Test
+        run: npm test
+        working-directory: frontend
+
+      # `npm run build` is `tsc -b && vite build`, so this covers the typecheck as well.
+      #
+      # The VITE_ values are deliberate placeholders. vite.config.ts refuses to build without them —
+      # because a missing one is inlined as `undefined`, which turns a guard into an unconditional throw
+      # and lets Rollup tree-shake the auth client away, producing a build that succeeds and then
+      # white-screens. That check is worth having, and it means CI has to supply something. Nothing here
+      # is secret and the build is thrown away; what is being proved is that the bundle assembles.
+      - name: Build
+        run: npm run build
+        working-directory: frontend
+        env:
+          VITE_API_URL: http://localhost:4000/api/v1
+          VITE_SUPABASE_URL: https://placeholder.supabase.co
+          VITE_SUPABASE_PUBLISHABLE_KEY: placeholder-not-a-real-key
